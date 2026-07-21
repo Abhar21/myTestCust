@@ -311,6 +311,7 @@ function App() {
   const [filterVegOnly, setFilterVegOnly] = useState(false)
   const [filterNonVeg, setFilterNonVeg] = useState(false)
   const [selectedMealFilters, setSelectedMealFilters] = useState<string[]>([])
+  const [partnerSearchQuery, setPartnerSearchQuery] = useState('')
 
   // Search Fields
   const [whereInput, setWhereInput] = useState(() => {
@@ -662,6 +663,11 @@ function App() {
     if (selectedMealFilters.length > 0) {
       const hasAllSelectedMeals = selectedMealFilters.every(meal => details.meals.includes(meal))
       if (!hasAllSelectedMeals) {
+        return false
+      }
+    }
+    if (partnerSearchQuery.trim() !== '') {
+      if (!item.title.toLowerCase().includes(partnerSearchQuery.toLowerCase())) {
         return false
       }
     }
@@ -1710,6 +1716,19 @@ function App() {
               <div className="header-text-group">
                 <h1>Caterers in Hyderabad, India</h1>
                 <p className="search-results-subtitle">Showing top-rated catering partners for events and weddings</p>
+              </div>
+              <div className="location-search-wrapper">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search partner name..."
+                  className="location-search-field"
+                  value={partnerSearchQuery}
+                  onChange={(e) => setPartnerSearchQuery(e.target.value)}
+                />
               </div>
             </div>
 

@@ -788,7 +788,7 @@
 }
 
 .card-info {
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .card-title-row {
@@ -824,15 +824,16 @@
 .search-card .card-title {
   font-size: 15px !important;
   font-weight: 700 !important;
+  margin-bottom: 0 !important;
 }
 
 .card-categories-row,
 .card-food-type-row {
-  font-size: 14px;
+  font-size: 13px;
   color: #717171;
   font-weight: 400;
-  margin-top: 4px;
-  margin-bottom: 2px;
+  margin-top: 0;
+  margin-bottom: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -840,7 +841,6 @@
 
 .search-card .card-details-row {
   font-size: 14px !important;
-  margin-top: 6px !important;
 }
 
 .card-original-price {
@@ -2820,4 +2820,61 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   opacity: 1 !important;
   display: block !important;
   cursor: pointer;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.carousel-arrow-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.carousel-arrow-btn:hover {
+  border-color: #111827 !important;
+  background-color: #f9fafb !important;
+  transform: scale(1.05);
+}
+
+.carousel-arrow-btn:active {
+  transform: scale(0.95);
+}
+
+.reviews-grid-scrollable {
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 40px) / 3);
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  width: 100%;
+  padding-bottom: 16px;
+  box-sizing: border-box;
+  scroll-snap-type: x mandatory;
+}
+
+@media (max-width: 1024px) {
+  .reviews-grid-scrollable {
+    grid-auto-columns: calc((100% - 20px) / 2);
+  }
+}
+
+@media (max-width: 640px) {
+  .reviews-grid-scrollable {
+    grid-template-rows: auto;
+    grid-auto-columns: 85%;
+  }
+}
+
+.show-all-reviews-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.show-all-reviews-btn:hover {
+  background-color: #e5e7eb !important;
+}
+
+.show-all-reviews-btn:active {
+  transform: scale(0.97);
 }

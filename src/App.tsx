@@ -163,6 +163,82 @@ const getFoodType = (title: string): string => {
   return 'Veg & Non-Veg';
 };
 
+const getCatererTravelInfo = (title: string): string => {
+  const lower = title.toLowerCase();
+  if (lower.includes('venkata')) {
+    return '🚚 22 mins • 15 km';
+  }
+  if (lower.includes('figma')) {
+    return '🚚 18 mins • 12 km';
+  }
+  if (lower.includes('brother')) {
+    return '🚚 35 mins • 22 km';
+  }
+  if (lower.includes('exotic')) {
+    return '🚚 25 mins • 18 km';
+  }
+  if (lower.includes('real')) {
+    return '🚚 30 mins • 20 km';
+  }
+  if (lower.includes('golden')) {
+    return '🚚 15 mins • 10 km';
+  }
+  if (lower.includes('annapurna')) {
+    return '🚚 20 mins • 14 km';
+  }
+  if (lower.includes('gourmet')) {
+    return '🚚 28 mins • 19 km';
+  }
+  if (lower.includes('swad')) {
+    return '🚚 16 mins • 11 km';
+  }
+  if (lower.includes('royal')) {
+    return '🚚 24 mins • 16 km';
+  }
+  if (lower.includes('elite')) {
+    return '🚚 32 mins • 21 km';
+  }
+  if (lower.includes('spice')) {
+    return '🚚 40 mins • 28 km';
+  }
+  if (lower.includes('feast')) {
+    return '🚚 19 mins • 13 km';
+  }
+  return '🚚 25 mins • 17 km';
+};
+
+const renderFoodTypeIcons = (title: string) => {
+  const type = getFoodType(title);
+  const vegIcon = (
+    <div key="veg" style={{
+      width: '14px', height: '14px', border: '1.5px solid #10b981',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      background: '#ffffff', borderRadius: '3px', flexShrink: 0
+    }} title="Veg">
+      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+    </div>
+  );
+
+  const nonVegIcon = (
+    <div key="nonveg" style={{
+      width: '14px', height: '14px', border: '1.5px solid #b91c1c',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      background: '#ffffff', borderRadius: '3px', flexShrink: 0
+    }} title="Non-Veg">
+      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#b91c1c' }} />
+    </div>
+  );
+
+  if (type === 'Veg') return vegIcon;
+  if (type === 'Non-Veg') return nonVegIcon;
+  return (
+    <div style={{ display: 'inline-flex', gap: '4px', flexShrink: 0 }}>
+      {vegIcon}
+      {nonVegIcon}
+    </div>
+  );
+};
+
 const renderReviewStars = (rating: number) => {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -223,6 +299,8 @@ function App() {
       document.body.style.overflow = '';
     };
   }, [showSelectItemsModal, showSelectItemsDrawer]);
+
+
 
   const [isSearchView, setIsSearchView] = useState(
     typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('page') === 'search' || new URLSearchParams(window.location.search).get('page') === 'detail') : false
@@ -1139,8 +1217,18 @@ function App() {
 
                   <div className="detail-left-meta-item">
                     <div className="detail-left-meta-label">TYPE</div>
-                    <div className={`detail-left-meta-value ${getFoodType(selectedVendorDetail.title) === 'Veg' ? 'detail-left-meta-value--veg' : 'detail-left-meta-value--non-veg'}`}>
-                      {getFoodType(selectedVendorDetail.title)}
+                    <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {renderFoodTypeIcons(selectedVendorDetail.title)}
+                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>
+                        {getFoodType(selectedVendorDetail.title)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="detail-left-meta-item">
+                    <div className="detail-left-meta-label">TRAVEL INFO</div>
+                    <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600', color: '#4b5563' }}>
+                      {getCatererTravelInfo(selectedVendorDetail.title)}
                     </div>
                   </div>
                 </div>
@@ -1457,10 +1545,31 @@ function App() {
 
           {/* Reviews and Ratings Section */}
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #e2e8f0' }}>
-            <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Reviews & Ratings
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Reviews & Ratings
+              </h3>
+              <button
+                onClick={() => { alert('Show all reviews modal would open'); }}
+                style={{
+                  border: 'none',
+                  background: '#f3f4f6',
+                  color: '#111827',
+                  borderRadius: '12px',
+                  padding: '12px 24px',
+                  fontSize: '15px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  outline: 'none'
+                }}
+                className="show-all-reviews-btn"
+              >
+                Show all reviews
+              </button>
+            </div>
+
+            <div className="reviews-grid-scrollable hide-scrollbar">
               {[
                 {
                   name: "Bhargav Ambati",
@@ -1488,6 +1597,33 @@ function App() {
                   stars: 4.5,
                   ordered: "Breakfast Menu 1",
                   text: "Very hygienic packaging and prompt delivery. Highly recommended for family events!"
+                },
+                {
+                  name: "Rajesh Verma",
+                  firstName: "Rajesh",
+                  time: "1 month ago",
+                  rating: "4.8/5",
+                  stars: 5,
+                  ordered: "Lunch Menu 2",
+                  text: "Excellent taste and quantity. The paneer tikka starter was exceptionally soft and delicious."
+                },
+                {
+                  name: "Sneha Reddy",
+                  firstName: "Sneha",
+                  time: "2 weeks ago",
+                  rating: "4.6/5",
+                  stars: 4.5,
+                  ordered: "Veg Breakfast",
+                  text: "On-time setup and clean presentation. The filter coffee was a huge hit among all our guests."
+                },
+                {
+                  name: "Amit Sharma",
+                  firstName: "Amit",
+                  time: "3 weeks ago",
+                  rating: "5.0/5",
+                  stars: 5,
+                  ordered: "Premium Dinner",
+                  text: "The service staff was very courteous. Highly professional management, everything went very smoothly."
                 }
               ].map((rev, rIdx) => (
                 <div
@@ -1500,7 +1636,11 @@ function App() {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '16px',
-                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.04)'
+                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.04)',
+                    width: '100%',
+                    flexShrink: 0,
+                    boxSizing: 'border-box',
+                    scrollSnapAlign: 'start'
                   }}
                 >
                   {/* Top Header Row */}
@@ -1584,13 +1724,16 @@ function App() {
                       <div className="card-title-row">
                         <span className="card-title">{home.title}</span>
                       </div>
-                      <div className="card-categories-row">
+                      <div className="card-categories-row" style={{ marginTop: '8px' }}>
                         {home.categories.join(' · ')}
                       </div>
-                      <div className="card-food-type-row">
+                      <div className="card-food-type-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '400' }}>
                         {getFoodType(home.title)}
                       </div>
-                      <div className="card-details-row">
+                      <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '500' }}>
+                        {getCatererTravelInfo(home.title)}
+                      </div>
+                      <div className="card-details-row" style={{ marginTop: '8px' }}>
                         <span className="card-original-price">{home.originalPrice}</span>
                         <span className="card-active-price">{home.price}</span>
                         <span className="card-dot">·</span>
@@ -2685,7 +2828,7 @@ function App() {
                                 <div style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>{c.desc}</div>
                               </div>
                             </div>
-                            
+
                             <button
                               onClick={() => setAppliedCouponCode(isApplied ? null : c.code)}
                               style={{

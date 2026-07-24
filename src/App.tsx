@@ -153,6 +153,72 @@ const bestRatingListings: HomeListing[] = [
   }
 ];
 
+const checkoutListings: HomeListing[] = [
+  {
+    title: 'Capital Caterers',
+    image: '/homes/flat_kondapur.png',
+    price: '₹120/plate',
+    originalPrice: '₹180/plate',
+    rating: '4.85',
+    isGuestFavourite: true,
+    categories: ['Lunch', 'Dinner']
+  },
+  {
+    title: 'Grand Banquet Services',
+    image: '/homes/apartment_somajiguda.png',
+    price: '₹220/plate',
+    originalPrice: '₹300/plate',
+    rating: '4.91',
+    isGuestFavourite: false,
+    categories: ['Breakfast', 'Lunch', 'Dinner']
+  },
+  {
+    title: 'Pinnacle Catering',
+    image: '/homes/flat_tolichowki.png',
+    price: '₹180/plate',
+    originalPrice: '₹250/plate',
+    rating: '4.88',
+    isGuestFavourite: true,
+    categories: ['Breakfast', 'Lunch', 'Snacks', 'Dinner']
+  },
+  {
+    title: 'Spice Route Caterers',
+    image: '/homes/villa_jubilee_hills.png',
+    price: '₹299/plate',
+    originalPrice: '₹399/plate',
+    rating: '4.94',
+    isGuestFavourite: false,
+    categories: ['Lunch', 'Dinner']
+  },
+  {
+    title: 'Dosa House Catering',
+    image: '/homes/flat_kondapur.png',
+    price: '₹75/plate',
+    originalPrice: '₹120/plate',
+    rating: '4.90',
+    isGuestFavourite: true,
+    categories: ['Breakfast', 'Snacks']
+  },
+  {
+    title: 'Biryani Express Services',
+    image: '/homes/flat_tolichowki.png',
+    price: '₹150/plate',
+    originalPrice: '₹210/plate',
+    rating: '4.82',
+    isGuestFavourite: false,
+    categories: ['Lunch', 'Dinner']
+  },
+  {
+    title: 'Royal Feast Hyderabad',
+    image: '/homes/apartment_somajiguda.png',
+    price: '₹380/plate',
+    originalPrice: '₹480/plate',
+    rating: '4.97',
+    isGuestFavourite: true,
+    categories: ['Breakfast', 'Lunch', 'Dinner']
+  }
+];
+
 const getFoodType = (title: string): string => {
   const lower = title.toLowerCase();
   if (lower.includes('venkata') || lower.includes('annapurna') || lower.includes('swad')) {
@@ -345,7 +411,7 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('page') === 'detail') {
       const vendorName = params.get('vendor');
-      return [...homeListings, ...bestRatingListings].find(item => item.title === vendorName) || null;
+      return [...homeListings, ...checkoutListings, ...bestRatingListings].find(item => item.title === vendorName) || null;
     }
     return null;
   })
@@ -637,7 +703,7 @@ function App() {
   }
 
   // Combine and deduplicate listings for search view
-  const allCaterers = [...homeListings, ...bestRatingListings]
+  const allCaterers = [...homeListings, ...checkoutListings, ...bestRatingListings]
   const uniqueCaterersRaw = allCaterers.filter((item, index, self) =>
     self.findIndex(t => t.title === item.title) === index
   )
@@ -2007,19 +2073,24 @@ function App() {
             </div>
           </div>
 
-          {/* Promo Cards: The Latest */}
+          {/* Segment: Checkout Caterers */}
           <div className="listings-segment">
             <div className="listings-header">
-              <div className="listings-title-row">
-                <h2 className="promo-heading-bold">Special offers only for special occasions</h2>
+              <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
+                <h2>Checkout caters in Hyderabad</h2>
+                <button className="arrow-link-btn" aria-label="View more checkout caters" style={{ pointerEvents: 'none' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
               </div>
               <div className="listings-nav-arrows">
-                <button className="nav-arrow-btn" aria-label="Scroll promo left" onClick={() => handleScroll('promo-scroll-container', 'left')}>
+                <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-checkout', 'left')}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                   </svg>
                 </button>
-                <button className="nav-arrow-btn" aria-label="Scroll promo right" onClick={() => handleScroll('promo-scroll-container', 'right')}>
+                <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container-checkout', 'right')}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
@@ -2027,27 +2098,57 @@ function App() {
               </div>
             </div>
 
+            <div className="listings-scroll-row" id="listings-scroll-container-checkout">
+              {checkoutListings.map((home, idx) => (
+                <div key={idx} className="home-card" onClick={() => handleCardClick(home.title)}>
+                  <div className="card-image-wrapper">
+                    <img src={home.image} alt={home.title} className="card-img" />
+                  </div>
+                  <div className="card-info">
+                    <div className="card-title-row">
+                      <span className="card-title">{home.title}</span>
+                    </div>
+                    <div className="card-details-row">
+                      <span className="card-active-price">{home.price}</span>
+                      <span className="card-dot">·</span>
+                      <span className="card-rating-inline">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        {home.rating}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Promo Cards: The Latest */}
+          <div className="listings-segment">
+            <div className="listings-header">
+              <div className="listings-title-row">
+                <h2 className="promo-heading-bold">Special offers only for special occasions</h2>
+              </div>
+            </div>
+
             <div className="listings-scroll-row promo-scroll-row" id="promo-scroll-container">
               <div className="promo-card promo-card--light">
-                <div className="promo-card__label promo-card__label--accent">NEW</div>
                 <div className="promo-card__title">Premium<br />Catering Package</div>
                 <div className="promo-card__subtitle">All-inclusive service for all occasions.</div>
                 <div className="promo-card__price">From ₹399/plate</div>
               </div>
               <div className="promo-card promo-card--light">
-                <div className="promo-card__label promo-card__label--accent">FEATURED</div>
                 <div className="promo-card__title">Budget Catering<br />Made Easy</div>
                 <div className="promo-card__subtitle">Great taste at the right price.</div>
                 <div className="promo-card__price">From ₹49/plate</div>
               </div>
               <div className="promo-card promo-card--light">
-                <div className="promo-card__label promo-card__label--accent">LIMITED TIME</div>
                 <div className="promo-card__title">Book Early,<br />Save Big.</div>
                 <div className="promo-card__subtitle">Get 20% off on advance bookings of 3+ days.</div>
                 <div className="promo-card__price">Offer ends soon</div>
               </div>
               <div className="promo-card promo-card--light">
-                <div className="promo-card__label promo-card__label--accent">TRENDING</div>
                 <div className="promo-card__title">Wedding<br />Special Menus</div>
                 <div className="promo-card__subtitle">Curated multi-course meals for your big day.</div>
                 <div className="promo-card__price">From ₹249/plate</div>

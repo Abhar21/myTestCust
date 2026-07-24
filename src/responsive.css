@@ -3,8 +3,13 @@
 @media (max-width: 768px) {
   /* Header Container */
   .airbnb-header-container {
-    padding: 12px 16px !important;
+    padding: 8px 16px !important;
     gap: 8px !important;
+  }
+
+  .logo-section,
+  .right-actions {
+    padding-top: 2px !important;
   }
 
   /* Listings & Filters container */
@@ -55,9 +60,11 @@
     flex-direction: row !important;
     align-items: center !important;
     gap: 10px !important;
-    padding: 6px 4px 10px 4px !important;
+    padding: 6px 16px 10px 16px !important;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
     overflow-x: auto !important;
-    width: 100% !important;
+    width: auto !important;
     box-sizing: border-box !important;
     -webkit-overflow-scrolling: touch !important;
   }
@@ -163,5 +170,14 @@
     width: 100% !important;
     flex-wrap: wrap !important;
     gap: 16px 24px !important;
+  }
+
+  /* Prevent horizontal scroll rows from clipping/cutting at container padding */
+  .listings-scroll-row {
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: auto !important;
   }
 }

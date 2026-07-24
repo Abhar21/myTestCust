@@ -1960,8 +1960,8 @@ function App() {
           <div className="listings-segment">
             <div className="listings-header">
               <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
-                <h2>Popular caterers in Hyderabad</h2>
-                <button className="arrow-link-btn" aria-label="View more popular caterers" style={{ pointerEvents: 'none' }}>
+                <h2>Best caters in Hyderabad</h2>
+                <button className="arrow-link-btn" aria-label="View more popular cater" style={{ pointerEvents: 'none' }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
@@ -2060,7 +2060,7 @@ function App() {
             <div className="listings-header">
               <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
                 <h2>Best in rating in Hyderabad</h2>
-                <button className="arrow-link-btn" aria-label="View more best rated caterers" style={{ pointerEvents: 'none' }}>
+                <button className="arrow-link-btn" aria-label="View more best rated caters" style={{ pointerEvents: 'none' }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
@@ -2180,13 +2180,13 @@ function App() {
               <h2 className="footer-tagline">
                 India's 1st direct<br className="tagline-break" /> booking event platform
               </h2>
-              <a 
-                href="#linkedin" 
-                className="footer-social-circle" 
+              <a
+                href="#linkedin"
+                className="footer-social-circle"
                 aria-label="LinkedIn"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF35E0">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
               </a>
             </div>

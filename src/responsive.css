@@ -1,0 +1,167 @@
+/* Responsive/Mobile Style Overrides */
+
+@media (max-width: 768px) {
+  /* Header Container */
+  .airbnb-header-container {
+    padding: 12px 16px !important;
+    gap: 8px !important;
+  }
+
+  /* Listings & Filters container */
+  .listings-container {
+    padding: 0 16px !important;
+    margin: 24px 0 60px 0 !important;
+  }
+  .filters-bar-row {
+    padding: 4px 16px 12px !important;
+  }
+
+  /* Header Row Layout: Logo & Hamburger on top, Tabs below */
+  .airbnb-header-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    min-height: auto !important;
+    gap: 12px 0 !important;
+  }
+
+  .header-left-col {
+    order: 1 !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+  }
+
+  .header-right-col {
+    order: 2 !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+  }
+
+  .header-center-col {
+    order: 3 !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: auto !important;
+  }
+
+  /* Center Tabs transformed to Horizontal Scrollable Pills (Image 1 style) */
+  .center-tabs {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 6px 4px 10px 4px !important;
+    overflow-x: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .tab-item {
+    display: flex !important;
+    flex-direction: row !important; /* Icon and text next to each other */
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 16px !important;
+    border-radius: 24px !important;
+    border: 1px solid #ebebeb !important;
+    background: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #484848 !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    position: relative !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.2s ease !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Remove default indicator line on mobile */
+  .tab-item::after {
+    display: none !important;
+  }
+
+  /* Hover and active states for horizontal pills on mobile */
+  .tab-item:hover {
+    color: #222222 !important;
+    border-color: #d3d3d3 !important;
+  }
+
+  .tab-item.active {
+    color: #222222 !important;
+    border-color: #222222 !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* Adjust badge positioning inside horizontal pills */
+  .tab-badge {
+    position: absolute !important;
+    top: -8px !important;
+    left: auto !important;
+    right: -4px !important;
+    transform: none !important;
+    font-size: 9px !important;
+    padding: 1px 5px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Adjust tab icon sizing inside pills */
+  .tab-icon {
+    font-size: 16px !important;
+    margin-right: 0 !important;
+  }
+
+  /* Banner frame mobile padding override */
+  .banner-frame__inner {
+    padding: 24px 20px !important;
+    gap: 20px !important;
+  }
+
+  /* Genius card mobile padding override */
+  .genius-card {
+    padding: 16px 20px !important;
+  }
+
+  /* Footer Mobile Styles */
+  .footer-top-split {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 32px !important;
+    padding-bottom: 32px !important;
+  }
+
+  .footer-tagline {
+    font-size: 28px !important;
+    margin-bottom: 16px !important;
+    max-width: 100% !important;
+  }
+
+  .tagline-break {
+    display: none !important;
+  }
+
+  .footer-links-stack {
+    align-items: flex-start !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  .footer-bottom-row {
+    flex-direction: column-reverse !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .footer-bottom-right-links {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    gap: 16px 24px !important;
+  }
+}

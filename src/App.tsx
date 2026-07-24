@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import './responsive.css'
 
 type TabType = 'caterers' | 'mehendi' | 'makeup' | 'theatres' | 'photography' | 'decors' | 'venues'
 
@@ -307,11 +308,12 @@ function App() {
   )
   const [isHeaderSearchExpanded, setIsHeaderSearchExpanded] = useState(false)
   const [showSortDropdown, setShowSortDropdown] = useState(false)
-  const [currentSort, setCurrentSort] = useState<'relevance' | 'low-high' | 'high-low'>('relevance')
+  const [currentSort, setCurrentSort] = useState<'relevance' | 'low-high' | 'high-low' | 'distance-low-high'>('relevance')
   const [filterVegOnly, setFilterVegOnly] = useState(false)
   const [filterNonVeg, setFilterNonVeg] = useState(false)
   const [selectedMealFilters, setSelectedMealFilters] = useState<string[]>([])
   const [partnerSearchQuery, setPartnerSearchQuery] = useState('')
+
 
   // Search Fields
   const [whereInput, setWhereInput] = useState(() => {
@@ -326,6 +328,7 @@ function App() {
   // Dropdown States
   const [showDestinations, setShowDestinations] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false)
+  const [showInitialDateModal, setShowInitialDateModal] = useState(false)
   const [activeSearchField, setActiveSearchField] = useState<'where' | 'when' | null>(null)
 
   // Year and Month navigation states (Locks initial to July 2026)
@@ -346,6 +349,13 @@ function App() {
     }
     return null;
   })
+
+  useEffect(() => {
+    if (selectedVendorDetail && !whenInput.trim()) {
+      setShowInitialDateModal(true);
+    }
+  }, [selectedVendorDetail, whenInput]);
+
   const handleFilterClick = (action: () => void) => {
     action();
     if (selectedVendorDetail) {
@@ -677,6 +687,13 @@ function App() {
       return getPriceNum(a.price) - getPriceNum(b.price)
     } else if (currentSort === 'high-low') {
       return getPriceNum(b.price) - getPriceNum(a.price)
+    } else if (currentSort === 'distance-low-high') {
+      const getDistanceNum = (title: string) => {
+        const info = getCatererTravelInfo(title)
+        const m = info.match(/•\s*(\d+)\s*km/)
+        return m ? parseInt(m[1], 10) : 17
+      }
+      return getDistanceNum(a.title) - getDistanceNum(b.title)
     }
     return 0 // relevance
   })
@@ -1074,7 +1091,7 @@ function App() {
                     <line x1="4" y1="12" x2="14" y2="12"></line>
                     <line x1="4" y1="18" x2="8" y2="18"></line>
                   </svg>
-                  <span>Sort: {currentSort === 'relevance' ? 'Relevance' : currentSort === 'low-high' ? 'Price: Low to high' : 'Price: High to low'}</span>
+                  <span>Sort: {currentSort === 'relevance' ? 'Relevance' : currentSort === 'low-high' ? 'Price: Low to high' : currentSort === 'high-low' ? 'Price: High to low' : 'Distance: Low to high'}</span>
                 </button>
 
                 {showSortDropdown && (
@@ -1105,6 +1122,15 @@ function App() {
                       })}
                     >
                       Price: High to low
+                    </div>
+                    <div
+                      className={`sort-dropdown-item ${currentSort === 'distance-low-high' ? 'selected' : ''}`}
+                      onClick={() => handleFilterClick(() => {
+                        setCurrentSort('distance-low-high')
+                        setShowSortDropdown(false)
+                      })}
+                    >
+                      Distance: Low to high
                     </div>
                   </div>
                 )}
@@ -1187,11 +1213,7 @@ function App() {
               </button>
             </div>
           </div>
-        ) : (
-          <div className="search-bar-row">
-            {renderSearchBar(false)}
-          </div>
-        )}
+        ) : null}
       </header>
 
       {/* Page Body: Listing Segments or Search Results Grid */}
@@ -1718,7 +1740,7 @@ function App() {
                 <p className="search-results-subtitle">Showing top-rated catering partners for events and weddings</p>
               </div>
               <div className="location-search-wrapper">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
@@ -1989,7 +2011,7 @@ function App() {
           <div className="listings-segment">
             <div className="listings-header">
               <div className="listings-title-row">
-                <h2 className="promo-heading-bold">Special offers <span className="promo-heading-light">only for special occasions.</span></h2>
+                <h2 className="promo-heading-bold">Special offers only for special occasions</h2>
               </div>
               <div className="listings-nav-arrows">
                 <button className="nav-arrow-btn" aria-label="Scroll promo left" onClick={() => handleScroll('promo-scroll-container', 'left')}>
@@ -2089,7 +2111,7 @@ function App() {
             <div className="banner-frame__inner">
               <div className="banner-frame__left">
                 <div className="banner-frame__eyebrow">myMooment</div>
-                <h2 className="banner-frame__title">Find the perfect caterer<br />for your next event.</h2>
+                <h2 className="banner-frame__title">Find the best cater<br />for your next event.</h2>
                 <p className="banner-frame__subtitle">Browse top-rated catering services across India from intimate gatherings to grand weddings.</p>
                 <div className="banner-frame__actions">
                   <button className="banner-frame__btn banner-frame__btn--primary">Explore all caterers</button>
@@ -2149,50 +2171,53 @@ function App() {
       {/* Footer Section */}
       <footer className="mooment-footer">
         <div className="footer-inner">
-          <div className="footer-links-grid">
-            <div className="footer-column">
-              <h3>Company</h3>
-              <ul>
-                <li><a href="#about">About us</a></li>
-                <li><a href="#privacy-policy">Privacy policy</a></li>
-                <li><a href="#terms-conditions">Terms & conditions</a></li>
-              </ul>
+          <div className="footer-top-split">
+            {/* Left Col: Logo, Title, LinkedIn icon */}
+            <div className="footer-brand-col">
+              <div className="footer-logo-row">
+                <span className="logo-text">myMooment</span>
+              </div>
+              <h2 className="footer-tagline">
+                India's 1st direct<br className="tagline-break" /> booking event platform
+              </h2>
+              <a 
+                href="#linkedin" 
+                className="footer-social-circle" 
+                aria-label="LinkedIn"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF35E0">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+              </a>
             </div>
-            <div className="footer-column">
-              <h3>Partners</h3>
-              <ul>
-                <li><a href="#register-partner">Register as a Partner</a></li>
-              </ul>
-            </div>
-            <div className="footer-column">
-              <h3>Support</h3>
-              <ul>
-                <li><a href="mailto:support@mymooment.com">support@mymooment.com</a></li>
-              </ul>
+
+            {/* Right Col: Navigation Links Stack */}
+            <div className="footer-links-stack">
+              <a href="#about" className="footer-stack-link">About Us</a>
+              <a href="#register-partner" className="footer-stack-link partner-link">
+                Register as Partner
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '4px', verticalAlign: 'middle' }}>
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                <span className="free-badge">FREE</span>
+              </a>
+              <a href="mailto:info@mymooment.com" className="footer-stack-link email-link">
+                info@mymooment.com
+              </a>
             </div>
           </div>
 
+          <div className="footer-divider-line"></div>
+
           <div className="footer-bottom-row">
             <div className="footer-bottom-left">
-              <span>© 2026 myMooment, Inc.</span>
+              <span>© 2026 myMooment. All Rights Reserved</span>
             </div>
-            <div className="footer-bottom-right">
-              <div className="footer-social-icons">
-                <a href="#instagram" aria-label="Instagram">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                  </svg>
-                </a>
-                <a href="#linkedin" aria-label="LinkedIn">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect x="2" y="9" width="4" height="12"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
-                  </svg>
-                </a>
-              </div>
+            <div className="footer-bottom-right-links">
+              <a href="#privacy">Privacy Policy</a>
+              <a href="#terms">Terms & Conditions</a>
             </div>
           </div>
         </div>
@@ -2255,6 +2280,182 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Initial Date Selection Modal */}
+      {showInitialDateModal && (
+        <div
+          className="modal-backdrop-animate"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backdropFilter: 'blur(4px)',
+            fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+            padding: '20px'
+          }}
+        >
+          <div
+            className="modal-content-animate"
+            style={{
+              width: '680px',
+              maxWidth: '100%',
+              background: '#ffffff',
+              borderRadius: '24px',
+              padding: '28px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              position: 'relative',
+            }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowInitialDateModal(false)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                background: '#f3f4f6',
+                border: 'none',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontWeight: '700',
+                color: '#4b5563',
+                fontSize: '16px',
+                zIndex: 10
+              }}
+            >
+              ×
+            </button>
+
+            <div style={{ textAlign: 'center' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#222222', margin: '0 0 6px 0' }}>
+                Select Booking Date
+              </h3>
+              <p style={{ fontSize: '13px', color: '#717171', margin: 0 }}>
+                Please choose a date to see availability and menus for <strong style={{ color: '#222222' }}>{selectedVendorDetail?.title}</strong>
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '32px', marginTop: '10px' }}>
+              {/* August 2026 */}
+              <div style={{ flex: 1 }}>
+                <div style={{ textAlign: 'center', fontWeight: '700', fontSize: '15px', color: '#222222', marginBottom: '12px' }}>
+                  August 2026
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: '600', fontSize: '11px', color: '#717171', marginBottom: '8px' }}>
+                  <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
+                  {/* Aug starts Saturday, 6 empty cells */}
+                  {Array(6).fill(null).map((_, i) => <div key={`empty-aug-${i}`} />)}
+                  {Array(31).fill(0).map((_, dIdx) => {
+                    const dayNum = dIdx + 1;
+                    const isBlocked = dayNum === 10 || dayNum === 11 || dayNum === 12 || dayNum === 24 || dayNum === 25;
+                    const dateStr = `August ${dayNum}, 2026`;
+                    return (
+                      <div
+                        key={`aug-${dayNum}`}
+                        onClick={() => {
+                          if (!isBlocked) {
+                            setWhenInput(dateStr);
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('when', dateStr);
+                            window.history.replaceState({}, '', url.toString());
+                            setShowInitialDateModal(false);
+                          }
+                        }}
+                        style={{
+                          height: '34px',
+                          width: '34px',
+                          margin: '0 auto',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '50%',
+                          cursor: isBlocked ? 'default' : 'pointer',
+                          color: isBlocked ? '#d1d5db' : '#222222',
+                          fontWeight: isBlocked ? '400' : '600',
+                          fontSize: '13px',
+                          textDecoration: isBlocked ? 'line-through' : 'none',
+                          transition: 'all 0.15s'
+                        }}
+                        className={!isBlocked ? 'detail-calendar-day-hover' : ''}
+                      >
+                        {dayNum}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* September 2026 */}
+              <div style={{ flex: 1 }}>
+                <div style={{ textAlign: 'center', fontWeight: '700', fontSize: '15px', color: '#222222', marginBottom: '12px' }}>
+                  September 2026
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: '600', fontSize: '11px', color: '#717171', marginBottom: '8px' }}>
+                  <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
+                  {/* Sep starts Tuesday, 2 empty cells */}
+                  {Array(2).fill(null).map((_, i) => <div key={`empty-sep-${i}`} />)}
+                  {Array(30).fill(0).map((_, dIdx) => {
+                    const dayNum = dIdx + 1;
+                    const isBlocked = dayNum === 5 || dayNum === 6 || dayNum === 25 || dayNum === 26 || dayNum === 27 || dayNum === 28;
+                    const dateStr = `September ${dayNum}, 2026`;
+                    return (
+                      <div
+                        key={`sep-${dayNum}`}
+                        onClick={() => {
+                          if (!isBlocked) {
+                            setWhenInput(dateStr);
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('when', dateStr);
+                            window.history.replaceState({}, '', url.toString());
+                            setShowInitialDateModal(false);
+                          }
+                        }}
+                        style={{
+                          height: '34px',
+                          width: '34px',
+                          margin: '0 auto',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '50%',
+                          cursor: isBlocked ? 'default' : 'pointer',
+                          color: isBlocked ? '#d1d5db' : '#222222',
+                          fontWeight: isBlocked ? '400' : '600',
+                          fontSize: '13px',
+                          textDecoration: isBlocked ? 'line-through' : 'none',
+                          transition: 'all 0.15s'
+                        }}
+                        className={!isBlocked ? 'detail-calendar-day-hover' : ''}
+                      >
+                        {dayNum}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Select Items Modal Popup */}
       {showSelectItemsModal && (

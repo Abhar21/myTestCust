@@ -663,19 +663,16 @@
   margin: 0;
 }
 
-.arrow-link-btn {
-  background: none;
-  border: none;
-  display: flex;
+.title-chevron {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  padding: 4px;
+  margin-left: 6px;
   color: #222222;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
 }
 
-.listings-title-row:hover .arrow-link-btn {
+.listings-title-row:hover .title-chevron {
   transform: translateX(4px);
 }
 

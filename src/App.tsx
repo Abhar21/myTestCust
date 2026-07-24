@@ -2027,11 +2027,11 @@ function App() {
             <div className="listings-header">
               <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
                 <h2>Best caters in Hyderabad</h2>
-                <button className="arrow-link-btn" aria-label="View more popular cater" style={{ pointerEvents: 'none' }}>
+                <span className="title-chevron">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
-                </button>
+                </span>
               </div>
               <div className="listings-nav-arrows">
                 <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container', 'left')}>
@@ -2078,11 +2078,11 @@ function App() {
             <div className="listings-header">
               <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
                 <h2>Checkout caters in Hyderabad</h2>
-                <button className="arrow-link-btn" aria-label="View more checkout caters" style={{ pointerEvents: 'none' }}>
+                <span className="title-chevron">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
-                </button>
+                </span>
               </div>
               <div className="listings-nav-arrows">
                 <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-checkout', 'left')}>
@@ -2161,11 +2161,11 @@ function App() {
             <div className="listings-header">
               <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
                 <h2>Best in rating in Hyderabad</h2>
-                <button className="arrow-link-btn" aria-label="View more best rated caters" style={{ pointerEvents: 'none' }}>
+                <span className="title-chevron">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
-                </button>
+                </span>
               </div>
               <div className="listings-nav-arrows">
                 <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-best', 'left')}>

@@ -185,4 +185,17 @@
   .promo-card {
     flex: 0 0 280px !important;
   }
+
+  /* Hide rounded navigation arrows on mobile */
+  .listings-nav-arrows {
+    display: none !important;
+  }
+
+  /* Position chevron right arrow at the edge of the screen on mobile */
+  .listings-title-row {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
 }

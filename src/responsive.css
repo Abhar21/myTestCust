@@ -198,9 +198,4 @@
     justify-content: space-between !important;
     align-items: center !important;
   }
-
-  /* Increase card width on mobile from default 160px min-width */
-  .home-card {
-    flex: 0 0 190px !important;
-  }
 }

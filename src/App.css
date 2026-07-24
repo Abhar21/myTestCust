@@ -722,7 +722,7 @@
 }
 
 .home-card {
-  flex: 0 0 calc((100% - 60px) / 6);
+  flex: 0 0 calc((100% - 72px) / 7);
   min-width: 160px;
   display: flex;
   flex-direction: column;

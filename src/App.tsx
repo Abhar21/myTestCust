@@ -2264,40 +2264,19 @@ function App() {
                 </div>
               </div>
 
-              {/* Current Selected Address */}
-              <div className="current-address-section">
-                <div className="current-address-label">Current Selected Address</div>
-                {selectedAddress ? (
-                  <div className="current-address-card">
-                    <div className="current-address-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2.5">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <div className="current-address-details">
-                      <div className="current-address-city">{selectedAddress.name}</div>
-                      <div className="current-address-full">{selectedAddress.full}</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={`current-address-placeholder-card `}>
-                    <div className="current-address-placeholder-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" style={{ strokeDasharray: '3 3' }}>
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <div className="current-address-placeholder-text">
-                      No address selected. Choose a saved address below.
-                    </div>
-                  </div>
-                )}
-              </div>
 
               {/* Saved Addresses Section */}
               <div className="saved-addresses-section">
-                <div className="saved-addresses-title">Saved Addresses</div>
+                <div className="saved-addresses-header">
+                  <div className="saved-addresses-title">Saved Addresses</div>
+                  <button className="add-address-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Address
+                  </button>
+                </div>
 
                 <div className="saved-addresses-list">
                   {/* Item 1: Home */}
@@ -4049,40 +4028,19 @@ function App() {
                 </div>
               </div>
 
-              {/* Current Selected Address inside modal */}
-              <div className="current-address-section modal-current-address" style={{ display: 'flex', marginTop: '20px' }}>
-                <div className="current-address-label">Current Selected Address</div>
-                {selectedAddress ? (
-                  <div className="current-address-card">
-                    <div className="current-address-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2.5">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <div className="current-address-details">
-                      <div className="current-address-city">{selectedAddress.name}</div>
-                      <div className="current-address-full">{selectedAddress.full}</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={`current-address-placeholder-card `}>
-                    <div className="current-address-placeholder-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" style={{ strokeDasharray: '3 3' }}>
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <div className="current-address-placeholder-text">
-                      No address selected. Choose a saved address below.
-                    </div>
-                  </div>
-                )}
-              </div>
 
               {/* Saved Addresses Section inside modal */}
               <div className="saved-addresses-section modal-saved-addresses" style={{ display: 'block', marginTop: '20px' }}>
-                <div className="saved-addresses-title">Saved Addresses</div>
+                <div className="saved-addresses-header">
+                  <div className="saved-addresses-title">Saved Addresses</div>
+                  <button className="add-address-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Address
+                  </button>
+                </div>
                 <div className="saved-addresses-list">
                   {/* Home */}
                   <div

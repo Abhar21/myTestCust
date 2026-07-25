@@ -2066,11 +2066,30 @@
   text-align: left;
 }
 
+.saved-addresses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .saved-addresses-title {
   font-size: 16px;
   font-weight: 700;
   color: #222222;
-  margin-bottom: 16px;
+  margin-bottom: 0;
+}
+
+.add-address-btn {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff385c; /* Pink color */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .saved-addresses-list {

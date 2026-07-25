@@ -4,13 +4,13 @@
 
   /* Header Container */
   .airbnb-header-container {
-    padding: 8px 16px !important;
-    gap: 2px !important;
+    padding: 10px 16px !important;
+    gap: 0 !important;
   }
 
   .logo-section,
   .right-actions {
-    padding-top: 2px !important;
+    padding-top: 0 !important;
   }
 
   /* Listings & Filters container */
@@ -20,7 +20,7 @@
   }
 
   .filters-bar-row {
-    padding: 4px 0 12px !important;
+    padding: 0 !important;
   }
 
   /* Mobile location badge on 2nd screen */
@@ -28,19 +28,20 @@
     display: flex !important;
     width: 100% !important;
     align-items: center;
-    background: #eaf4fd; /* Very light blue background */
+    background: #eaf4fd;
+    /* Very light blue background */
     border-radius: 12px;
     padding: 8px 12px;
-    margin: 4px 0 12px 0 !important;
+    margin: 2px 0 10px 0 !important;
     cursor: pointer;
     overflow: hidden;
   }
-  
+
   .mobile-location-badge svg {
     flex-shrink: 0;
     color: #222;
   }
-  
+
   .mobile-location-badge .badge-name {
     font-weight: 700;
     font-size: 12px;
@@ -48,7 +49,7 @@
     margin-left: 6px;
     margin-right: 4px;
   }
-  
+
   .mobile-location-badge .badge-full {
     font-size: 12px;
     color: #444;
@@ -57,7 +58,7 @@
     text-overflow: ellipsis;
     flex-grow: 1;
   }
-  
+
   .mobile-location-badge .badge-chevron {
     margin-left: 4px;
     color: #444;

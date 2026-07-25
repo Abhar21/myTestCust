@@ -505,6 +505,11 @@
     width: auto !important;
   }
 
+  /* Hide second month in calendar on mobile */
+  .mobile-hide-month {
+    display: none !important;
+  }
+
   /* Reduce padding below location badge on Screen 3 */
   .airbnb-header-container--detail {
     padding-bottom: 6px !important;

@@ -1515,7 +1515,7 @@ function App() {
                     </svg>
                   ) : (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                     </svg>
                   )}
                   <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
@@ -1776,7 +1776,6 @@ function App() {
                     }
                   ]
                     .filter(menu => activeMenuCategory === 'All' || menu.category === activeMenuCategory)
-                    .slice(0, 2)
                     .map((menu, idx) => (
                       <div
                         key={idx}
@@ -2784,12 +2783,12 @@ function App() {
               ×
             </button>
 
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'left' }}>
               <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#222222', margin: '0 0 6px 0' }}>
                 Select Booking Date
               </h3>
               <p style={{ fontSize: '13px', color: '#717171', margin: 0 }}>
-                Please choose a date to see availability and menus for <strong style={{ color: '#222222' }}>{selectedVendorDetail?.title}</strong>
+                Choose the perfect date
               </p>
             </div>
 
@@ -2846,7 +2845,7 @@ function App() {
               </div>
 
               {/* September 2026 */}
-              <div style={{ flex: 1 }}>
+              <div className="mobile-hide-month" style={{ flex: 1 }}>
                 <div style={{ textAlign: 'center', fontWeight: '700', fontSize: '15px', color: '#222222', marginBottom: '12px' }}>
                   September 2026
                 </div>

@@ -632,7 +632,7 @@
 }
 
 .listings-segment {
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .listings-segment:last-child {
@@ -643,7 +643,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .listings-title-row {
@@ -655,7 +655,7 @@
 
 .listings-title-row h2 {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   color: #222222;
   margin: 0;
 }
@@ -728,7 +728,7 @@
 
 .card-image-wrapper {
   position: relative;
-  aspect-ratio: 20 / 16;
+  aspect-ratio: 1 / 1;
   border-radius: 24px;
   /* further increased corner radius */
   overflow: hidden;
@@ -2085,7 +2085,8 @@
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: #ff385c; /* Pink color */
+  color: #ff385c;
+  /* Pink color */
   background: none;
   border: none;
   cursor: pointer;
@@ -3113,8 +3114,8 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 .mobile-address-modal-content .modal-saved-addresses {
   display: block !important;
 }
+
 /* Hidden by default on desktop */
 .mobile-location-badge {
   display: none;
 }
-

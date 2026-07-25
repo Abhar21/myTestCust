@@ -1736,7 +1736,7 @@ function App() {
                 <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Menu's
                 </h3>
-                <div style={{ display: 'flex', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                   {[
                     {
                       title: "Breakfast Menu 1",

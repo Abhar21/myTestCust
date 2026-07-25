@@ -398,4 +398,119 @@
     height: 150px !important;
     aspect-ratio: auto !important;
   }
+
+  /* Vendor Detail View Mobile Overrides */
+  .detail-view-container {
+    padding: 0 16px !important;
+    margin: 16px auto 40px auto !important;
+  }
+
+  .detail-split-layout {
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  /* Make image on left, info on right in responsive */
+  .detail-left-pane {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 16px !important;
+    align-items: flex-start !important;
+  }
+
+  .detail-large-image {
+    flex: 0 0 45% !important;
+    width: 45% !important;
+    height: auto !important;
+    aspect-ratio: 1 !important;
+    /* square or close to it looks better side-by-side, maybe let it follow original 16/10 */
+    border-radius: 20px !important;
+    object-fit: cover !important;
+  }
+
+  .detail-under-image-info {
+    flex: 1 !important;
+    margin-top: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .detail-profile-header {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  .detail-left-title {
+    font-size: 16px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .detail-left-rating-row {
+    font-size: 11px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .detail-left-divider {
+    display: none !important;
+  }
+
+  .detail-left-meta-section {
+    gap: 12px !important;
+  }
+
+  .detail-left-meta-label {
+    font-size: 9px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .detail-left-meta-value {
+    font-size: 12px !important;
+  }
+
+  .detail-type-icon {
+    display: none !important;
+  }
+
+  /* Reduce Show all reviews button size on mobile */
+  .show-all-reviews-btn {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Make reviews scroll edge-to-edge on mobile */
+  .reviews-grid-scrollable {
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: auto !important;
+    grid-auto-columns: 92% !important;
+    scroll-padding-left: 16px !important;
+  }
+
+  /* Reduce gap between filters and Menu's */
+  .detail-vendor-categories-box {
+    margin-bottom: 16px !important;
+  }
+
+  /* Make category filters scroll edge-to-edge on mobile */
+  .category-filters-scroll-container {
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: auto !important;
+  }
+
+  /* Reduce padding below location badge on Screen 3 */
+  .airbnb-header-container--detail {
+    padding-bottom: 6px !important;
+  }
+
+  .airbnb-header-container--detail .mobile-location-badge {
+    margin-bottom: 6px !important;
+  }
 }

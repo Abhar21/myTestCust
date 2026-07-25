@@ -1490,7 +1490,7 @@ function App() {
       )}
 
       {/* Premium Airbnb-Style Header */}
-      <header className={`airbnb-header-container ${isSearchView ? 'airbnb-header-container--search' : ''}`}>
+      <header className={`airbnb-header-container ${isSearchView ? 'airbnb-header-container--search' : ''} ${selectedVendorDetail ? 'airbnb-header-container--detail' : ''}`}>
         {/* Row 1: Logo, Navigation Tabs, User Menu */}
         <div className="airbnb-header-row">
           {/* Left Section (flexible col) */}
@@ -1640,14 +1640,15 @@ function App() {
               <img src={selectedVendorDetail.image} alt={selectedVendorDetail.title} className="detail-large-image" />
 
               <div className="detail-under-image-info">
-                <h1 className="detail-left-title">{selectedVendorDetail.title}</h1>
-
-                <div className="detail-left-rating-row">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#ff385c', marginRight: '4px' }}>
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                  </svg>
-                  <span className="detail-left-rating-val">{selectedVendorDetail.rating}</span>
-                  <span className="detail-left-rating-count">· 48 reviews</span>
+                <div className="detail-profile-header">
+                  <h1 className="detail-left-title">{selectedVendorDetail.title}</h1>
+                  <div className="detail-left-rating-row">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#ff385c', marginRight: '4px' }}>
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span className="detail-left-rating-val">{selectedVendorDetail.rating}</span>
+                    <span className="detail-left-rating-count">· 48 reviews</span>
+                  </div>
                 </div>
 
                 <div className="detail-left-divider"></div>
@@ -1661,8 +1662,10 @@ function App() {
                   <div className="detail-left-meta-item">
                     <div className="detail-left-meta-label">TYPE</div>
                     <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      {renderFoodTypeIcons(selectedVendorDetail.title)}
-                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>
+                      <span className="detail-type-icon">
+                        {renderFoodTypeIcons(selectedVendorDetail.title)}
+                      </span>
+                      <span className="detail-type-text">
                         {getFoodType(selectedVendorDetail.title)}
                       </span>
                     </div>
@@ -1670,7 +1673,7 @@ function App() {
 
                   <div className="detail-left-meta-item">
                     <div className="detail-left-meta-label">TRAVEL INFO</div>
-                    <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600', color: '#4b5563' }}>
+                    <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       {getCaterTravelInfo(selectedVendorDetail.title)}
                     </div>
                   </div>
@@ -1681,7 +1684,7 @@ function App() {
             {/* Right side: Recommended Vendors */}
             <div className="detail-right-pane">
               <div className="detail-vendor-categories-box" style={{ marginBottom: '32px' }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                <div className="hide-scrollbar category-filters-scroll-container" style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
                   <div
                     style={{
                       display: 'inline-flex',
@@ -1694,7 +1697,9 @@ function App() {
                       fontWeight: activeMenuCategory === 'All' ? '600' : '500',
                       color: activeMenuCategory === 'All' ? '#ffffff' : '#222222',
                       cursor: 'pointer',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
                     }}
                     onClick={() => setActiveMenuCategory('All')}
                   >
@@ -1714,7 +1719,9 @@ function App() {
                         fontWeight: activeMenuCategory === category ? '600' : '500',
                         color: activeMenuCategory === category ? '#ffffff' : '#222222',
                         cursor: 'pointer',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0
                       }}
                       onClick={() => setActiveMenuCategory(category)}
                     >

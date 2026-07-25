@@ -354,4 +354,9 @@
     padding-right: 16px !important;
     width: auto !important;
   }
+
+  /* Increase vendor image size on mobile */
+  .card-image-wrapper {
+    aspect-ratio: 1 / 1 !important;
+  }
 }

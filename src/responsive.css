@@ -355,8 +355,9 @@
     width: auto !important;
   }
 
-  /* Increase vendor image size on mobile */
-  .card-image-wrapper {
-    aspect-ratio: 1 / 1 !important;
+  /* Increase vendor image size on search screen (2nd screen) */
+  .search-card .card-image-wrapper {
+    height: 150px !important;
+    aspect-ratio: auto !important;
   }
 }

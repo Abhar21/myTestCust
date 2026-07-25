@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import './responsive.css'
 
-type TabType = 'caterers' | 'mehendi' | 'makeup' | 'theatres' | 'photography' | 'decors' | 'venues'
+type TabType = 'caters' | 'mehendi' | 'makeup' | 'theatres' | 'photography' | 'decors' | 'venues'
 
 interface Suggestion {
   name: string
@@ -155,7 +155,7 @@ const bestRatingListings: HomeListing[] = [
 
 const checkoutListings: HomeListing[] = [
   {
-    title: 'Capital Caterers',
+    title: 'Capital Caters',
     image: '/homes/flat_kondapur.png',
     price: '₹120/plate',
     originalPrice: '₹180/plate',
@@ -182,7 +182,7 @@ const checkoutListings: HomeListing[] = [
     categories: ['Breakfast', 'Lunch', 'Snacks', 'Dinner']
   },
   {
-    title: 'Spice Route Caterers',
+    title: 'Spice Route Caters',
     image: '/homes/villa_jubilee_hills.png',
     price: '₹299/plate',
     originalPrice: '₹399/plate',
@@ -230,7 +230,7 @@ const getFoodType = (title: string): string => {
   return 'Veg & Non-Veg';
 };
 
-const getCatererTravelInfo = (title: string): string => {
+const getCaterTravelInfo = (title: string): string => {
   const lower = title.toLowerCase();
   if (lower.includes('venkata')) {
     return '🚚 22 mins • 15 km';
@@ -338,8 +338,8 @@ const renderReviewStars = (rating: number) => {
 };
 
 function App() {
-  // Tabs: caterers, mehendi, makeup, theatres, photography, decors, venues
-  const [activeTab, setActiveTab] = useState<TabType>('caterers')
+  // Tabs: caters, mehendi, makeup, theatres, photography, decors, venues
+  const [activeTab, setActiveTab] = useState<TabType>('caters')
 
   // Select Items Modal state
   const [showSelectItemsModal, setShowSelectItemsModal] = useState(false);
@@ -463,7 +463,7 @@ function App() {
     }
   }
 
-  const handleCardClick = (catererTitle: string) => {
+  const handleCardClick = (caterTitle: string) => {
     if (isSearchView) {
       // 1. Validate Date (When)
       if (!whenInput.trim()) {
@@ -487,9 +487,9 @@ function App() {
         return
       }
 
-      window.open(`?page=detail&vendor=${encodeURIComponent(catererTitle)}&when=${encodeURIComponent(whenInput)}`, '_blank');
+      window.open(`?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`, '_blank');
     } else {
-      window.open(`?page=detail&vendor=${encodeURIComponent(catererTitle)}&when=${encodeURIComponent(whenInput)}`, '_self');
+      window.open(`?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`, '_self');
     }
   }
 
@@ -717,12 +717,12 @@ function App() {
   }
 
   // Combine and deduplicate listings for search view
-  const allCaterers = [...homeListings, ...checkoutListings, ...bestRatingListings]
-  const uniqueCaterersRaw = allCaterers.filter((item, index, self) =>
+  const allCaters = [...homeListings, ...checkoutListings, ...bestRatingListings]
+  const uniqueCatersRaw = allCaters.filter((item, index, self) =>
     self.findIndex(t => t.title === item.title) === index
   )
 
-  const getCatererDetails = (title: string) => {
+  const getCaterDetails = (title: string) => {
     // Generate deterministic values based on char codes of title
     const codeSum = title.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0)
     const isVegOnly = codeSum % 2 === 0
@@ -741,8 +741,8 @@ function App() {
     return parseInt(priceStr.replace(/[^\d]/g, ''), 10) || 0
   }
 
-  const uniqueCaterers = [...uniqueCaterersRaw].filter(item => {
-    const details = getCatererDetails(item.title)
+  const uniqueCaters = [...uniqueCatersRaw].filter(item => {
+    const details = getCaterDetails(item.title)
 
     if (filterVegOnly && !details.isVegOnly) {
       return false
@@ -769,7 +769,7 @@ function App() {
       return getPriceNum(b.price) - getPriceNum(a.price)
     } else if (currentSort === 'distance-low-high') {
       const getDistanceNum = (title: string) => {
-        const info = getCatererTravelInfo(title)
+        const info = getCaterTravelInfo(title)
         const m = info.match(/•\s*(\d+)\s*km/)
         return m ? parseInt(m[1], 10) : 17
       }
@@ -1249,7 +1249,7 @@ function App() {
               setSelectedMealFilters([])
             })}
           >
-            All Caterers
+            All Caters
           </button>
           <button
             className={`filter-pill ${filterVegOnly ? 'active' : ''}`}
@@ -1373,8 +1373,8 @@ function App() {
                 {filterVegOnly
                   ? 'Diet: Veg Only'
                   : filterNonVeg
-                  ? 'Diet: Non-Veg Included'
-                  : 'Dietary'}
+                    ? 'Diet: Non-Veg Included'
+                    : 'Dietary'}
               </span>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '6px' }}>
                 <polyline points="6 9 12 15 18 9"></polyline>
@@ -1433,8 +1433,8 @@ function App() {
                 {selectedMealFilters.length === 0
                   ? 'Meals'
                   : selectedMealFilters.length === 1
-                  ? `Meal: ${selectedMealFilters[0]}`
-                  : `Meals (${selectedMealFilters.length})`}
+                    ? `Meal: ${selectedMealFilters[0]}`
+                    : `Meals (${selectedMealFilters.length})`}
               </span>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '6px' }}>
                 <polyline points="6 9 12 15 18 9"></polyline>
@@ -1535,11 +1535,11 @@ function App() {
             ) : selectedVendorDetail ? null : (
               <div className="center-tabs">
                 <div
-                  className={`tab-item ${activeTab === 'caterers' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('caterers')}
+                  className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('caters')}
                 >
                   <span className="tab-icon">🍽</span>
-                  <span>Caterers</span>
+                  <span>Caters</span>
                 </div>
 
                 <div
@@ -1675,7 +1675,7 @@ function App() {
                   <div className="detail-left-meta-item">
                     <div className="detail-left-meta-label">TRAVEL INFO</div>
                     <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600', color: '#4b5563' }}>
-                      {getCatererTravelInfo(selectedVendorDetail.title)}
+                      {getCaterTravelInfo(selectedVendorDetail.title)}
                     </div>
                   </div>
                 </div>
@@ -1728,7 +1728,7 @@ function App() {
                 </div>
               </div>
 
-              {/* Recommended Caterers Section */}
+              {/* Recommended Caters Section */}
               <div className="detail-recommendations-section" style={{ marginTop: '0' }}>
                 <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Menu's
@@ -2151,11 +2151,11 @@ function App() {
         </main>
       ) : isSearchView ? (
         <main className="search-split-layout">
-          {/* Left Pane: Caterers Grid (60% width) */}
+          {/* Left Pane: Caters Grid (60% width) */}
           <div className="search-left-pane">
             <div className="search-results-header">
               <div className="header-text-group">
-                <h1>Caterers in Hyderabad, India</h1>
+                <h1> Caters Hyderabad, India</h1>
                 <p className="search-results-subtitle">Showing top-rated catering partners for events and weddings</p>
               </div>
               <div className="location-search-wrapper">
@@ -2173,9 +2173,9 @@ function App() {
               </div>
             </div>
 
-            {uniqueCaterers.length > 0 ? (
+            {uniqueCaters.length > 0 ? (
               <div className="search-results-grid">
-                {uniqueCaterers.map((home, idx) => (
+                {uniqueCaters.map((home, idx) => (
                   <div key={idx} className="home-card search-card" onClick={() => handleCardClick(home.title)}>
                     <div className="card-image-wrapper">
                       <img src={home.image} alt={home.title} className="card-img" />
@@ -2191,7 +2191,7 @@ function App() {
                         {getFoodType(home.title)}
                       </div>
                       <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '500' }}>
-                        {getCatererTravelInfo(home.title)}
+                        {getCaterTravelInfo(home.title)}
                       </div>
                       <div className="card-details-row" style={{ marginTop: '8px' }}>
                         <span className="card-original-price">{home.originalPrice}</span>
@@ -2211,7 +2211,7 @@ function App() {
             ) : (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#717171' }}>
                 <div style={{ fontSize: '32px', marginBottom: '16px' }}>🍽</div>
-                <h3 style={{ fontSize: '18px', color: '#222222', marginBottom: '8px' }}>No caterers match your filters</h3>
+                <h3 style={{ fontSize: '18px', color: '#222222', marginBottom: '8px' }}>No caters match your filters</h3>
                 <p style={{ fontSize: '14px', marginBottom: '24px' }}>Try choosing fewer filters or reset them to view all options.</p>
                 <button
                   className="filter-pill active"
@@ -2370,9 +2370,9 @@ function App() {
                   </div>
                 </div>
               </div>
-              
-              <button 
-                className="add-select-address-mobile-btn" 
+
+              <button
+                className="add-select-address-mobile-btn"
                 onClick={() => setShowMobileAddressModal(true)}
               >
                 Add / Select address
@@ -2382,7 +2382,7 @@ function App() {
         </main>
       ) : (
         <main className="listings-container">
-          {/* Segment 1: Popular Caterers */}
+          {/* Segment 1: Popular Caters */}
           <div className="listings-segment">
             <div className="listings-header">
               <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
@@ -2433,7 +2433,7 @@ function App() {
             </div>
           </div>
 
-          {/* Segment: Checkout Caterers */}
+          {/* Segment: Checkout Caters */}
           <div className="listings-segment">
             <div className="listings-header">
               <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
@@ -2575,7 +2575,7 @@ function App() {
                 <h2 className="banner-frame__title">Find the best cater<br />for your next event.</h2>
                 <p className="banner-frame__subtitle">Browse top-rated catering services across India from intimate gatherings to grand weddings.</p>
                 <div className="banner-frame__actions">
-                  <button className="banner-frame__btn banner-frame__btn--primary">Explore all caterers</button>
+                  <button className="banner-frame__btn banner-frame__btn--primary">Explore all caters</button>
                 </div>
               </div>
             </div>

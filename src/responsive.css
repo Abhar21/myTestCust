@@ -266,10 +266,6 @@
     gap: 8px !important;
   }
 
-  /* Every 4 normal vendor profiles, show 1 full-width card instead of 2 */
-  .search-card:nth-child(5n) {
-    grid-column: span 2 !important;
-  }
 
   /* Full-bleed Add / Select address button at the bottom of the card on mobile */
   .add-select-address-mobile-btn {
@@ -340,9 +336,10 @@
     line-height: 1.2 !important;
   }
 
-  /* Reduce gap between vendor cards on mobile */
+  /* Force 2-card grid and reduce gap between vendor cards on mobile */
   .search-results-grid,
   .search-left-pane .search-results-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 24px 12px !important;
   }
 

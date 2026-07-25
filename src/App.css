@@ -1676,6 +1676,7 @@
 @media (max-width: 768px) {
   .search-results-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 24px 8px;
   }
 }
 
@@ -2993,7 +2994,8 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-end; /* slides up from bottom like a premium iOS modal drawer */
+  align-items: flex-end;
+  /* slides up from bottom like a premium iOS modal drawer */
   justify-content: center;
   z-index: 2000;
   animation: fadeIn 0.2s ease-out;
@@ -3003,14 +3005,20 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 
 .mobile-address-modal-content {
   background: #ffffff;
-  width: 100% !important; /* Full width touching edges */
+  width: 100% !important;
+  /* Full width touching edges */
   max-width: 500px;
-  border-radius: 24px 24px 0 0 !important; /* Rounded top corners, flush bottom */
-  margin: 0 !important; /* No gap at the bottom */
-  padding: 24px 24px 0 24px; /* bottom padding handled in scroll body */
+  border-radius: 24px 24px 0 0 !important;
+  /* Rounded top corners, flush bottom */
+  margin: 0 !important;
+  /* No gap at the bottom */
+  padding: 24px 24px 0 24px;
+  /* bottom padding handled in scroll body */
   box-sizing: border-box;
-  max-height: 80% !important; /* Constrain to exactly 80% of fixed viewport */
-  overflow: hidden; /* prevent nested scroll conflict */
+  max-height: 80% !important;
+  /* Constrain to exactly 80% of fixed viewport */
+  overflow: hidden;
+  /* prevent nested scroll conflict */
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -3049,7 +3057,8 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   flex: 1;
   overflow-y: auto;
   padding-top: 8px;
-  padding-bottom: 40px !important; /* padding so bottom items aren't clipped */
+  padding-bottom: 40px !important;
+  /* padding so bottom items aren't clipped */
   overscroll-behavior: contain !important;
 }
 
@@ -3077,9 +3086,11 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 .mobile-address-modal-content .modal-search-bar {
   display: flex !important;
 }
+
 .mobile-address-modal-content .modal-current-address {
   display: flex !important;
 }
+
 .mobile-address-modal-content .modal-saved-addresses {
   display: block !important;
 }

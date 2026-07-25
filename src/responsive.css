@@ -1,10 +1,11 @@
 /* Responsive/Mobile Style Overrides */
 
 @media (max-width: 768px) {
+
   /* Header Container */
   .airbnb-header-container {
     padding: 8px 16px !important;
-    gap: 8px !important;
+    gap: 2px !important;
   }
 
   .logo-section,
@@ -17,6 +18,7 @@
     padding: 0 16px !important;
     margin: 24px 0 60px 0 !important;
   }
+
   .filters-bar-row {
     padding: 4px 0 12px !important;
   }
@@ -71,7 +73,8 @@
 
   .tab-item {
     display: flex !important;
-    flex-direction: row !important; /* Icon and text next to each other */
+    flex-direction: row !important;
+    /* Icon and text next to each other */
     align-items: center !important;
     gap: 8px !important;
     padding: 8px 16px !important;
@@ -180,9 +183,13 @@
   }
 
   /* Promo card & home card mobile width override to fit exactly 2 cards matching margins */
-  .promo-card,
   .home-card {
     flex: 0 0 calc((100% - 12px) / 2) !important;
+    min-width: 0 !important;
+  }
+
+  .promo-card {
+    flex: 0 0 80% !important;
     min-width: 0 !important;
   }
 
@@ -217,12 +224,13 @@
   .filters-container {
     display: flex !important;
     justify-content: flex-start !important;
-    overflow: visible !important;
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin: 0 -16px !important;
+    padding: 2px 16px !important;
+    width: auto !important;
+    max-width: none !important;
     gap: 8px !important;
   }
 
@@ -235,6 +243,16 @@
   /* Remove vertical divider line on mobile */
   .filter-vertical-divider {
     display: none !important;
+  }
+
+  /* Fix dropdown clipping on mobile by making them fixed */
+  .sort-dropdown-menu {
+    position: fixed !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin-top: 8px !important;
+    z-index: 2000 !important;
   }
 
   /* Mobile: hide desktop group, show mobile group */
@@ -261,7 +279,8 @@
     padding: 16px !important;
     border: none !important;
     border-radius: 12px !important;
-    background: #FF35E0 !important; /* Brand hot pink */
+    background: #FF35E0 !important;
+    /* Brand hot pink */
     color: #ffffff !important;
     font-size: 15px !important;
     font-weight: 600 !important;
@@ -269,6 +288,7 @@
     text-align: center !important;
     transition: background-color 0.2s !important;
   }
+
   .add-select-address-mobile-btn:active {
     background-color: #e02bc5 !important;
   }
@@ -284,25 +304,25 @@
     row-gap: 8px !important;
     column-gap: 8px !important;
   }
-  
+
   .card-active-price {
     grid-area: active !important;
     line-height: 1.2 !important;
   }
-  
+
   .card-original-price {
     grid-area: original !important;
     line-height: 1.2 !important;
     margin-right: 0 !important;
   }
-  
+
   .card-rating-inline {
     grid-area: rating !important;
     justify-self: start !important;
     display: flex !important;
     align-items: center !important;
   }
-  
+
   .card-dot {
     display: none !important;
   }
@@ -314,9 +334,24 @@
     gap: 8px !important;
   }
 
-  .card-info > div {
+  .card-info>div {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     line-height: 1.2 !important;
+  }
+
+  /* Reduce gap between vendor cards on mobile */
+  .search-results-grid,
+  .search-left-pane .search-results-grid {
+    gap: 24px 12px !important;
+  }
+
+  /* Make home screen listings scroll edge-to-edge */
+  .listings-scroll-row {
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: auto !important;
   }
 }

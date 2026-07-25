@@ -374,6 +374,8 @@ function App() {
   )
   const [isHeaderSearchExpanded, setIsHeaderSearchExpanded] = useState(false)
   const [showSortDropdown, setShowSortDropdown] = useState(false)
+  const [showDietDropdown, setShowDietDropdown] = useState(false)
+  const [showMealsDropdown, setShowMealsDropdown] = useState(false)
   const [currentSort, setCurrentSort] = useState<'relevance' | 'low-high' | 'high-low' | 'distance-low-high'>('relevance')
   const [filterVegOnly, setFilterVegOnly] = useState(false)
   const [filterNonVeg, setFilterNonVeg] = useState(false)
@@ -403,6 +405,7 @@ function App() {
 
   // Address Manager selected address state (initialized to null for Screen 2)
   const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(null)
+  const [showMobileAddressModal, setShowMobileAddressModal] = useState(false)
   const [showAddressWarning, setShowAddressWarning] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
   const [activeMenuCategory, setActiveMenuCategory] = useState("All")
@@ -421,6 +424,17 @@ function App() {
       setShowInitialDateModal(true);
     }
   }, [selectedVendorDetail, whenInput]);
+
+  useEffect(() => {
+    if (showMobileAddressModal || showSelectItemsModal || showSelectItemsDrawer) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showMobileAddressModal, showSelectItemsModal, showSelectItemsDrawer]);
 
   const handleFilterClick = (action: () => void) => {
     action();
@@ -764,6 +778,172 @@ function App() {
     return 0 // relevance
   })
 
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const renderSearchBar = (isHeaderMode = false) => {
+    return (
+      <form className={`search-bar-container ${isHeaderMode && !isHeaderSearchExpanded ? 'search-bar-container--header' : ''}`} onSubmit={handleSearchSubmit}>
+        <div
+          className={`search-field-section ${activeSearchField === 'where' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSearchField('where')
+            setShowDestinations(true)
+          }}
+        >
+          <div className="search-field-label">Where</div>
+          <input
+            type="text"
+            placeholder="Search destinations"
+            className="search-field-input"
+            value={whereInput}
+            onChange={(e) => {
+              setWhereInput(e.target.value)
+              setShowDestinations(true)
+            }}
+          />
+          {whereInput && (
+            <button
+              className="clear-input-btn"
+              onClick={(e) => {
+                e.stopPropagation()
+                setWhereInput('')
+                setActiveSearchField('where')
+                setShowDestinations(true)
+              }}
+            >
+              ×
+            </button>
+          )}
+
+          {showDestinations && activeSearchField === 'where' && (
+            <div className="destinations-dropdown" onClick={(e) => e.stopPropagation()}>
+              <div className="dropdown-title">Popular Cities</div>
+              <div className="destinations-list">
+                {filteredSuggestions.length > 0 ? (
+                  filteredSuggestions.map((dest) => (
+                    <div
+                      key={dest.name}
+                      className="destination-item"
+                      onClick={() => {
+                        setWhereInput(dest.name)
+                        setShowDestinations(false)
+                        setActiveSearchField('when')
+                        setShowCalendar(true)
+                      }}
+                    >
+                      <div className="destination-icon">📍</div>
+                      <div className="destination-details">
+                        <div className="destination-name">{dest.name}</div>
+                        <div className="destination-desc">{dest.desc}</div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-destinations">
+                    No destinations found for "{whereInput}"
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="search-field-divider"></div>
+
+        <div
+          className={`search-field-section ${activeSearchField === 'when' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveSearchField('when')
+            setShowCalendar(true)
+          }}
+        >
+          <div className="search-field-label">When</div>
+          <div className={`search-field-value ${!whenInput ? 'placeholder' : ''}`}>
+            {whenInput || 'Add dates'}
+          </div>
+          {whenInput && (
+            <button
+              className="clear-input-btn"
+              onClick={(e) => {
+                e.stopPropagation()
+                setWhenInput('')
+                setActiveSearchField('when')
+                setShowCalendar(true)
+              }}
+            >
+              ×
+            </button>
+          )}
+
+          {showCalendar && activeSearchField === 'when' && (
+            <div className="calendar-dropdown" onClick={(e) => e.stopPropagation()}>
+              <div className="calendar-header">
+                <button
+                  type="button"
+                  className="calendar-nav-btn"
+                  onClick={handlePrevMonth}
+                  disabled={currentMonth === 6 && currentYear === 2026}
+                >
+                  &lt;
+                </button>
+                <div className="calendar-month-year">
+                  {monthNames[currentMonth]} {currentYear}
+                </div>
+                <button
+                  type="button"
+                  className="calendar-nav-btn"
+                  onClick={handleNextMonth}
+                >
+                  &gt;
+                </button>
+              </div>
+
+              <div className="calendar-days-grid-header">
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+                  <div key={day} className="calendar-day-header">
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              <div className="calendar-days-grid">
+                {calendarDays.map((cell, idx) => {
+                  const isSelected = cell.day !== null &&
+                    whenInput === `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`calendar-day-cell ${cell.day === null ? 'empty' : ''} ${cell.isPast ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`}
+                      onClick={() => {
+                        if (cell.day !== null && !cell.isPast) {
+                          const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`
+                          setWhenInput(dateString)
+                          setShowCalendar(false)
+                          setActiveSearchField(null)
+                        }
+                      }}
+                    >
+                      {cell.day}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <button type="submit" className="search-btn-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Search</span>
+        </button>
+      </form>
+    )
+  }
+  */
+
   const renderSearchBar = (isHeaderMode = false) => {
     return (
       <form className={`search-bar-container ${isHeaderMode && !isHeaderSearchExpanded ? 'search-bar-container--header' : ''}`} onSubmit={handleSearchSubmit}>
@@ -987,10 +1167,340 @@ function App() {
     )
   }
 
+  if (false) {
+    renderSearchBar();
+  }
+
+  const renderFilters = () => {
+    return (
+      <div className="filters-container">
+        {/* DESKTOP FILTERS (Pills) */}
+        <div className="filters-desktop-group">
+          {/* Sort Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className={`filter-pill ${currentSort !== 'relevance' ? 'active' : ''}`}
+              type="button"
+              style={{ display: 'flex', alignItems: 'center' }}
+              onClick={() => {
+                setShowSortDropdown(!showSortDropdown)
+                setShowDietDropdown(false)
+                setShowMealsDropdown(false)
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '6px' }}>
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="12" x2="14" y2="12"></line>
+                <line x1="4" y1="18" x2="8" y2="18"></line>
+              </svg>
+              <span>Sort: {currentSort === 'relevance' ? 'Relevance' : currentSort === 'low-high' ? 'Price: Low to high' : currentSort === 'high-low' ? 'Price: High to low' : 'Distance: Low to high'}</span>
+            </button>
+
+            {showSortDropdown && (
+              <div className="sort-dropdown-menu">
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'relevance' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('relevance')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Relevance
+                </div>
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'low-high' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('low-high')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Price: Low to high
+                </div>
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'high-low' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('high-low')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Price: High to low
+                </div>
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'distance-low-high' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('distance-low-high')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Distance: Low to high
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="filter-vertical-divider"></div>
+
+          <button
+            className={`filter-pill ${(!filterVegOnly && !filterNonVeg && selectedMealFilters.length === 0) ? 'active' : ''}`}
+            type="button"
+            onClick={() => handleFilterClick(() => {
+              setFilterVegOnly(false)
+              setFilterNonVeg(false)
+              setSelectedMealFilters([])
+            })}
+          >
+            All Caterers
+          </button>
+          <button
+            className={`filter-pill ${filterVegOnly ? 'active' : ''}`}
+            type="button"
+            onClick={() => handleFilterClick(() => {
+              setFilterVegOnly(!filterVegOnly)
+            })}
+          >
+            Veg Only
+          </button>
+          <button
+            className={`filter-pill ${filterNonVeg ? 'active' : ''}`}
+            type="button"
+            onClick={() => handleFilterClick(() => {
+              setFilterNonVeg(!filterNonVeg)
+            })}
+          >
+            Non-Veg Included
+          </button>
+
+          <div className="filter-vertical-divider"></div>
+
+          {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(meal => {
+            const isSelected = selectedMealFilters.includes(meal)
+            return (
+              <button
+                key={meal}
+                className={`filter-pill ${isSelected ? 'active' : ''}`}
+                type="button"
+                onClick={() => handleFilterClick(() => {
+                  if (isSelected) {
+                    setSelectedMealFilters(selectedMealFilters.filter(m => m !== meal))
+                  } else {
+                    setSelectedMealFilters([...selectedMealFilters, meal])
+                  }
+                })}
+              >
+                {meal}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* MOBILE FILTERS (Dropdowns) */}
+        <div className="filters-mobile-group">
+          {/* Sort Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className={`filter-pill ${currentSort !== 'relevance' ? 'active' : ''}`}
+              type="button"
+              style={{ display: 'flex', alignItems: 'center' }}
+              onClick={() => {
+                setShowSortDropdown(!showSortDropdown)
+                setShowDietDropdown(false)
+                setShowMealsDropdown(false)
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '6px' }}>
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="12" x2="14" y2="12"></line>
+                <line x1="4" y1="18" x2="8" y2="18"></line>
+              </svg>
+              <span>Sort: {currentSort === 'relevance' ? 'Relevance' : currentSort === 'low-high' ? 'Price: Low to high' : currentSort === 'high-low' ? 'Price: High to low' : 'Distance: Low to high'}</span>
+            </button>
+
+            {showSortDropdown && (
+              <div className="sort-dropdown-menu">
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'relevance' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('relevance')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Relevance
+                </div>
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'low-high' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('low-high')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Price: Low to high
+                </div>
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'high-low' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('high-low')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Price: High to low
+                </div>
+                <div
+                  className={`sort-dropdown-item ${currentSort === 'distance-low-high' ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setCurrentSort('distance-low-high')
+                    setShowSortDropdown(false)
+                  })}
+                >
+                  Distance: Low to high
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Dietary Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className={`filter-pill ${(filterVegOnly || filterNonVeg) ? 'active' : ''}`}
+              type="button"
+              style={{ display: 'flex', alignItems: 'center' }}
+              onClick={() => {
+                setShowDietDropdown(!showDietDropdown)
+                setShowSortDropdown(false)
+                setShowMealsDropdown(false)
+              }}
+            >
+              <span>
+                {filterVegOnly
+                  ? 'Diet: Veg Only'
+                  : filterNonVeg
+                  ? 'Diet: Non-Veg Included'
+                  : 'Dietary'}
+              </span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '6px' }}>
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            {showDietDropdown && (
+              <div className="sort-dropdown-menu">
+                <div
+                  className={`sort-dropdown-item ${(!filterVegOnly && !filterNonVeg) ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setFilterVegOnly(false)
+                    setFilterNonVeg(false)
+                    setShowDietDropdown(false)
+                  })}
+                >
+                  All Diets
+                </div>
+                <div
+                  className={`sort-dropdown-item ${filterVegOnly ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setFilterVegOnly(true)
+                    setFilterNonVeg(false)
+                    setShowDietDropdown(false)
+                  })}
+                >
+                  Veg Only
+                </div>
+                <div
+                  className={`sort-dropdown-item ${filterNonVeg ? 'selected' : ''}`}
+                  onClick={() => handleFilterClick(() => {
+                    setFilterNonVeg(true)
+                    setFilterVegOnly(false)
+                    setShowDietDropdown(false)
+                  })}
+                >
+                  Non-Veg Included
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Meals Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className={`filter-pill ${selectedMealFilters.length > 0 ? 'active' : ''}`}
+              type="button"
+              style={{ display: 'flex', alignItems: 'center' }}
+              onClick={() => {
+                setShowMealsDropdown(!showMealsDropdown)
+                setShowSortDropdown(false)
+                setShowDietDropdown(false)
+              }}
+            >
+              <span>
+                {selectedMealFilters.length === 0
+                  ? 'Meals'
+                  : selectedMealFilters.length === 1
+                  ? `Meal: ${selectedMealFilters[0]}`
+                  : `Meals (${selectedMealFilters.length})`}
+              </span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '6px' }}>
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            {showMealsDropdown && (
+              <div className="sort-dropdown-menu meals-dropdown-menu" style={{ minWidth: '160px' }}>
+                {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(meal => {
+                  const isSelected = selectedMealFilters.includes(meal)
+                  return (
+                    <div
+                      key={meal}
+                      className={`sort-dropdown-item dropdown-checkbox-item ${isSelected ? 'selected' : ''}`}
+                      onClick={() => handleFilterClick(() => {
+                        if (isSelected) {
+                          setSelectedMealFilters(selectedMealFilters.filter(m => m !== meal))
+                        } else {
+                          setSelectedMealFilters([...selectedMealFilters, meal])
+                        }
+                      })}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                      <span className="dropdown-item-checkbox-box">
+                        {isSelected && (
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        )}
+                      </span>
+                      <span>{meal}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Vertical divider line and reset icon at the very end */}
+        <div className="filter-vertical-divider"></div>
+        <button
+          className="filter-pill"
+          type="button"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 12px' }}
+          title="Reset all filters"
+          onClick={() => handleFilterClick(() => {
+            setFilterVegOnly(false)
+            setFilterNonVeg(false)
+            setSelectedMealFilters([])
+            setCurrentSort('relevance')
+          })}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <polyline points="3 3 3 8 8 8"></polyline>
+          </svg>
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#ffffff' }}>
       {/* Background Catcher Overlay to close dropdown when clicking outside */}
-      {(showDestinations || showCalendar || isHeaderSearchExpanded || showSortDropdown) && (
+      {(showDestinations || showCalendar || isHeaderSearchExpanded || showSortDropdown || showDietDropdown || showMealsDropdown) && (
         <div
           className="dropdown-overlay"
           onClick={() => {
@@ -999,6 +1509,8 @@ function App() {
             setActiveSearchField(null)
             setIsHeaderSearchExpanded(false)
             setShowSortDropdown(false)
+            setShowDietDropdown(false)
+            setShowMealsDropdown(false)
           }}
         />
       )}
@@ -1016,36 +1528,11 @@ function App() {
 
           {/* Center Section (flexible col, centered) */}
           <div className="header-center-col">
-            {isSearchView || selectedVendorDetail ? (
-              <div
-                className={`search-bar-wrapper ${isHeaderSearchExpanded ? 'expanded' : 'compact'}`}
-                onClick={() => {
-                  if (!isHeaderSearchExpanded) {
-                    setIsHeaderSearchExpanded(true)
-                    setActiveSearchField('where')
-                    setShowDestinations(true)
-                  }
-                }}
-              >
-                {/* ── Compact Search View Placeholder ── */}
-                <div className="search-compact-placeholder">
-                  <span className="compact-part font-bold">Hyderabad</span>
-                  <span className="compact-divider"></span>
-                  <span className="compact-part">{whenInput || 'Any date'}</span>
-                  <div className="compact-search-icon">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                  </div>
-                </div>
-
-                {/* ── Full Interactive Search Form ── */}
-                <div className="search-full-form-wrapper">
-                  {renderSearchBar(true)}
-                </div>
+            {isSearchView ? (
+              <div className="header-filters-wrapper">
+                {renderFilters()}
               </div>
-            ) : (
+            ) : selectedVendorDetail ? null : (
               <div className="center-tabs">
                 <div
                   className={`tab-item ${activeTab === 'caterers' ? 'active' : ''}`}
@@ -1142,142 +1629,8 @@ function App() {
 
         {/* Row 2: Large Floating Search Bar or Filters */}
         {selectedVendorDetail ? null : isSearchView ? (
-          <div className="filters-bar-row">
-            <div className="filters-container">
-              {/* Sort Dropdown */}
-              <div style={{ position: 'relative' }}>
-                <button
-                  className={`filter-pill ${currentSort !== 'relevance' ? 'active' : ''}`}
-                  type="button"
-                  style={{ display: 'flex', alignItems: 'center' }}
-                  onClick={() => setShowSortDropdown(!showSortDropdown)}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '6px' }}>
-                    <line x1="4" y1="6" x2="20" y2="6"></line>
-                    <line x1="4" y1="12" x2="14" y2="12"></line>
-                    <line x1="4" y1="18" x2="8" y2="18"></line>
-                  </svg>
-                  <span>Sort: {currentSort === 'relevance' ? 'Relevance' : currentSort === 'low-high' ? 'Price: Low to high' : currentSort === 'high-low' ? 'Price: High to low' : 'Distance: Low to high'}</span>
-                </button>
-
-                {showSortDropdown && (
-                  <div className="sort-dropdown-menu">
-                    <div
-                      className={`sort-dropdown-item ${currentSort === 'relevance' ? 'selected' : ''}`}
-                      onClick={() => handleFilterClick(() => {
-                        setCurrentSort('relevance')
-                        setShowSortDropdown(false)
-                      })}
-                    >
-                      Relevance
-                    </div>
-                    <div
-                      className={`sort-dropdown-item ${currentSort === 'low-high' ? 'selected' : ''}`}
-                      onClick={() => handleFilterClick(() => {
-                        setCurrentSort('low-high')
-                        setShowSortDropdown(false)
-                      })}
-                    >
-                      Price: Low to high
-                    </div>
-                    <div
-                      className={`sort-dropdown-item ${currentSort === 'high-low' ? 'selected' : ''}`}
-                      onClick={() => handleFilterClick(() => {
-                        setCurrentSort('high-low')
-                        setShowSortDropdown(false)
-                      })}
-                    >
-                      Price: High to low
-                    </div>
-                    <div
-                      className={`sort-dropdown-item ${currentSort === 'distance-low-high' ? 'selected' : ''}`}
-                      onClick={() => handleFilterClick(() => {
-                        setCurrentSort('distance-low-high')
-                        setShowSortDropdown(false)
-                      })}
-                    >
-                      Distance: Low to high
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Vertical divider line between Sort and primary filters */}
-              <div className="filter-vertical-divider"></div>
-
-              <button
-                className={`filter-pill ${(!filterVegOnly && !filterNonVeg && selectedMealFilters.length === 0) ? 'active' : ''}`}
-                type="button"
-                onClick={() => handleFilterClick(() => {
-                  setFilterVegOnly(false)
-                  setFilterNonVeg(false)
-                  setSelectedMealFilters([])
-                })}
-              >
-                All Caterers
-              </button>
-              <button
-                className={`filter-pill ${filterVegOnly ? 'active' : ''}`}
-                type="button"
-                onClick={() => handleFilterClick(() => {
-                  setFilterVegOnly(!filterVegOnly)
-                })}
-              >
-                Veg Only
-              </button>
-              <button
-                className={`filter-pill ${filterNonVeg ? 'active' : ''}`}
-                type="button"
-                onClick={() => handleFilterClick(() => {
-                  setFilterNonVeg(!filterNonVeg)
-                })}
-              >
-                Non-Veg Included
-              </button>
-
-              {/* Vertical divider line between current and new meal filters */}
-              <div className="filter-vertical-divider"></div>
-
-              {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(meal => {
-                const isSelected = selectedMealFilters.includes(meal)
-                return (
-                  <button
-                    key={meal}
-                    className={`filter-pill ${isSelected ? 'active' : ''}`}
-                    type="button"
-                    onClick={() => handleFilterClick(() => {
-                      if (isSelected) {
-                        setSelectedMealFilters(selectedMealFilters.filter(m => m !== meal))
-                      } else {
-                        setSelectedMealFilters([...selectedMealFilters, meal])
-                      }
-                    })}
-                  >
-                    {meal}
-                  </button>
-                )
-              })}
-
-              {/* Vertical divider line and reset icon at the very end */}
-              <div className="filter-vertical-divider"></div>
-              <button
-                className="filter-pill"
-                type="button"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 12px' }}
-                title="Reset all filters"
-                onClick={() => handleFilterClick(() => {
-                  setFilterVegOnly(false)
-                  setFilterNonVeg(false)
-                  setSelectedMealFilters([])
-                  setCurrentSort('relevance')
-                })}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                  <polyline points="3 3 3 8 8 8"></polyline>
-                </svg>
-              </button>
-            </div>
+          <div className="filters-bar-row mobile-filters-row">
+            {renderFilters()}
           </div>
         ) : null}
       </header>
@@ -2017,6 +2370,13 @@ function App() {
                   </div>
                 </div>
               </div>
+              
+              <button 
+                className="add-select-address-mobile-btn" 
+                onClick={() => setShowMobileAddressModal(true)}
+              >
+                Add / Select address
+              </button>
             </div>
           </div>
         </main>
@@ -3635,6 +3995,169 @@ function App() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Address Selector Modal Overlay */}
+      {showMobileAddressModal && (
+        <div className="mobile-address-modal-overlay" onClick={() => setShowMobileAddressModal(false)}>
+          <div className="mobile-address-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-address-modal-header">
+              <h3>Add / Select Address</h3>
+              <button className="mobile-address-modal-close" onClick={() => setShowMobileAddressModal(false)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div className="mobile-address-modal-body">
+              {/* Address Search Bar inside modal */}
+              <div className="address-search-bar modal-search-bar" style={{ display: 'flex' }}>
+                <input
+                  type="text"
+                  placeholder="Enter your address..."
+                  className="address-search-input modal-search-input"
+                  defaultValue=""
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const val = (e.target as HTMLInputElement).value.trim();
+                      if (val) {
+                        setSelectedAddress({
+                          name: 'Custom Location',
+                          full: val
+                        });
+                        setShowMobileAddressModal(false);
+                      }
+                    }
+                  }}
+                />
+                <div
+                  className="address-search-btn"
+                  onClick={() => {
+                    const inputEl = document.querySelector('.modal-search-input') as HTMLInputElement;
+                    if (inputEl && inputEl.value.trim()) {
+                      setSelectedAddress({
+                        name: 'Custom Location',
+                        full: inputEl.value.trim()
+                      });
+                      setShowMobileAddressModal(false);
+                    }
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Current Selected Address inside modal */}
+              <div className="current-address-section modal-current-address" style={{ display: 'flex', marginTop: '20px' }}>
+                <div className="current-address-label">Current Selected Address</div>
+                {selectedAddress ? (
+                  <div className="current-address-card">
+                    <div className="current-address-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2.5">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                    </div>
+                    <div className="current-address-details">
+                      <div className="current-address-city">{selectedAddress.name}</div>
+                      <div className="current-address-full">{selectedAddress.full}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={`current-address-placeholder-card ${showAddressWarning ? 'show-warning' : ''}`}>
+                    <div className="current-address-placeholder-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" style={{ strokeDasharray: '3 3' }}>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                    </div>
+                    <div className="current-address-placeholder-text">
+                      No address selected. Choose a saved address below.
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Saved Addresses Section inside modal */}
+              <div className="saved-addresses-section modal-saved-addresses" style={{ display: 'block', marginTop: '20px' }}>
+                <div className="saved-addresses-title">Saved Addresses</div>
+                <div className="saved-addresses-list">
+                  {/* Home */}
+                  <div
+                    className={`saved-address-item ${selectedAddress?.name === 'Home' ? 'selected' : ''}`}
+                    onClick={() => {
+                      setSelectedAddress({
+                        name: 'Home',
+                        full: 'Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032'
+                      });
+                      setShowMobileAddressModal(false);
+                    }}
+                  >
+                    <div className="address-icon-circle">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                      </svg>
+                    </div>
+                    <div className="address-item-details">
+                      <div className="address-item-name">Home</div>
+                      <div className="address-item-text">Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032</div>
+                    </div>
+                  </div>
+
+                  {/* Work */}
+                  <div
+                    className={`saved-address-item ${selectedAddress?.name === 'Work' ? 'selected' : ''}`}
+                    onClick={() => {
+                      setSelectedAddress({
+                        name: 'Work',
+                        full: 'Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081'
+                      });
+                      setShowMobileAddressModal(false);
+                    }}
+                  >
+                    <div className="address-icon-circle">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                      </svg>
+                    </div>
+                    <div className="address-item-details">
+                      <div className="address-item-name">Work</div>
+                      <div className="address-item-text">Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081</div>
+                    </div>
+                  </div>
+
+                  {/* Parents' House */}
+                  <div
+                    className={`saved-address-item ${selectedAddress?.name === "Parents' House" ? 'selected' : ''}`}
+                    onClick={() => {
+                      setSelectedAddress({
+                        name: "Parents' House",
+                        full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034'
+                      });
+                      setShowMobileAddressModal(false);
+                    }}
+                  >
+                    <div className="address-icon-circle">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                      </svg>
+                    </div>
+                    <div className="address-item-details">
+                      <div className="address-item-name">Parents' House</div>
+                      <div className="address-item-text">Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

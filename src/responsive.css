@@ -18,7 +18,7 @@
     margin: 24px 0 60px 0 !important;
   }
   .filters-bar-row {
-    padding: 4px 16px 12px !important;
+    padding: 4px 0 12px !important;
   }
 
   /* Header Row Layout: Logo & Hamburger on top, Tabs below */
@@ -172,18 +172,18 @@
     gap: 16px 24px !important;
   }
 
-  /* Prevent horizontal scroll rows from clipping/cutting at container padding */
+  /* Make horizontal scroll rows match the exact search bar margins */
   .listings-scroll-row {
-    margin-left: -16px !important;
-    margin-right: -16px !important;
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
   }
 
-  /* Promo card mobile width override */
-  .promo-card {
-    flex: 0 0 280px !important;
+  /* Promo card & home card mobile width override to fit exactly 2 cards matching margins */
+  .promo-card,
+  .home-card {
+    flex: 0 0 calc((100% - 12px) / 2) !important;
+    min-width: 0 !important;
   }
 
   /* Hide rounded navigation arrows on mobile */
@@ -197,5 +197,126 @@
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
+  }
+
+  /* Remove header search bar on mobile */
+  .search-bar-wrapper {
+    display: none !important;
+  }
+
+  /* Mobile: hide filters in header, show below header */
+  .header-filters-wrapper {
+    display: none !important;
+  }
+
+  .mobile-filters-row {
+    display: block !important;
+  }
+
+  /* Center filters start from left on mobile and allow horizontal scrolling */
+  .filters-container {
+    display: flex !important;
+    justify-content: flex-start !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 8px !important;
+  }
+
+  /* Reduce padding inside filter pills on mobile */
+  .filter-pill {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+
+  /* Remove vertical divider line on mobile */
+  .filter-vertical-divider {
+    display: none !important;
+  }
+
+  /* Mobile: hide desktop group, show mobile group */
+  .filters-desktop-group {
+    display: none !important;
+  }
+
+  .filters-mobile-group {
+    display: flex !important;
+    align-items: center;
+    gap: 8px !important;
+  }
+
+  /* Every 4 normal vendor profiles, show 1 full-width card instead of 2 */
+  .search-card:nth-child(5n) {
+    grid-column: span 2 !important;
+  }
+
+  /* Full-bleed Add / Select address button at the bottom of the card on mobile */
+  .add-select-address-mobile-btn {
+    display: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 16px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    background: #FF35E0 !important; /* Brand hot pink */
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    transition: background-color 0.2s !important;
+  }
+  .add-select-address-mobile-btn:active {
+    background-color: #e02bc5 !important;
+  }
+
+  /* Stack prices vertically on mobile */
+  .card-details-row {
+    display: grid !important;
+    grid-template-columns: max-content 1fr !important;
+    grid-template-areas:
+      "active rating"
+      "original ." !important;
+    align-items: center !important;
+    row-gap: 8px !important;
+    column-gap: 8px !important;
+  }
+  
+  .card-active-price {
+    grid-area: active !important;
+    line-height: 1.2 !important;
+  }
+  
+  .card-original-price {
+    grid-area: original !important;
+    line-height: 1.2 !important;
+    margin-right: 0 !important;
+  }
+  
+  .card-rating-inline {
+    grid-area: rating !important;
+    justify-self: start !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  .card-dot {
+    display: none !important;
+  }
+
+  /* Equal gap spacing for card details */
+  .card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .card-info > div {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    line-height: 1.2 !important;
   }
 }

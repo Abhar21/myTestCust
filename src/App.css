@@ -3094,3 +3094,8 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 .mobile-address-modal-content .modal-saved-addresses {
   display: block !important;
 }
+/* Hidden by default on desktop */
+.mobile-location-badge {
+  display: none;
+}
+

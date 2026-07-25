@@ -406,7 +406,7 @@ function App() {
   // Address Manager selected address state (initialized to null for Screen 2)
   const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(null)
   const [showMobileAddressModal, setShowMobileAddressModal] = useState(false)
-  const [showAddressWarning, setShowAddressWarning] = useState(false)
+
   const [showSidebar, setShowSidebar] = useState(false)
   const [activeMenuCategory, setActiveMenuCategory] = useState("All")
   const [selectedVendorDetail, setSelectedVendorDetail] = useState<HomeListing | null>(() => {
@@ -464,33 +464,7 @@ function App() {
   }
 
   const handleCardClick = (caterTitle: string) => {
-    if (isSearchView) {
-      // 1. Validate Date (When)
-      if (!whenInput.trim()) {
-        setIsHeaderSearchExpanded(true)
-        setActiveSearchField('when')
-        setShowDestinations(false)
-        setShowCalendar(true)
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-        return
-      }
-
-      // 2. Validate Address Selection
-      if (!selectedAddress) {
-        setShowAddressWarning(true)
-        setTimeout(() => setShowAddressWarning(false), 2000)
-
-        const addressCard = document.querySelector('.address-manager-card')
-        if (addressCard) {
-          addressCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-        }
-        return
-      }
-
-      window.open(`?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`, '_blank');
-    } else {
-      window.open(`?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`, '_self');
-    }
+    window.location.href = `?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`;
   }
 
   const isPrevDisabled = currentYear === 2026 && currentMonth === 6
@@ -1529,9 +1503,31 @@ function App() {
           {/* Center Section (flexible col, centered) */}
           <div className="header-center-col">
             {isSearchView ? (
-              <div className="header-filters-wrapper">
-                {renderFilters()}
-              </div>
+              <>
+                {/* Mobile Location Badge (Image 2 style) */}
+                <div
+                  className="mobile-location-badge"
+                  onClick={() => setShowMobileAddressModal(true)}
+                >
+                  {selectedAddress ? (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                    </svg>
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                  )}
+                  <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
+                  <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
+                  <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+                <div className="header-filters-wrapper">
+                  {renderFilters()}
+                </div>
+              </>
             ) : selectedVendorDetail ? null : (
               <div className="center-tabs">
                 <div
@@ -2156,7 +2152,7 @@ function App() {
             <div className="search-results-header">
               <div className="header-text-group">
                 <h1> Caters Hyderabad, India</h1>
-                <p className="search-results-subtitle">Showing top-rated catering partners for events and weddings</p>
+                <p className="search-results-subtitle">Showing top-rated caters</p>
               </div>
               <div className="location-search-wrapper">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
@@ -2285,7 +2281,7 @@ function App() {
                     </div>
                   </div>
                 ) : (
-                  <div className={`current-address-placeholder-card ${showAddressWarning ? 'show-warning' : ''}`}>
+                  <div className={`current-address-placeholder-card `}>
                     <div className="current-address-placeholder-icon">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" style={{ strokeDasharray: '3 3' }}>
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -4070,7 +4066,7 @@ function App() {
                     </div>
                   </div>
                 ) : (
-                  <div className={`current-address-placeholder-card ${showAddressWarning ? 'show-warning' : ''}`}>
+                  <div className={`current-address-placeholder-card `}>
                     <div className="current-address-placeholder-icon">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" style={{ strokeDasharray: '3 3' }}>
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>

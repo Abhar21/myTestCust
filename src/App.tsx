@@ -373,6 +373,9 @@ function App() {
   // Select Items Modal state
   const [showSelectItemsModal, setShowSelectItemsModal] = useState(false);
   const [showCheckoutPage, setShowCheckoutPage] = useState(false);
+  const [checkoutContactName, setCheckoutContactName] = useState('John Doe');
+  const [checkoutContactPhone, setCheckoutContactPhone] = useState('+91 98765 43210');
+  const [isEditingContact, setIsEditingContact] = useState(false);
   const [selectedMenuForModal, setSelectedMenuForModal] = useState<string | null>(null);
   const [modalStep, setModalStep] = useState<number>(1);
   const [modalSelectedDate, setModalSelectedDate] = useState<string | null>(() => {
@@ -1782,6 +1785,25 @@ function App() {
                           {selectedAddress ? selectedAddress.full : 'Choose a location...'}
                         </div>
                       </div>
+                    </div>
+
+                    <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                    {/* Contact Details */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Contact details</div>
+                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
+                          <div>{checkoutContactName}</div>
+                          <div style={{ color: '#717171', marginTop: '2px' }}>{checkoutContactPhone}</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setIsEditingContact(true)}
+                        style={{ background: '#f3f4f6', border: 'none', borderRadius: '8px', fontWeight: '500', fontSize: '14px', color: '#222222', cursor: 'pointer', padding: '8px 16px', height: 'fit-content', flexShrink: 0, marginLeft: '16px' }}
+                      >
+                        Change
+                      </button>
                     </div>
 
                   </div>
@@ -4426,6 +4448,74 @@ function App() {
               })()}
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Contact Details Modal Overlay */}
+      {isEditingContact && (
+        <div className="mobile-address-modal-overlay" onClick={() => setIsEditingContact(false)} style={{ zIndex: 1000020 }}>
+          <div className="mobile-address-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-address-modal-header" style={{ borderBottom: 'none', paddingBottom: '0', alignItems: 'flex-start' }}>
+              <div style={{ textAlign: 'left', marginTop: '4px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', margin: 0 }}>
+                  Update contact details
+                </h3>
+                <p style={{ fontSize: '12px', color: '#717171', margin: '4px 0 0 0' }}>
+                  Provide correct contact details for better service
+                </p>
+              </div>
+              <button
+                onClick={() => setIsEditingContact(false)}
+                style={{
+                  background: '#f3f4f6',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: '#222222',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  padding: 0
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="mobile-address-modal-body" style={{ padding: '16px 0 32px 0' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: '#717171', marginBottom: '8px' }}>Name</label>
+                  <input
+                    type="text"
+                    value={checkoutContactName}
+                    onChange={(e) => setCheckoutContactName(e.target.value)}
+                    style={{ width: '100%', boxSizing: 'border-box', padding: '12px 16px', border: '1px solid #dddddd', borderRadius: '8px', fontSize: '16px', color: '#222222', outline: 'none' }}
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: '#717171', marginBottom: '8px' }}>Mobile Number</label>
+                  <input
+                    type="text"
+                    value={checkoutContactPhone}
+                    onChange={(e) => setCheckoutContactPhone(e.target.value)}
+                    style={{ width: '100%', boxSizing: 'border-box', padding: '12px 16px', border: '1px solid #dddddd', borderRadius: '8px', fontSize: '16px', color: '#222222', outline: 'none' }}
+                    placeholder="Enter mobile number"
+                  />
+                </div>
+                <button
+                  onClick={() => setIsEditingContact(false)}
+                  style={{ background: '#222222', color: '#ffffff', border: 'none', borderRadius: '8px', padding: '14px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', marginTop: '8px' }}
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

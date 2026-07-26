@@ -225,7 +225,7 @@
 
   /* Promo card & home card mobile width override to fit exactly 2 cards matching margins */
   .home-card {
-    flex: 0 0 calc((100% - 12px) / 2) !important;
+    flex: 0 0 42% !important;
     min-width: 0 !important;
   }
 
@@ -517,5 +517,11 @@
 
   .airbnb-header-container--detail .mobile-location-badge {
     margin-bottom: 6px !important;
+  }
+
+  /* Reduce font weight for vendor titles on mobile */
+  .card-title,
+  .search-card .card-title {
+    font-weight: 500 !important;
   }
 }

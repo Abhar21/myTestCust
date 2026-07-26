@@ -3119,3 +3119,6 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 .mobile-location-badge {
   display: none;
 }
+.mobile-inline-calendar {
+  display: none;
+}

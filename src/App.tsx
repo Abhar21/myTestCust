@@ -21,6 +21,8 @@ interface HomeListing {
   categories: string[];
 }
 
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 const homeListings: HomeListing[] = [
   {
     title: 'Sri Venkata Carters',
@@ -467,7 +469,12 @@ function App() {
     window.location.href = `?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`;
   }
 
-  const isPrevDisabled = currentYear === 2026 && currentMonth === 6
+  const actualToday = new Date();
+  const actualMonth = actualToday.getMonth();
+  const actualYear = actualToday.getFullYear();
+  const isPrevDisabled = currentYear < actualYear || (currentYear === actualYear && currentMonth <= actualMonth);
+  const maxYear = actualYear + 1;
+  const isNextDisabled = currentYear > maxYear || (currentYear === maxYear && currentMonth >= actualMonth);
   const monthName = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -685,8 +692,12 @@ function App() {
   // Add actual month days
   for (let d = 1; d <= totalDaysInMonth; d++) {
     const cellDate = new Date(currentYear, currentMonth, d);
-    const minSelectableDate = new Date(2026, 6, 22); // July 19, 2026 (today) + 3 days = July 22, 2026
-    const isPast = cellDate < minSelectableDate;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const minSelectableDate = new Date(today);
+    const maxSelectableDate = new Date(today);
+    maxSelectableDate.setFullYear(today.getFullYear() + 1);
+    const isPast = cellDate < minSelectableDate || cellDate > maxSelectableDate;
     calendarDays.push({ day: d, isPast });
   }
 
@@ -866,6 +877,8 @@ function App() {
                   type="button"
                   className="calendar-nav-btn"
                   onClick={handleNextMonth}
+                  disabled={isNextDisabled}
+                  style={{ color: isNextDisabled ? '#d1d5db' : '#717171', cursor: isNextDisabled ? 'default' : 'pointer' }}
                 >
                   &gt;
                 </button>
@@ -1992,6 +2005,69 @@ function App() {
             </div>
           </div>
 
+          {/* Mobile Inline Calendar (Responsive Only) */}
+          <div className="mobile-inline-calendar">
+            <div style={{ marginTop: '32px' }}>
+              <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Calendar View
+              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <button
+                  type="button"
+                  className="calendar-nav-btn"
+                  onClick={handlePrevMonth}
+                  disabled={isPrevDisabled}
+                  style={{ background: 'none', border: 'none', cursor: isPrevDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isPrevDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div style={{ fontWeight: '600', fontSize: '16px', color: '#222222' }}>
+                  {monthNames[currentMonth]} {currentYear}
+                </div>
+                <button
+                  type="button"
+                  className="calendar-nav-btn"
+                  onClick={handleNextMonth}
+                  disabled={isNextDisabled}
+                  style={{ background: 'none', border: 'none', cursor: isNextDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isNextDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontSize: '12px', fontWeight: '700', color: '#717171', marginBottom: '12px' }}>
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                  <div key={`inline-cal-header-${idx}`}>
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', rowGap: '8px', textAlign: 'center' }}>
+                {calendarDays.map((cell, idx) => {
+                  const isSelected = cell.day !== null &&
+                    whenInput === `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+                  
+                  return (
+                    <div
+                      key={`inline-cal-${idx}`}
+                      className={`calendar-day-cell ${cell.day === null ? 'empty' : ''} ${cell.isPast ? 'past' : ''} ${isSelected ? 'selected' : ''}`}
+                      onClick={() => {
+                        if (cell.day !== null && !cell.isPast) {
+                          const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+                          setWhenInput(dateString);
+                        }
+                      }}
+                      style={cell.isPast ? { color: '#d1d5db', textDecoration: 'line-through', fontWeight: '400', cursor: 'default' } : (cell.day !== null ? { cursor: 'pointer', color: '#222222', fontWeight: '600' } : {})}
+                    >
+                      {cell.day}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {/* Reviews and Ratings Section */}
           <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #e2e8f0' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
@@ -2782,7 +2858,6 @@ function App() {
             >
               ×
             </button>
-
             <div style={{ textAlign: 'left' }}>
               <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#222222', margin: '0 0 6px 0' }}>
                 Select Booking Date
@@ -3765,7 +3840,7 @@ function App() {
                     Items
                   </h4>
                   <p style={{ fontSize: '13px', color: '#717171', marginTop: '4px', marginBottom: 0 }}>
-                    Items are customisable and fixed
+                    Customise your menu
                   </p>
                 </div>
                 <div style={{
@@ -3956,7 +4031,9 @@ function App() {
             }}>
               <button
                 onClick={() => {
+                  setModalStep(2);
                   setShowSelectItemsModal(true);
+                  setShowSelectItemsDrawer(false);
                 }}
                 style={{
                   background: '#222222',

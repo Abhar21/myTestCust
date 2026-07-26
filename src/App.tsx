@@ -372,9 +372,26 @@ function App() {
 
   // Select Items Modal state
   const [showSelectItemsModal, setShowSelectItemsModal] = useState(false);
+  const [showCheckoutPage, setShowCheckoutPage] = useState(false);
   const [selectedMenuForModal, setSelectedMenuForModal] = useState<string | null>(null);
   const [modalStep, setModalStep] = useState<number>(1);
-  const [modalSelectedDate, setModalSelectedDate] = useState<string | null>(null);
+  const [modalSelectedDate, setModalSelectedDate] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const when = new URLSearchParams(window.location.search).get('when');
+      if (when && when !== 'Any week') {
+        const parts = when.split('-');
+        if (parts.length === 3) {
+          const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+          const monthIndex = parseInt(parts[1], 10) - 1;
+          const day = parseInt(parts[2], 10);
+          if (monthIndex >= 0 && monthIndex < 12 && day > 0) {
+            return `${monthNames[monthIndex]}-${day}`;
+          }
+        }
+      }
+    }
+    return null;
+  });
   const [modalSelectedSlot, setModalSelectedSlot] = useState<string | null>(null);
   const [confirmedSelection, setConfirmedSelection] = useState<{ [menuTitle: string]: { date: string, slot: string } }>({});
   const [showSelectItemsDrawer, setShowSelectItemsDrawer] = useState(false);
@@ -420,7 +437,21 @@ function App() {
   const [whenInput, setWhenInput] = useState(() => {
     if (typeof window === 'undefined') return '';
     return new URLSearchParams(window.location.search).get('when') || '';
-  })
+  });
+
+  useEffect(() => {
+    if (whenInput && whenInput !== 'Any week') {
+      const parts = whenInput.split('-');
+      if (parts.length === 3) {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthIndex = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        if (monthIndex >= 0 && monthIndex < 12 && day > 0) {
+          setModalSelectedDate(`${monthNames[monthIndex]}-${day}`);
+        }
+      }
+    }
+  }, [whenInput]);
 
   // Dropdown States
   const [showDestinations, setShowDestinations] = useState(false)
@@ -1602,6 +1633,230 @@ function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#ffffff' }}>
+      {/* Checkout Page Full Screen Overlay */}
+      {showCheckoutPage && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: '#ffffff', zIndex: 999999, overflowY: 'auto',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+        }}>
+          {(() => {
+            const actualPricePerPlate = (() => {
+              if (!selectedMenuData || !selectedMenuData.price) return 49;
+              const match = selectedMenuData.price.match(/\d+/);
+              return match ? parseInt(match[0], 10) : 49;
+            })();
+            const minGuests = (() => {
+              if (!selectedMenuData || !selectedMenuData.guestCount) return 50;
+              const match = selectedMenuData.guestCount.match(/Min\s+(\d+)/i);
+              return match ? parseInt(match[1], 10) : 50;
+            })();
+            const maxGuests = (() => {
+              if (!selectedMenuData || !selectedMenuData.guestCount) return 500;
+              const match = selectedMenuData.guestCount.match(/Max\s+(\d+)/i);
+              return match ? parseInt(match[1], 10) : 500;
+            })();
+
+            const couponDiscount = (() => {
+              if (appliedCouponCode === 'FLAT100') return 100;
+              if (appliedCouponCode === 'TENPERCENT') {
+                const subtotal = previewGuestCount * actualPricePerPlate;
+                return Math.min(199, Math.round(subtotal * 0.1));
+              }
+              return 0;
+            })();
+
+            const subtotal = previewGuestCount * actualPricePerPlate;
+            const taxes = Math.round(subtotal * 0.05); // 5% tax
+            const finalDiscountedPrice = Math.max(0, subtotal - couponDiscount) + taxes;
+
+            return (
+              <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '100px' }}>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 24px 32px 24px' }}>
+                  <h1 style={{ fontSize: '26px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
+                  <button onClick={() => setShowCheckoutPage(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: '3', overflow: 'visible' }}><path d="m6 6 20 20M26 6 6 26"></path></svg>
+                  </button>
+                </div>
+
+                <div style={{ padding: '0 24px' }}>
+
+                  {/* Vendor Card */}
+                  <div style={{ border: '1px solid #dddddd', borderRadius: '24px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', padding: '16px', display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                    <img src={selectedVendorDetail?.image || '/homes/flat_kondapur.png'} alt="Vendor" style={{ width: '84px', height: '84px', borderRadius: '12px', objectFit: 'cover' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
+                      <div style={{ fontSize: '12px', color: '#717171', marginBottom: '4px', fontWeight: '400' }}>Cater</div>
+                      <div style={{ fontSize: '18px', fontWeight: '500', color: '#222222', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{selectedVendorDetail?.title || 'Vendor Name'}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '14px', color: '#222222', fontWeight: '600' }}>
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '14px', width: '14px', fill: 'currentcolor' }}><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
+                        <span>{selectedVendorDetail?.rating || '4.96'}</span>
+                        <span style={{ fontWeight: '400', color: '#717171' }}>(23)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Booking Details Box */}
+                  <div style={{ border: '1px solid #dddddd', borderRadius: '12px', padding: '24px', display: 'flex', flexDirection: 'column', marginBottom: '24px', backgroundColor: '#ffffff' }}>
+
+                    {/* Dates */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222', marginBottom: '8px' }}>Date & Slot</div>
+                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>
+                          {modalSelectedDate ? `${modalSelectedDate.split('-')[0]} ${modalSelectedDate.split('-')[1]}, 2026` : 'Select date'}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span
+                            onClick={() => { setModalStep(2); setShowSelectItemsModal(true); }}
+                            style={{ fontSize: '14px', fontWeight: '500', color: '#FF35E0', textDecoration: 'underline', cursor: 'pointer' }}
+                          >
+                            {modalSelectedSlot || 'Select time slot'}
+                          </span>
+                        </div>
+                      </div>
+                      <button onClick={() => { setModalStep(1); setShowSelectItemsModal(true); }} style={{ background: '#f3f4f6', border: 'none', borderRadius: '8px', fontWeight: '500', fontSize: '14px', color: '#222222', cursor: 'pointer', padding: '8px 16px', height: 'fit-content' }}>Change</button>
+                    </div>
+
+                    <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
+
+                    {/* Menu and Guests Merged */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222', marginBottom: '8px' }}>Menu</div>
+                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
+                        <div style={{ fontSize: '12px', color: '#717171' }}>Min: {minGuests} -  Max: {maxGuests}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                          {selectedMenuData?.originalPrice && (
+                            <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>{selectedMenuData.originalPrice}</span>
+                          )}
+                          <span style={{ fontSize: '12px', fontWeight: '500', color: '#222222' }}>{selectedMenuData?.price || `₹49/plate`}</span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <button
+                          disabled={typeof previewGuestCount === 'number' && previewGuestCount <= minGuests}
+                          onClick={() => setPreviewGuestCount(Math.max(minGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) - 5))}
+                          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="text"
+                          value={previewGuestCount}
+                          onChange={(e) => {
+                            const valRaw = e.target.value.replace(/\D/g, '');
+                            if (valRaw === '') {
+                              setPreviewGuestCount('' as any);
+                            } else {
+                              const valNum = parseInt(valRaw, 10);
+                              setPreviewGuestCount(valNum > maxGuests ? maxGuests : valNum);
+                            }
+                          }}
+                          onBlur={() => {
+                            let val = typeof previewGuestCount === 'number' ? previewGuestCount : 0;
+                            if (val < minGuests) val = minGuests;
+                            if (val > maxGuests) val = maxGuests;
+                            setPreviewGuestCount(val);
+                          }}
+                          style={{ fontSize: '16px', color: '#222222', width: '36px', textAlign: 'center', border: 'none', outline: 'none', background: 'transparent', padding: 0 }}
+                        />
+                        <button
+                          disabled={typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests}
+                          onClick={() => setPreviewGuestCount(Math.min(maxGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) + 5))}
+                          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
+
+                  {/* Price Details */}
+                  <h2 style={{ fontSize: '22px', fontWeight: '600', color: '#222222', marginBottom: '24px' }}>Price details</h2>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '16px', color: '#222222' }}>
+                    <span>{previewGuestCount} guests x ₹{actualPricePerPlate}</span>
+                    <span>₹{subtotal.toLocaleString()}</span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '16px', color: '#222222' }}>
+                    <span style={{ textDecoration: 'underline' }}>Taxes & fees</span>
+                    <span>₹{taxes.toLocaleString()}</span>
+                  </div>
+
+                  {couponDiscount > 0 && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '16px', color: '#059669', fontWeight: '500' }}>
+                      <span>Coupon discount</span>
+                      <span>-₹{couponDiscount.toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '600', color: '#222222', marginBottom: '24px' }}>
+                    <span>Total (INR)</span>
+                    <span>₹{finalDiscountedPrice.toLocaleString()}</span>
+                  </div>
+
+                  {/* Coupons Section */}
+                  <div style={{ border: '1px solid #dddddd', borderRadius: '12px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: '#222222' }}>Coupons</div>
+                      <div style={{ fontSize: '14px', color: '#717171', marginTop: '4px' }}>{appliedCouponCode ? `Applied: ${appliedCouponCode}` : 'No coupons applied'}</div>
+                    </div>
+                    <button style={{ background: 'none', border: 'none', fontSize: '16px', fontWeight: '600', textDecoration: 'underline', cursor: 'pointer', color: '#222222' }} onClick={() => setAppliedCouponCode(appliedCouponCode ? null : 'FLAT100')}>
+                      {appliedCouponCode ? 'Remove' : 'Add coupon'}
+                    </button>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                  {/* Disclaimer */}
+                  <div style={{ fontSize: '12px', color: '#717171', marginBottom: '32px' }}>
+                    You'll be directed to Razorpay to complete payment securely.
+                  </div>
+
+                  {/* Checkout Button */}
+                  <button
+                    onClick={() => {
+                      alert('Proceeding to Razorpay with total: ₹' + finalDiscountedPrice);
+                      setShowCheckoutPage(false);
+                      setConfirmedSelection(prev => ({
+                        ...prev,
+                        [selectedMenuForModal || '']: {
+                          date: modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : '',
+                          slot: modalSelectedSlot || ''
+                        }
+                      }));
+                    }}
+                    style={{
+                      width: '100%',
+                      background: '#e61e4d',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '14px 24px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                  >
+                    Confirm and pay
+                  </button>
+
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
       {/* Background Catcher Overlay to close dropdown when clicking outside */}
       {(showDestinations || showCalendar || isHeaderSearchExpanded || showSortDropdown || showDietDropdown || showMealsDropdown) && (
         <div
@@ -2001,18 +2256,14 @@ function App() {
 
                             // Set default date from previous search screen selection
                             let defaultDate: string | null = null;
-                            if (whenInput) {
-                              const cleaned = whenInput.trim();
-                              if (cleaned.startsWith("2026-07-")) {
-                                const dayNum = parseInt(cleaned.split('-')[2]);
-                                if (dayNum >= 20 && dayNum <= 26) {
-                                  defaultDate = `July-${dayNum}`;
-                                }
-                              } else if (cleaned.startsWith("2026-08-")) {
-                                const dayNum = parseInt(cleaned.split('-')[2]);
-                                const isBlocked = dayNum === 10 || dayNum === 11 || dayNum === 12 || dayNum === 24 || dayNum === 25;
-                                if (!isBlocked) {
-                                  defaultDate = `August-${dayNum}`;
+                            if (whenInput && whenInput !== 'Any week') {
+                              const parts = whenInput.split('-');
+                              if (parts.length === 3) {
+                                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                const monthIndex = parseInt(parts[1], 10) - 1;
+                                const day = parseInt(parts[2], 10);
+                                if (monthIndex >= 0 && monthIndex < 12 && day > 0) {
+                                  defaultDate = `${monthNames[monthIndex]}-${day}`;
                                 }
                               }
                             }
@@ -3032,7 +3283,7 @@ function App() {
             right: 0,
             bottom: 0,
             background: 'rgba(0,0,0,0.5)',
-            zIndex: 99999,
+            zIndex: 1000010,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -3170,7 +3421,7 @@ function App() {
             right: 0,
             bottom: 0,
             background: 'rgba(0,0,0,0.5)',
-            zIndex: 99999,
+            zIndex: 1000010,
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'center',
@@ -3224,38 +3475,37 @@ function App() {
             {modalStep === 1 ? (
               // Step 1: Select Date (Airbnb style side-by-side Calendar)
               <>
-                <div style={{ textAlign: 'center', marginTop: '4px' }}>
+                <div style={{ textAlign: 'left', marginTop: '4px' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', margin: 0 }}>
-                    Select Date
+                    Select event date
                   </h3>
                   <p style={{ fontSize: '12px', color: '#717171', marginTop: '4px' }}>
-                    Choose booking date for {selectedMenuForModal}
+                    Choose the perfect date for your event
                   </p>
                 </div>
 
                 {/* Month Picker Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px', marginTop: '10px' }}>
                   <button
-                    onClick={() => alert('Only July and August 2026 are active')}
-                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#717171', padding: '4px' }}
+                    onClick={handleModalPrevMonth}
+                    disabled={isModalPrevDisabled}
+                    style={{ background: 'transparent', border: 'none', cursor: isModalPrevDisabled ? 'default' : 'pointer', color: isModalPrevDisabled ? '#d1d5db' : '#717171', padding: '4px' }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
 
-                  <div style={{ display: 'flex', flex: 1, justifyContent: 'space-around' }}>
-                    <span style={{ fontSize: '15px', fontWeight: '700', color: '#222222', width: '50%', textAlign: 'center' }}>
-                      July 2026
-                    </span>
-                    <span style={{ fontSize: '15px', fontWeight: '700', color: '#222222', width: '50%', textAlign: 'center' }}>
-                      August 2026
+                  <div style={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
+                    <span style={{ fontSize: '15px', fontWeight: '700', color: '#222222', textAlign: 'center' }}>
+                      {new Date(modalYear, modalMonth).toLocaleString('default', { month: 'long' })} {modalYear}
                     </span>
                   </div>
 
                   <button
-                    onClick={() => alert('Only July and August 2026 are active')}
-                    style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#717171', padding: '4px' }}
+                    onClick={handleModalNextMonth}
+                    disabled={isModalNextDisabled}
+                    style={{ background: 'transparent', border: 'none', cursor: isModalNextDisabled ? 'default' : 'pointer', color: isModalNextDisabled ? '#d1d5db' : '#717171', padding: '4px' }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
@@ -3263,169 +3513,70 @@ function App() {
                   </button>
                 </div>
 
-                {/* Double Month Columns Container */}
-                <div style={{ display: 'flex', gap: '32px', justifyContent: 'space-between' }}>
-
-                  {/* July Column */}
-                  <div style={{ flex: 1 }}>
-                    {/* Weekday initials */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: '600', fontSize: '11px', color: '#717171', marginBottom: '8px' }}>
-                      <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
-                    </div>
-                    {/* July Days grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
-                      {[
-                        // July starts Wednesday, so 3 empty cells
-                        ...Array(3).fill({ day: null, enabled: false }),
-                        ...Array(31).fill(0).map((_, dIdx) => {
-                          const dayNum = dIdx + 1;
-                          return {
-                            day: dayNum,
-                            // July 20-26 are enabled. 1-19 (past/peak time advance) and 27-31 (blocked) are disabled.
-                            enabled: dayNum >= 20 && dayNum <= 26
-                          };
-                        })
-                      ].map((item, idx) => {
-                        if (!item.day) return <div key={idx} />;
-                        const dateKey = `July-${item.day}`;
-                        const isSelected = modalSelectedDate === dateKey;
-                        return (
-                          <div
-                            key={idx}
-                            onClick={() => {
-                              if (item.enabled) {
-                                setModalSelectedDate(dateKey);
-                              }
-                            }}
-                            style={{
-                              padding: '0',
-                              borderRadius: '50%',
-                              cursor: item.enabled ? 'pointer' : 'default',
-                              color: isSelected ? '#ffffff' : (item.enabled ? '#222222' : '#d1d5db'),
-                              background: isSelected ? '#222222' : 'transparent',
-                              fontWeight: item.enabled ? '600' : '400',
-                              fontSize: '13px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              height: '32px',
-                              width: '32px',
-                              margin: '0 auto',
-                              textDecoration: !item.enabled ? 'line-through' : 'none',
-                              transition: 'all 0.15s'
-                            }}
-                            className={item.enabled && !isSelected ? 'modal-day-hover' : ''}
-                          >
-                            {item.day}
-                          </div>
-                        );
-                      })}
-                    </div>
+                {/* Single Month Container */}
+                <div style={{ marginTop: '16px' }}>
+                  {/* Weekday initials */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: '600', fontSize: '11px', color: '#717171', marginBottom: '8px' }}>
+                    <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
                   </div>
+                  {/* Days grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
+                    {modalCalendarDays.map((cell, idx) => {
+                      if (cell.day === null) {
+                        return <div key={idx} style={{ height: '32px' }} />;
+                      }
 
-                  {/* August Column */}
-                  <div style={{ flex: 1 }}>
-                    {/* Weekday initials */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: '600', fontSize: '11px', color: '#717171', marginBottom: '8px' }}>
-                      <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
-                    </div>
-                    {/* August Days grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
-                      {[
-                        // August starts Saturday, so 6 empty cells
-                        ...Array(6).fill({ day: null, enabled: false }),
-                        ...Array(31).fill(0).map((_, dIdx) => {
-                          const dayNum = dIdx + 1;
-                          // Block some random future days: e.g. August 10, 11, 12 and 24, 25
-                          const isBlocked = dayNum === 10 || dayNum === 11 || dayNum === 12 || dayNum === 24 || dayNum === 25;
-                          return {
-                            day: dayNum,
-                            enabled: !isBlocked
-                          };
-                        })
-                      ].map((item, idx) => {
-                        if (!item.day) return <div key={idx} />;
-                        const dateKey = `August-${item.day}`;
-                        const isSelected = modalSelectedDate === dateKey;
-                        return (
-                          <div
-                            key={idx}
-                            onClick={() => {
-                              if (item.enabled) {
-                                setModalSelectedDate(dateKey);
-                              }
-                            }}
-                            style={{
-                              padding: '0',
-                              borderRadius: '50%',
-                              cursor: item.enabled ? 'pointer' : 'default',
-                              color: isSelected ? '#ffffff' : (item.enabled ? '#222222' : '#d1d5db'),
-                              background: isSelected ? '#222222' : 'transparent',
-                              fontWeight: item.enabled ? '600' : '400',
-                              fontSize: '13px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              height: '32px',
-                              width: '32px',
-                              margin: '0 auto',
-                              textDecoration: !item.enabled ? 'line-through' : 'none',
-                              transition: 'all 0.15s'
-                            }}
-                            className={item.enabled && !isSelected ? 'modal-day-hover' : ''}
-                          >
-                            {item.day}
-                          </div>
-                        );
-                      })}
-                    </div>
+                      const monthName = new Date(modalYear, modalMonth).toLocaleString('default', { month: 'long' });
+                      const dateKey = `${monthName}-${cell.day}`;
+                      const isSelected = modalSelectedDate === dateKey;
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => {
+                            if (!cell.isPast) {
+                              setModalSelectedDate(dateKey);
+                            }
+                          }}
+                          style={{
+                            padding: '0',
+                            borderRadius: '50%',
+                            cursor: !cell.isPast ? 'pointer' : 'default',
+                            color: isSelected ? '#ffffff' : (!cell.isPast ? '#222222' : '#d1d5db'),
+                            background: isSelected ? '#222222' : 'transparent',
+                            fontWeight: !cell.isPast ? '600' : '400',
+                            fontSize: '13px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '32px',
+                            width: '32px',
+                            margin: '0 auto',
+                            textDecoration: cell.isPast ? 'line-through' : 'none',
+                            transition: 'all 0.15s'
+                          }}
+                          className={!cell.isPast && !isSelected ? 'modal-day-hover' : ''}
+                        >
+                          {cell.day}
+                        </div>
+                      );
+                    })}
                   </div>
-
-                </div>
-
-                {/* Warning Message */}
-                <div style={{
-                  background: '#fffbeb',
-                  border: '1px solid #fef3c7',
-                  borderRadius: '12px',
-                  padding: '10px 14px',
-                  display: 'flex',
-                  gap: '8px',
-                  alignItems: 'center',
-                  marginTop: '4px'
-                }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.5" style={{ flexShrink: 0 }}>
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                  <span style={{ fontSize: '11px', color: '#b45309', fontWeight: '500', textAlign: 'left' }}>
-                    Due to peak time booking, we allow you to book min 3 days in advance.
-                  </span>
                 </div>
 
                 {/* Footer buttons row */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                  {/* Clear button */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <span
-                      onClick={() => setModalSelectedDate(null)}
-                      style={{ fontSize: '12px', fontWeight: '600', color: '#222222', textDecoration: 'underline', cursor: 'pointer' }}
-                    >
-                      Clear dates
-                    </span>
-                  </div>
-
+                <div style={{ marginTop: '32px' }}>
                   <button
                     disabled={!modalSelectedDate}
                     onClick={() => setModalStep(2)}
                     style={{
+                      width: '100%',
                       background: modalSelectedDate ? '#222222' : '#e5e7eb',
                       color: modalSelectedDate ? '#ffffff' : '#9ca3af',
                       border: 'none',
                       borderRadius: '12px',
-                      padding: '12px 24px',
-                      fontWeight: '600',
+                      padding: '14px 24px',
+                      fontWeight: '500',
                       fontSize: '14px',
                       cursor: modalSelectedDate ? 'pointer' : 'default',
                       transition: 'background-color 0.2s'
@@ -3536,7 +3687,11 @@ function App() {
                 <div style={{ display: 'flex', gap: '12px', paddingTop: '12px', flexShrink: 0 }}>
                   <button
                     disabled={!modalSelectedSlot}
-                    onClick={() => setModalStep(3)}
+                    onClick={() => {
+                      setShowSelectItemsModal(false);
+                      setShowSelectItemsDrawer(false);
+                      setShowCheckoutPage(true);
+                    }}
                     style={{
                       background: modalSelectedSlot ? '#222222' : '#e5e7eb',
                       color: modalSelectedSlot ? '#ffffff' : '#9ca3af',
@@ -3555,355 +3710,7 @@ function App() {
                   </button>
                 </div>
               </div>
-            ) : (() => {
-              const actualPricePerPlate = (() => {
-                if (!selectedMenuData || !selectedMenuData.price) return 49;
-                const match = selectedMenuData.price.match(/\d+/);
-                return match ? parseInt(match[0], 10) : 49;
-              })();
-              const originalPricePerPlate = (() => {
-                if (!selectedMenuData || !selectedMenuData.originalPrice) return 54;
-                const match = selectedMenuData.originalPrice.match(/\d+/);
-                return match ? parseInt(match[0], 10) : 54;
-              })();
-              const minGuests = (() => {
-                if (!selectedMenuData || !selectedMenuData.guestCount) return 50;
-                const match = selectedMenuData.guestCount.match(/Min\s+(\d+)/i);
-                return match ? parseInt(match[1], 10) : 50;
-              })();
-              const maxGuests = (() => {
-                if (!selectedMenuData || !selectedMenuData.guestCount) return 500;
-                const match = selectedMenuData.guestCount.match(/Max\s+(\d+)/i);
-                return match ? parseInt(match[1], 10) : 500;
-              })();
-              const quickSelectOptions = (() => {
-                if (maxGuests <= 300) {
-                  return [30, 50, 100, 150, 200];
-                } else if (maxGuests >= 1000) {
-                  return [100, 250, 500, 750, 1000];
-                }
-                return [50, 100, 150, 200, 250];
-              })();
-
-              return (
-                // Step 3: Booking Preview
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
-
-                  {/* ── Heading ── */}
-                  <div style={{ textAlign: 'left', marginBottom: '16px' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#111827', margin: '0 0 4px 0' }}>Review & Confirm</h3>
-                    <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0 }}>Check your booking details before paying</p>
-                  </div>
-
-                  {/* ── Section 1: Guest Count Widget ── */}
-                  <div style={{
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '16px',
-                    padding: '16px',
-                    marginBottom: '12px'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-                        <div>
-                          <div style={{ fontSize: '15px', fontWeight: '700', color: '#111827' }}>Guest Count</div>
-                          <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '3px' }}>We recommend you to add some extra guests</div>
-                          <div style={{ fontSize: '11px', fontWeight: '600', color: '#4b5563', marginTop: '10px', display: 'inline-block', background: '#f3f4f6', padding: '2px 8px', borderRadius: '6px' }}>
-                            Limit: {minGuests} - {maxGuests} pax
-                          </div>
-                        </div>
-                      </div>
-                      {/* Numeric Input container */}
-                      <div style={{
-                        display: 'flex', alignItems: 'center',
-                        border: '1px solid #e5e7eb', borderRadius: '12px', padding: '8px 14px',
-                        flexShrink: 0
-                      }}>
-                        <input
-                          type="number"
-                          className="always-show-spin"
-                          value={previewGuestCount || ''}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            if (val === '') {
-                              setPreviewGuestCount(0);
-                            } else {
-                              const parsed = parseInt(val, 10);
-                              if (!isNaN(parsed)) {
-                                if (parsed <= maxGuests) {
-                                  setPreviewGuestCount(parsed);
-                                }
-                              }
-                            }
-                          }}
-                          onBlur={() => {
-                            if (previewGuestCount < minGuests) setPreviewGuestCount(minGuests);
-                            if (previewGuestCount > maxGuests) setPreviewGuestCount(maxGuests);
-                          }}
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            color: '#111827',
-                            width: '55px',
-                            textAlign: 'center',
-                            border: 'none',
-                            background: 'transparent',
-                            outline: 'none',
-                            padding: 0,
-                            margin: 0
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Quick Select Buttons */}
-                    <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
-                      {quickSelectOptions.map((num) => {
-                        const isSelected = previewGuestCount === num;
-                        return (
-                          <button
-                            key={num}
-                            onClick={() => setPreviewGuestCount(num)}
-                            style={{
-                              flex: 1,
-                              background: isSelected ? '#111827' : '#ffffff',
-                              color: isSelected ? '#ffffff' : '#374151',
-                              border: isSelected ? '1px solid #111827' : '1px solid #e5e7eb',
-                              borderRadius: '8px',
-                              padding: '6px 0',
-                              fontSize: '13px',
-                              fontWeight: '600',
-                              cursor: 'pointer',
-                              transition: 'all 0.15s',
-                              textAlign: 'center'
-                            }}
-                          >
-                            {num}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-
-                    {/* Price per plate banner */}
-                    <div style={{
-                      marginTop: '20px',
-                      background: '#eff6ff',
-                      borderRadius: '10px',
-                      padding: '10px',
-                      textAlign: 'center',
-                      color: '#2563eb',
-                      fontWeight: '700',
-                      fontSize: '15px'
-                    }}>
-                      Just {selectedMenuData?.price || '₹49/plate'}
-                    </div>
-                  </div>
-
-                  {/* ── Section 2: Date & Time Slot ── */}
-                  <div style={{
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '16px',
-                    padding: '14px 16px',
-                    marginBottom: '12px',
-                    display: 'flex',
-                    gap: '16px'
-                  }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '11px', color: '#9ca3af', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Date</div>
-                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827', marginTop: '4px' }}>
-                        {modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : '—'}
-                      </div>
-                    </div>
-                    <div style={{ width: '1px', background: '#e5e7eb', flexShrink: 0 }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '11px', color: '#9ca3af', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Time Slot</div>
-                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827', marginTop: '4px' }}>{modalSelectedSlot || '—'}</div>
-                    </div>
-                  </div>
-
-                  {/* ── Section 3: Offers & Coupons ── */}
-                  <div style={{
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '16px',
-                    padding: '16px',
-                    marginBottom: '12px'
-                  }}>
-                    <div style={{ fontSize: '16px', fontWeight: '700', color: '#111827', margin: '0 0 2px 0' }}>Offers & Coupons</div>
-                    <div style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '16px' }}>only 1 Coupon applicable at a time</div>
-
-                    {[
-                      {
-                        code: 'FLAT100',
-                        title: '₹100 OFF on this Order',
-                        desc: 'Flat ₹100 OFF on bookings above ₹8,999'
-                      },
-                      {
-                        code: 'TENPERCENT',
-                        title: '10% OFF on this Order',
-                        desc: 'Upto ₹199 OFF on above ₹7,599'
-                      }
-                    ].map((c, idx) => {
-                      const isApplied = appliedCouponCode === c.code;
-                      return (
-                        <div key={c.code}>
-                          {idx > 0 && <div style={{ borderTop: '1px dashed #e5e7eb', margin: '14px 0' }} />}
-                          <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: '12px'
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                              {/* Serrated discount badge SVG */}
-                              <svg width="32" height="32" viewBox="0 0 24 24" fill="#10b981" style={{ flexShrink: 0 }}>
-                                <path d="M12 2l2.4 1.8 2.9-.6.8 2.9 2.9.8-.6 2.9 1.8 2.4-1.8 2.4.6 2.9-2.9.8-.8 2.9-2.9-.6L12 22l-2.4-1.8-2.9.6-.8-2.9-2.9-.8.6-2.9-1.8-2.4 1.8-2.4-.6-2.9 2.9-.8.8-2.9 2.9.6L12 2z" />
-                                <circle cx="9.5" cy="9.5" r="1.5" fill="#ffffff" />
-                                <circle cx="14.5" cy="14.5" r="1.5" fill="#ffffff" />
-                                <line x1="14.5" y1="9.5" x2="9.5" y2="14.5" stroke="#ffffff" strokeWidth="2" />
-                              </svg>
-                              <div>
-                                <div style={{ fontSize: '14px', fontWeight: '700', color: '#10b981' }}>{c.title}</div>
-                                <div style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>{c.desc}</div>
-                              </div>
-                            </div>
-
-                            <button
-                              onClick={() => setAppliedCouponCode(isApplied ? null : c.code)}
-                              style={{
-                                border: isApplied ? '1px solid #fecaca' : '1px solid #a7f3d0',
-                                background: isApplied ? '#fee2e2' : '#ecfdf5',
-                                color: isApplied ? '#ef4444' : '#10b981',
-                                borderRadius: '16px',
-                                padding: isApplied ? '8px 16px' : '8px 20px',
-                                fontSize: '13px',
-                                fontWeight: '700',
-                                cursor: 'pointer',
-                                transition: 'all 0.15s',
-                                flexShrink: 0
-                              }}
-                            >
-                              {isApplied ? 'Remove' : 'Apply'}
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* ── Section 4: Order Summary Card ── */}
-                  {(() => {
-                    const couponDiscount = (() => {
-                      if (appliedCouponCode === 'FLAT100') return 100;
-                      if (appliedCouponCode === 'TENPERCENT') {
-                        const subtotal = previewGuestCount * actualPricePerPlate;
-                        return Math.min(199, Math.round(subtotal * 0.1));
-                      }
-                      return 0;
-                    })();
-
-                    const subtotal = previewGuestCount * actualPricePerPlate;
-                    const finalDiscountedPrice = Math.max(0, subtotal - couponDiscount);
-                    const originalTotal = previewGuestCount * originalPricePerPlate;
-                    const totalSavedAmount = originalTotal - finalDiscountedPrice;
-
-                    return (
-                      <div style={{
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '16px',
-                        overflow: 'hidden',
-                        marginBottom: '12px'
-                      }}>
-                        {/* Delivery Address */}
-                        <div style={{ padding: '14px 16px', borderBottom: '1px dashed #d1d5db' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
-                            <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500' }}>Delivery Address</span>
-                          </div>
-                          <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827', marginTop: '4px' }}>12/34-AB, South India SH, Diamond Hills...</div>
-                        </div>
-                        {/* Menu Details */}
-                        <div style={{ padding: '14px 16px', borderBottom: '1px dashed #d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="3" y1="9" x2="21" y2="9" /><line x1="9" y1="21" x2="9" y2="9" /></svg>
-                              <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500' }}>Menu Details</span>
-                            </div>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827', marginTop: '4px' }}>{selectedMenuForModal || 'Veg, Breakfast'}</div>
-                          </div>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-                        </div>
-                        {/* Contact Details */}
-                        <div style={{ padding: '14px 16px', borderBottom: '1px dashed #d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.91-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                              <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500' }}>Contact Details</span>
-                            </div>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827', marginTop: '4px' }}>Bhargav Ambati, +91 9876543210</div>
-                          </div>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-                        </div>
-                        {/* Bill Details */}
-                        <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
-                              <span style={{ fontSize: '12px', color: '#9ca3af', fontWeight: '500' }}>Bill Details</span>
-                              {totalSavedAmount > 0 && (
-                                <span style={{ fontSize: '11px', fontWeight: '700', color: '#ec4899', background: '#fce7f3', borderRadius: '6px', padding: '2px 8px', marginLeft: '6px' }}>
-                                  Saved ₹{totalSavedAmount.toLocaleString()}
-                                </span>
-                              )}
-                            </div>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827', marginTop: '4px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                              <span style={{ textDecoration: 'line-through', color: '#9ca3af', fontWeight: '400' }}>₹{originalTotal.toLocaleString()}</span>
-                              <span>₹{finalDiscountedPrice.toLocaleString()}</span>
-                            </div>
-                          </div>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* ── Section 5: Cancellation Policy ── */}
-                  <div style={{ marginBottom: '16px' }}>
-                    <div style={{ fontSize: '13px', fontWeight: '600', color: '#9ca3af', marginBottom: '4px' }}>Cancellation Policy</div>
-                    <div style={{ fontSize: '12px', color: '#9ca3af', lineHeight: '1.5' }}>Please verify your event details before booking. Once an order is placed, it cannot be refunded.</div>
-                  </div>
-
-                  {/* ── Pay Advance CTA ── */}
-                  <button
-                    onClick={() => {
-                      setConfirmedSelection(prev => ({
-                        ...prev,
-                        [selectedMenuForModal || '']: {
-                          date: modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : '',
-                          slot: modalSelectedSlot || ''
-                        }
-                      }));
-                      setShowSelectItemsModal(false);
-                    }}
-                    style={{
-                      background: '#111827',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '14px',
-                      padding: '16px',
-                      fontWeight: '700',
-                      fontSize: '15px',
-                      cursor: 'pointer',
-                      width: '100%',
-                      textAlign: 'center',
-                      letterSpacing: '0.02em',
-                      flexShrink: 0
-                    }}
-                  >
-                    Pay Advance
-                  </button>
-                </div>
-              );
-            })()}
+            ) : null}
           </div>
         </div>
       )}
@@ -4187,7 +3994,7 @@ function App() {
             right: 0,
             bottom: 0,
             background: 'rgba(0,0,0,0.4)',
-            zIndex: 99980,
+            zIndex: 1000000,
             backdropFilter: 'blur(2px)'
           }}
           onClick={() => setShowSelectItemsDrawer(false)}
@@ -4202,7 +4009,7 @@ function App() {
               width: '500px',
               maxWidth: '100%',
               background: '#ffffff',
-              zIndex: 99990,
+              zIndex: 1000001,
               boxShadow: '-10px 0 40px rgba(0,0,0,0.15)',
               display: 'flex',
               flexDirection: 'column',
@@ -4338,7 +4145,17 @@ function App() {
               </div>
 
               {/* Tabs Row */}
-              <div className="hide-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflowX: 'auto', paddingBottom: '8px', margin: '0 -24px', paddingLeft: '24px', paddingRight: '24px' }}>
+              <div className="hide-scrollbar" style={{
+                display: 'grid',
+                gridTemplateRows: 'auto auto',
+                gridAutoFlow: 'column',
+                gap: '8px',
+                overflowX: 'auto',
+                paddingBottom: '8px',
+                margin: '0 -24px',
+                paddingLeft: '24px',
+                paddingRight: '24px'
+              }}>
                 {(() => {
                   const catLimits: Record<string, number | null> = { 'Starters': 2, 'Main Course': 2, 'Desserts': 2, 'Curries': 2, 'Tiffins': 2, 'Rice & Breads': null, 'Beverages': null, 'Extra Items': null };
                   const getCatItems = (cat: string) =>
@@ -4348,48 +4165,41 @@ function App() {
                           cat === 'Tiffins' ? ['Dosa', 'Upma', 'Bonda', 'Uttapam'] :
                             ['Kesari Bath', 'Gulab Jamun', 'Payasam'];
 
-                  return [
-                    ['Starters', 'Rice & Breads', 'Desserts', 'Extra Items'],
-                    ['Main Course', 'Beverages', 'Curries', 'Tiffins']
-                  ].map((rowCats, rowIndex) => (
-                    <div key={rowIndex} style={{ display: 'flex', gap: '8px', width: 'max-content' }}>
-                      {rowCats.map(cat => {
-                        const limit = catLimits[cat];
-                        const isFull = limit === null || getCatItems(cat).filter(x => drawerSelectedItems.includes(x)).length >= limit;
-                        const isActive = activeItemCategory === cat;
+                  return ['Starters', 'Rice & Breads', 'Desserts', 'Extra Items', 'Main Course', 'Beverages', 'Curries', 'Tiffins'].map(cat => {
+                    const limit = catLimits[cat];
+                    const isFull = limit === null || getCatItems(cat).filter(x => drawerSelectedItems.includes(x)).length >= limit;
+                    const isActive = activeItemCategory === cat;
 
-                        const bg = isFull ? (isActive ? '#d1fae5' : '#f0fdf4') : (isActive ? '#222222' : '#f3f4f6');
-                        const color = isFull ? (isActive ? '#047857' : '#10b981') : (isActive ? '#ffffff' : '#4b5563');
-                        const border = isFull ? (isActive ? '1px solid #10b981' : '1px solid #bbf7d0') : (isActive ? '1px solid #222222' : '1px solid #e5e7eb');
+                    const bg = isFull ? (isActive ? '#d1fae5' : '#f0fdf4') : (isActive ? '#222222' : '#f3f4f6');
+                    const color = isFull ? (isActive ? '#047857' : '#10b981') : (isActive ? '#ffffff' : '#4b5563');
+                    const border = isFull ? (isActive ? '1px solid #10b981' : '1px solid #bbf7d0') : (isActive ? '1px solid #222222' : '1px solid #e5e7eb');
 
-                        return (
-                          <button
-                            key={cat}
-                            onClick={() => setActiveItemCategory(cat)}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              whiteSpace: 'nowrap',
-                              flexShrink: 0,
-                              background: bg,
-                              border: border,
-                              borderRadius: '24px',
-                              padding: '6px 12px',
-                              fontSize: '12px',
-                              fontWeight: '500',
-                              color: color,
-                              cursor: 'pointer',
-                              boxShadow: isActive ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
-                              transition: 'all 0.15s'
-                            }}
-                          >
-                            {cat}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ));
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setActiveItemCategory(cat)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                          background: bg,
+                          border: border,
+                          borderRadius: '24px',
+                          padding: '6px 12px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          color: color,
+                          cursor: 'pointer',
+                          boxShadow: isActive ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+                          transition: 'all 0.15s'
+                        }}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  });
                 })()}
               </div>
 
@@ -4580,7 +4390,7 @@ function App() {
                   <button
                     disabled={!isAllItemsSelected}
                     onClick={() => {
-                      setModalStep(2);
+                      setModalStep(modalSelectedDate ? 2 : 1);
                       setShowSelectItemsModal(true);
                       // Drawer stays open in the background
                     }}

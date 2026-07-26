@@ -522,7 +522,7 @@
   /* Reduce font weight for vendor titles on mobile */
   .card-title,
   .search-card .card-title {
-    font-weight: 600 !important;
+    font-weight: 550 !important;
   }
 
   .mobile-inline-calendar {

@@ -339,6 +339,16 @@ const renderReviewStars = (rating: number) => {
   return stars;
 };
 
+const formatWhenInput = (val: string) => {
+  if (!val) return '';
+  const parts = val.split('-');
+  if (parts.length === 3) {
+    const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  return val;
+};
+
 function App() {
   // Tabs: caters, mehendi, makeup, theatres, photography, decors, venues
   const [activeTab, setActiveTab] = useState<TabType>('caters')
@@ -404,6 +414,8 @@ function App() {
   // Year and Month navigation states (Locks initial to July 2026)
   const [currentYear, setCurrentYear] = useState(2026)
   const [currentMonth, setCurrentMonth] = useState(6) // 6 = July (0-indexed)
+  const [modalYear, setModalYear] = useState(2026)
+  const [modalMonth, setModalMonth] = useState(6)
 
   // Address Manager selected address state (initialized to null for Screen 2)
   const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(null)
@@ -422,10 +434,10 @@ function App() {
   })
 
   useEffect(() => {
-    if (selectedVendorDetail && !whenInput.trim()) {
+    if (selectedVendorDetail) {
       setShowInitialDateModal(true);
     }
-  }, [selectedVendorDetail, whenInput]);
+  }, [selectedVendorDetail]);
 
   useEffect(() => {
     if (showMobileAddressModal || showSelectItemsModal || showSelectItemsDrawer) {
@@ -465,6 +477,24 @@ function App() {
     }
   }
 
+  const handleModalPrevMonth = () => {
+    if (modalMonth === 0) {
+      setModalMonth(11)
+      setModalYear((prev) => prev - 1)
+    } else {
+      setModalMonth((prev) => prev - 1)
+    }
+  }
+
+  const handleModalNextMonth = () => {
+    if (modalMonth === 11) {
+      setModalMonth(0)
+      setModalYear((prev) => prev + 1)
+    } else {
+      setModalMonth((prev) => prev + 1)
+    }
+  }
+
   const handleCardClick = (caterTitle: string) => {
     window.location.href = `?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`;
   }
@@ -475,6 +505,8 @@ function App() {
   const isPrevDisabled = currentYear < actualYear || (currentYear === actualYear && currentMonth <= actualMonth);
   const maxYear = actualYear + 1;
   const isNextDisabled = currentYear > maxYear || (currentYear === maxYear && currentMonth >= actualMonth);
+  const isModalPrevDisabled = modalYear < actualYear || (modalYear === actualYear && modalMonth <= actualMonth);
+  const isModalNextDisabled = modalYear > maxYear || (modalYear === maxYear && modalMonth >= actualMonth);
   const monthName = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -681,25 +713,38 @@ function App() {
   });
 
   // Dynamic Month Calendar Days grid generation
-  const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
-  const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const getCalendarDays = (year: number, month: number) => {
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    const days: Array<{ day: number | null, isPast: boolean }> = [];
+    // Add empty leading cells
+    for (let i = 0; i < firstDayIndex; i++) {
+      days.push({ day: null, isPast: true });
+    }
+    // Add actual month days
+    for (let d = 1; d <= totalDaysInMonth; d++) {
+      const cellDate = new Date(year, month, d);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const minSelectableDate = new Date(today);
+      minSelectableDate.setDate(minSelectableDate.getDate() + 3);
+      const maxSelectableDate = new Date(today);
+      maxSelectableDate.setFullYear(today.getFullYear() + 1);
+      let isBooked = false;
+      if (year === 2026 && month === 7) {
+        isBooked = d === 10 || d === 11 || d === 12 || d === 24 || d === 25;
+      } else if (year === 2026 && month === 8) {
+        isBooked = d === 5 || d === 6 || d === 25 || d === 26 || d === 27 || d === 28;
+      }
+      const isPast = cellDate < minSelectableDate || cellDate > maxSelectableDate || isBooked;
+      days.push({ day: d, isPast });
+    }
+    return days;
+  };
 
-  const calendarDays: Array<{ day: number | null, isPast: boolean }> = [];
-  // Add empty leading cells
-  for (let i = 0; i < firstDayIndex; i++) {
-    calendarDays.push({ day: null, isPast: true });
-  }
-  // Add actual month days
-  for (let d = 1; d <= totalDaysInMonth; d++) {
-    const cellDate = new Date(currentYear, currentMonth, d);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const minSelectableDate = new Date(today);
-    const maxSelectableDate = new Date(today);
-    maxSelectableDate.setFullYear(today.getFullYear() + 1);
-    const isPast = cellDate < minSelectableDate || cellDate > maxSelectableDate;
-    calendarDays.push({ day: d, isPast });
-  }
+  const calendarDays = getCalendarDays(currentYear, currentMonth);
+  const modalCalendarDays = getCalendarDays(modalYear, modalMonth);
 
   // Combine and deduplicate listings for search view
   const allCaters = [...homeListings, ...checkoutListings, ...bestRatingListings]
@@ -843,7 +888,7 @@ function App() {
         >
           <div className="search-field-label">When</div>
           <div className={`search-field-value ${!whenInput ? 'placeholder' : ''}`}>
-            {whenInput || 'Add dates'}
+            {formatWhenInput(whenInput) || 'Add dates'}
           </div>
           {whenInput && (
             <button
@@ -1053,7 +1098,7 @@ function App() {
                 type="text"
                 className="search-field-input"
                 placeholder="Add dates"
-                value={whenInput}
+                value={formatWhenInput(whenInput)}
                 readOnly
               />
             </div>
@@ -1846,22 +1891,16 @@ function App() {
                             let defaultDate: string | null = null;
                             if (whenInput) {
                               const cleaned = whenInput.trim();
-                              if (cleaned.startsWith("July")) {
-                                const match = cleaned.match(/July\s+(\d+)/i);
-                                if (match) {
-                                  const dayNum = parseInt(match[1]);
-                                  if (dayNum >= 20 && dayNum <= 26) {
-                                    defaultDate = `July-${dayNum}`;
-                                  }
+                              if (cleaned.startsWith("2026-07-")) {
+                                const dayNum = parseInt(cleaned.split('-')[2]);
+                                if (dayNum >= 20 && dayNum <= 26) {
+                                  defaultDate = `July-${dayNum}`;
                                 }
-                              } else if (cleaned.startsWith("August")) {
-                                const match = cleaned.match(/August\s+(\d+)/i);
-                                if (match) {
-                                  const dayNum = parseInt(match[1]);
-                                  const isBlocked = dayNum === 10 || dayNum === 11 || dayNum === 12 || dayNum === 24 || dayNum === 25;
-                                  if (!isBlocked) {
-                                    defaultDate = `August-${dayNum}`;
-                                  }
+                              } else if (cleaned.startsWith("2026-08-")) {
+                                const dayNum = parseInt(cleaned.split('-')[2]);
+                                const isBlocked = dayNum === 10 || dayNum === 11 || dayNum === 12 || dayNum === 24 || dayNum === 25;
+                                if (!isBlocked) {
+                                  defaultDate = `August-${dayNum}`;
                                 }
                               }
                             }
@@ -2008,9 +2047,16 @@ function App() {
           {/* Mobile Inline Calendar (Responsive Only) */}
           <div className="mobile-inline-calendar">
             <div style={{ marginTop: '32px' }}>
-              <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Calendar View
-              </h3>
+              <div style={{ marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Calendar View
+                </h3>
+                {whenInput && (
+                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#0891b2', marginTop: '6px' }}>
+                    Selected date : {formatWhenInput(whenInput)}
+                  </div>
+                )}
+              </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
                 <button
                   type="button"
@@ -2064,6 +2110,9 @@ function App() {
                     </div>
                   );
                 })}
+              </div>
+              <div style={{ marginTop: '24px', fontSize: '11px', color: '#717171', textAlign: 'center', fontWeight: '500' }}>
+                Max upto 1 year calender released
               </div>
             </div>
           </div>
@@ -2822,7 +2871,7 @@ function App() {
           <div
             className="modal-content-animate"
             style={{
-              width: '680px',
+              width: '400px',
               maxWidth: '100%',
               background: '#ffffff',
               borderRadius: '24px',
@@ -2863,111 +2912,74 @@ function App() {
                 Select Booking Date
               </h3>
               <p style={{ fontSize: '13px', color: '#717171', margin: 0 }}>
-                Choose the perfect date
+                {whenInput ? `Selected: ${formatWhenInput(whenInput)}` : 'Choose the perfect date'}
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '32px', marginTop: '10px' }}>
-              {/* August 2026 */}
-              <div style={{ flex: 1 }}>
-                <div style={{ textAlign: 'center', fontWeight: '700', fontSize: '15px', color: '#222222', marginBottom: '12px' }}>
-                  August 2026
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <button
+                  type="button"
+                  className="calendar-nav-btn"
+                  onClick={handleModalPrevMonth}
+                  disabled={isModalPrevDisabled}
+                  style={{ background: 'none', border: 'none', cursor: isModalPrevDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isModalPrevDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div style={{ fontWeight: '700', fontSize: '15px', color: '#222222' }}>
+                  {monthNames[modalMonth]} {modalYear}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: '600', fontSize: '11px', color: '#717171', marginBottom: '8px' }}>
-                  <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
-                  {/* Aug starts Saturday, 6 empty cells */}
-                  {Array(6).fill(null).map((_, i) => <div key={`empty-aug-${i}`} />)}
-                  {Array(31).fill(0).map((_, dIdx) => {
-                    const dayNum = dIdx + 1;
-                    const isBlocked = dayNum === 10 || dayNum === 11 || dayNum === 12 || dayNum === 24 || dayNum === 25;
-                    const dateStr = `August ${dayNum}, 2026`;
-                    return (
-                      <div
-                        key={`aug-${dayNum}`}
-                        onClick={() => {
-                          if (!isBlocked) {
-                            setWhenInput(dateStr);
-                            const url = new URL(window.location.href);
-                            url.searchParams.set('when', dateStr);
-                            window.history.replaceState({}, '', url.toString());
-                            setShowInitialDateModal(false);
-                          }
-                        }}
-                        style={{
-                          height: '34px',
-                          width: '34px',
-                          margin: '0 auto',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: '50%',
-                          cursor: isBlocked ? 'default' : 'pointer',
-                          color: isBlocked ? '#d1d5db' : '#222222',
-                          fontWeight: isBlocked ? '400' : '600',
-                          fontSize: '13px',
-                          textDecoration: isBlocked ? 'line-through' : 'none',
-                          transition: 'all 0.15s'
-                        }}
-                        className={!isBlocked ? 'detail-calendar-day-hover' : ''}
-                      >
-                        {dayNum}
-                      </div>
-                    );
-                  })}
-                </div>
+                <button
+                  type="button"
+                  className="calendar-nav-btn"
+                  onClick={handleModalNextMonth}
+                  disabled={isModalNextDisabled}
+                  style={{ background: 'none', border: 'none', cursor: isModalNextDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isModalNextDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
               </div>
 
-              {/* September 2026 */}
-              <div className="mobile-hide-month" style={{ flex: 1 }}>
-                <div style={{ textAlign: 'center', fontWeight: '700', fontSize: '15px', color: '#222222', marginBottom: '12px' }}>
-                  September 2026
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: '600', fontSize: '11px', color: '#717171', marginBottom: '8px' }}>
-                  <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
-                  {/* Sep starts Tuesday, 2 empty cells */}
-                  {Array(2).fill(null).map((_, i) => <div key={`empty-sep-${i}`} />)}
-                  {Array(30).fill(0).map((_, dIdx) => {
-                    const dayNum = dIdx + 1;
-                    const isBlocked = dayNum === 5 || dayNum === 6 || dayNum === 25 || dayNum === 26 || dayNum === 27 || dayNum === 28;
-                    const dateStr = `September ${dayNum}, 2026`;
-                    return (
-                      <div
-                        key={`sep-${dayNum}`}
-                        onClick={() => {
-                          if (!isBlocked) {
-                            setWhenInput(dateStr);
-                            const url = new URL(window.location.href);
-                            url.searchParams.set('when', dateStr);
-                            window.history.replaceState({}, '', url.toString());
-                            setShowInitialDateModal(false);
-                          }
-                        }}
-                        style={{
-                          height: '34px',
-                          width: '34px',
-                          margin: '0 auto',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: '50%',
-                          cursor: isBlocked ? 'default' : 'pointer',
-                          color: isBlocked ? '#d1d5db' : '#222222',
-                          fontWeight: isBlocked ? '400' : '600',
-                          fontSize: '13px',
-                          textDecoration: isBlocked ? 'line-through' : 'none',
-                          transition: 'all 0.15s'
-                        }}
-                        className={!isBlocked ? 'detail-calendar-day-hover' : ''}
-                      >
-                        {dayNum}
-                      </div>
-                    );
-                  })}
-                </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontSize: '12px', fontWeight: '700', color: '#717171', marginBottom: '12px' }}>
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                  <div key={`modal-cal-header-${idx}`}>
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', rowGap: '8px', textAlign: 'center' }}>
+                {modalCalendarDays.map((cell, idx) => {
+                  const isSelected = cell.day !== null &&
+                    whenInput === `${modalYear}-${String(modalMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+                  
+                  return (
+                    <div
+                      key={`modal-cal-${idx}`}
+                      className={`calendar-day-cell ${cell.day === null ? 'empty' : ''} ${cell.isPast ? 'past' : ''} ${isSelected ? 'selected' : ''}`}
+                      onClick={() => {
+                        if (cell.day !== null && !cell.isPast) {
+                          const dateString = `${modalYear}-${String(modalMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+                          setWhenInput(dateString);
+                          
+                          const url = new URL(window.location.href);
+                          url.searchParams.set('when', dateString);
+                          window.history.replaceState({}, '', url.toString());
+                          
+                          // Optional: Auto-sync inline calendar to chosen date's month
+                          setCurrentMonth(modalMonth);
+                          setCurrentYear(modalYear);
+                          
+                          setShowInitialDateModal(false);
+                        }
+                      }}
+                      style={cell.isPast ? { color: '#d1d5db', textDecoration: 'line-through', fontWeight: '400', cursor: 'default' } : (cell.day !== null ? { cursor: 'pointer', color: '#222222', fontWeight: '600' } : {})}
+                    >
+                      {cell.day}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

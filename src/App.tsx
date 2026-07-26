@@ -414,6 +414,7 @@ function App() {
   const [showLoginPopup, setShowLoginPopup] = useState(false)
   const [showFullScreenLogin, setShowFullScreenLogin] = useState(false)
   const [loginStep, setLoginStep] = useState(0)
+  const [loginOrigin, setLoginOrigin] = useState<'address' | 'sidebar'>('address')
   const [loginMobile, setLoginMobile] = useState('')
   const [loginOTP, setLoginOTP] = useState('')
   const [otpTimer, setOtpTimer] = useState(59)
@@ -2878,19 +2879,76 @@ function App() {
             </div>
           </div>
 
-          <div className="sidebar-divider"></div>
+          {isLoggedIn ? (
+            <>
+              <div className="sidebar-divider"></div>
+              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                <div className="sidebar-menu-text-col">
+                  <span className="sidebar-menu-label">Profile</span>
+                </div>
+                <div className="sidebar-menu-arrow">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
 
-          {/* Log in or sign up */}
-          <div className="sidebar-menu-item" onClick={() => { alert('Login or Signup clicked'); setShowSidebar(false); }}>
-            <div className="sidebar-menu-text-col">
-              <span className="sidebar-menu-label">Log in or sign up</span>
-            </div>
-            <div className="sidebar-menu-arrow">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </div>
-          </div>
+              <div className="sidebar-divider"></div>
+              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                <div className="sidebar-menu-text-col">
+                  <span className="sidebar-menu-label">Bookings</span>
+                </div>
+                <div className="sidebar-menu-arrow">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <div className="sidebar-divider"></div>
+              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                <div className="sidebar-menu-text-col">
+                  <span className="sidebar-menu-label">Add location</span>
+                </div>
+                <div className="sidebar-menu-arrow">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              <div className="sidebar-divider"></div>
+              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                <div className="sidebar-menu-text-col">
+                  <span className="sidebar-menu-label">More</span>
+                </div>
+                <div className="sidebar-menu-arrow">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="sidebar-divider"></div>
+              <div className="sidebar-menu-item" onClick={() => { 
+                setShowSidebar(false);
+                setLoginOrigin('sidebar');
+                setLoginStep(1);
+                setShowFullScreenLogin(true);
+              }}>
+                <div className="sidebar-menu-text-col">
+                  <span className="sidebar-menu-label">Log in or sign up</span>
+                </div>
+                <div className="sidebar-menu-arrow">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -3830,6 +3888,7 @@ function App() {
               <button
                 onClick={() => {
                   setShowLoginPopup(false);
+                  setLoginOrigin('address');
                   setLoginStep(1);
                   setShowFullScreenLogin(true);
                 }}
@@ -3999,7 +4058,11 @@ function App() {
                       setIsLoggedIn(true);
                       setShowFullScreenLogin(false);
                       setLoginStep(0);
-                      setShowMobileAddressModal(true);
+                      if (loginOrigin === 'sidebar') {
+                        setShowSidebar(true);
+                      } else {
+                        setShowMobileAddressModal(true);
+                      }
                     }
                   }}
                   style={{

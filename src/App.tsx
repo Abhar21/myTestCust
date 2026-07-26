@@ -3162,7 +3162,7 @@ function App() {
       {/* Select Items Modal Popup */}
       {showSelectItemsModal && (
         <div
-          className="modal-backdrop-animate"
+          className="modal-backdrop-animate bottom-sheet-on-mobile"
           style={{
             position: 'fixed',
             top: 0,
@@ -3439,85 +3439,101 @@ function App() {
               // Step 2: Select Time Slot (Scroll and select)
               <div style={{ display: 'flex', flexDirection: 'column', height: '420px' }}>
                 {/* Fixed Title */}
-                <div style={{ textAlign: 'center', paddingBottom: '12px', flexShrink: 0 }}>
+                <div style={{ textAlign: 'left', paddingBottom: '12px', flexShrink: 0 }}>
                   <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#222222', margin: 0 }}>
-                    Select Time Slot
+                    Select arrival slot
                   </h3>
                   <p style={{ fontSize: '12px', color: '#717171', marginTop: '4px' }}>
-                    For {modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : ''}
+                    Select slot for partner arrival at your location
                   </p>
                 </div>
 
                 {/* Scrollable Slots — only this area scrolls */}
                 <div style={{
                   flex: 1,
-                  overflowY: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  paddingRight: '4px',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}>
-                  {[
-                    "8:00 AM to 8:15 AM",
-                    "8:15 AM to 8:30 AM",
-                    "8:30 AM to 8:45 AM",
-                    "8:45 AM to 9:00 AM",
-                    "9:00 AM to 9:15 AM",
-                    "9:15 AM to 9:30 AM",
-                    "9:30 AM to 9:45 AM",
-                    "9:45 AM to 10:00 AM"
-                  ].map((slot, sIdx) => {
-                    const isSelected = modalSelectedSlot === slot;
+                  {(() => {
+                    const slots = [
+                      "8:00 AM to 8:15 AM",
+                      "8:15 AM to 8:30 AM",
+                      "8:30 AM to 8:45 AM",
+                      "8:45 AM to 9:00 AM",
+                      "9:00 AM to 9:15 AM",
+                      "9:15 AM to 9:30 AM",
+                      "9:30 AM to 9:45 AM",
+                      "9:45 AM to 10:00 AM"
+                    ];
                     return (
-                      <div
-                        key={sIdx}
-                        onClick={() => setModalSelectedSlot(slot)}
-                        style={{
-                          padding: '13px 16px',
-                          border: 'none',
-                          background: isSelected ? '#f3f4f6' : '#fafafa',
-                          borderRadius: '12px',
-                          cursor: 'pointer',
-                          fontWeight: isSelected ? '600' : '400',
-                          color: isSelected ? '#222222' : '#555555',
-                          fontSize: '14px',
-                          transition: 'all 0.15s',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          flexShrink: 0
-                        }}
-                      >
-                        <span>{slot}</span>
-                        {isSelected && (
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ color: '#222222' }}>
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
-                      </div>
+                      <>
+                        <div style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: 0,
+                          right: 0,
+                          height: '54px',
+                          marginTop: '-27px',
+                          background: '#f3f4f6',
+                          borderRadius: '16px',
+                          pointerEvents: 'none',
+                          zIndex: 0
+                        }} />
+                        <div
+                          className="hide-scrollbar"
+                          onScroll={(e) => {
+                            const scrollTop = e.currentTarget.scrollTop;
+                            const index = Math.round(scrollTop / 54);
+                            const safeIndex = Math.max(0, Math.min(slots.length - 1, index));
+                            if (slots[safeIndex] && modalSelectedSlot !== slots[safeIndex]) {
+                              setModalSelectedSlot(slots[safeIndex]);
+                            }
+                          }}
+                          style={{
+                            position: 'absolute',
+                            top: 0, left: 0, right: 0, bottom: 0,
+                            overflowY: 'auto',
+                            scrollSnapType: 'y mandatory',
+                            zIndex: 1
+                          }}
+                        >
+                          <div style={{ height: 'calc(50% - 27px)' }} />
+                          {slots.map((slot, sIdx) => {
+                            const isSelected = modalSelectedSlot === slot;
+                            return (
+                              <div
+                                key={sIdx}
+                                onClick={(e) => {
+                                  e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                  setModalSelectedSlot(slot);
+                                }}
+                                style={{
+                                  height: '54px',
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  scrollSnapAlign: 'center',
+                                  cursor: 'pointer',
+                                  fontWeight: '700',
+                                  color: isSelected ? '#222222' : '#71717a',
+                                  fontSize: '15px',
+                                  transition: 'color 0.15s',
+                                  flexShrink: 0
+                                }}
+                              >
+                                {slot}
+                              </div>
+                            );
+                          })}
+                          <div style={{ height: 'calc(50% - 27px)' }} />
+                        </div>
+                      </>
                     );
-                  })}
+                  })()}
                 </div>
 
-                {/* Fixed Footer — Back + Next */}
+                {/* Fixed Footer — Next */}
                 <div style={{ display: 'flex', gap: '12px', paddingTop: '12px', flexShrink: 0 }}>
-                  <button
-                    onClick={() => setModalStep(1)}
-                    style={{
-                      background: '#ffffff',
-                      border: '1.5px solid #e2e8f0',
-                      borderRadius: '12px',
-                      padding: '14px',
-                      fontWeight: '600',
-                      fontSize: '14px',
-                      cursor: 'pointer',
-                      flex: 1,
-                      color: '#222222',
-                      textAlign: 'center'
-                    }}
-                  >
-                    Back
-                  </button>
                   <button
                     disabled={!modalSelectedSlot}
                     onClick={() => setModalStep(3)}
@@ -3525,17 +3541,17 @@ function App() {
                       background: modalSelectedSlot ? '#222222' : '#e5e7eb',
                       color: modalSelectedSlot ? '#ffffff' : '#9ca3af',
                       border: 'none',
-                      borderRadius: '12px',
-                      padding: '14px',
+                      borderRadius: '16px',
+                      padding: '16px',
                       fontWeight: '600',
-                      fontSize: '14px',
+                      fontSize: '16px',
                       cursor: modalSelectedSlot ? 'pointer' : 'default',
                       flex: 1,
                       textAlign: 'center',
                       transition: 'background-color 0.2s'
                     }}
                   >
-                    Next
+                    Confirm
                   </button>
                 </div>
               </div>
@@ -4566,7 +4582,7 @@ function App() {
                     onClick={() => {
                       setModalStep(2);
                       setShowSelectItemsModal(true);
-                      setShowSelectItemsDrawer(false);
+                      // Drawer stays open in the background
                     }}
                     style={{
                       background: isAllItemsSelected ? '#222222' : '#e5e7eb',

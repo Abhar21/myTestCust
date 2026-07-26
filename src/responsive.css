@@ -537,3 +537,27 @@
     display: block !important;
   }
 }
+
+/* Bottom sheet behavior for slot modal on mobile */
+@keyframes slideUpBottomSheet {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .bottom-sheet-on-mobile {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+  .bottom-sheet-on-mobile .modal-content-animate {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 24px 24px 0 0 !important;
+    margin: 0 !important;
+    animation: slideUpBottomSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+}

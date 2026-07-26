@@ -403,10 +403,12 @@ function App() {
   const [drawerSelectedItems, setDrawerSelectedItems] = useState<string[]>([]);
   const [previewGuestCount, setPreviewGuestCount] = useState<number>(50);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
-
+  const [showCouponTerms, setShowCouponTerms] = useState<string | null>(null);
+  const [showAllOffers, setShowAllOffers] = useState(false);
+  const [manualCouponCode, setManualCouponCode] = useState('');
   // Lock body scroll when popup or drawer is open
   useEffect(() => {
-    if (showSelectItemsModal || showSelectItemsDrawer) {
+    if (showSelectItemsModal || showSelectItemsDrawer || showCouponTerms !== null || showAllOffers) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -414,7 +416,7 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showSelectItemsModal, showSelectItemsDrawer]);
+  }, [showSelectItemsModal, showSelectItemsDrawer, showCouponTerms, showAllOffers]);
 
 
 
@@ -1661,10 +1663,15 @@ function App() {
             })();
 
             const couponDiscount = (() => {
-              if (appliedCouponCode === 'FLAT100') return 100;
-              if (appliedCouponCode === 'TENPERCENT') {
+              if (appliedCouponCode === 'FLAT500') {
                 const subtotal = previewGuestCount * actualPricePerPlate;
-                return Math.min(199, Math.round(subtotal * 0.1));
+                return Math.round(subtotal * 0.1);
+              }
+              if (appliedCouponCode === 'SAVE10') {
+                return 100;
+              }
+              if (appliedCouponCode === 'FLAT200') {
+                return 200;
               }
               return 0;
             })();
@@ -1676,14 +1683,14 @@ function App() {
             return (
               <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '100px' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 24px 32px 24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 16px 32px 16px' }}>
                   <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
                   <button onClick={() => setShowCheckoutPage(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
                     <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: '3', overflow: 'visible' }}><path d="m6 6 20 20M26 6 6 26"></path></svg>
                   </button>
                 </div>
 
-                <div style={{ padding: '0 24px' }}>
+                <div style={{ padding: '0 16px' }}>
 
                   {/* Vendor Card */}
                   <div style={{ border: '1px solid #dddddd', borderRadius: '24px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', padding: '16px', display: 'flex', gap: '16px', marginBottom: '24px' }}>
@@ -1808,6 +1815,198 @@ function App() {
 
                   </div>
 
+                  {/* Coupons Section */}
+                  <div style={{ marginBottom: '32px' }}>
+                    <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginTop: '32px', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      ACTIVE OFFERS
+                    </h3>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {/* Coupon 1: SAVE10 */}
+                      <div style={{
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '10px 14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                            <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                          </svg>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
+                            ₹100 off on this booking
+                          </div>
+                          <div
+                            onClick={() => setShowCouponTerms('SAVE10')}
+                            style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}
+                          >
+                            Terms apply
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setAppliedCouponCode(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            letterSpacing: '1px',
+                            cursor: 'pointer',
+                            background: appliedCouponCode === 'SAVE10' ? '#fee2e2' : '#000000',
+                            color: appliedCouponCode === 'SAVE10' ? '#ef4444' : '#ffffff',
+                            border: appliedCouponCode === 'SAVE10' ? '1px dashed #ef4444' : '1px solid #000000',
+                            userSelect: 'none',
+                            minWidth: '70px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          {appliedCouponCode === 'SAVE10' ? 'Remove' : 'Apply'}
+                        </button>
+                      </div>
+
+                      {/* Coupon 2: FLAT500 */}
+                      <div style={{
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '10px 14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                            <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                          </svg>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
+                            10% off on this booking
+                          </div>
+                          <div
+                            onClick={() => setShowCouponTerms('FLAT500')}
+                            style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}
+                          >
+                            Terms apply
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                            letterSpacing: '1px',
+                            cursor: 'pointer',
+                            background: appliedCouponCode === 'FLAT500' ? '#fee2e2' : '#000000',
+                            color: appliedCouponCode === 'FLAT500' ? '#ef4444' : '#ffffff',
+                            border: appliedCouponCode === 'FLAT500' ? '1px dashed #ef4444' : '1px solid #000000',
+                            userSelect: 'none',
+                            minWidth: '70px',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          {appliedCouponCode === 'FLAT500' ? 'Remove' : 'Apply'}
+                        </button>
+                      </div>
+
+                      {/* Coupon 3: Disabled */}
+                      <div style={{
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '10px 14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                            <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                          </svg>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
+                            ₹200 off on this booking
+                          </div>
+                          {subtotal < 5000 && (
+                            <div style={{ fontSize: '11px', fontWeight: '500', color: '#ef4444', marginTop: '4px', marginBottom: '2px' }}>
+                              Add more ₹{Math.max(0, 5000 - subtotal)} to apply
+                            </div>
+                          )}
+                          <div
+                            onClick={() => setShowCouponTerms('FLAT200')}
+                            style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}
+                          >
+                            Terms apply
+                          </div>
+                        </div>
+                        <button
+                          disabled={subtotal < 5000}
+                          onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')}
+                          style={
+                            subtotal < 5000 ? {
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              letterSpacing: '1px',
+                              cursor: 'not-allowed',
+                              background: '#f3f4f6',
+                              color: '#9ca3af',
+                              border: '1px solid #d1d5db',
+                              userSelect: 'none',
+                              minWidth: '70px',
+                              textTransform: 'uppercase'
+                            } : {
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              fontSize: '11px',
+                              fontWeight: '700',
+                              letterSpacing: '1px',
+                              cursor: 'pointer',
+                              background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000',
+                              color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff',
+                              border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000',
+                              userSelect: 'none',
+                              minWidth: '70px',
+                              textTransform: 'uppercase'
+                            }
+                          }
+                        >
+                          {subtotal >= 5000 && appliedCouponCode === 'FLAT200' ? 'Remove' : 'Apply'}
+                        </button>
+                      </div>
+
+                      <div
+                        onClick={() => setShowAllOffers(true)}
+                        style={{
+                          textAlign: 'center',
+                          marginTop: '8px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: '#222222',
+                          textDecoration: 'underline',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        View more offers
+                      </div>
+                    </div>
+                  </div>
+
                   <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
 
                   {/* Price Details */}
@@ -1837,16 +2036,6 @@ function App() {
                     <span>₹{finalDiscountedPrice.toLocaleString()}</span>
                   </div>
 
-                  {/* Coupons Section */}
-                  <div style={{ border: '1px solid #dddddd', borderRadius: '12px', padding: '16px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: '#222222' }}>Coupons</div>
-                      <div style={{ fontSize: '14px', color: '#717171', marginTop: '4px' }}>{appliedCouponCode ? `Applied: ${appliedCouponCode}` : 'No coupons applied'}</div>
-                    </div>
-                    <button style={{ background: 'none', border: 'none', fontSize: '16px', fontWeight: '600', textDecoration: 'underline', cursor: 'pointer', color: '#222222' }} onClick={() => setAppliedCouponCode(appliedCouponCode ? null : 'FLAT100')}>
-                      {appliedCouponCode ? 'Remove' : 'Add coupon'}
-                    </button>
-                  </div>
 
                   <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
 
@@ -1894,1420 +2083,1420 @@ function App() {
       {!showCheckoutPage && (
         <>
           {/* Background Catcher Overlay to close dropdown when clicking outside */}
-      {(showDestinations || showCalendar || isHeaderSearchExpanded || showSortDropdown || showDietDropdown || showMealsDropdown) && (
-        <div
-          className="dropdown-overlay"
-          onClick={() => {
-            setShowDestinations(false)
-            setShowCalendar(false)
-            setActiveSearchField(null)
-            setIsHeaderSearchExpanded(false)
-            setShowSortDropdown(false)
-            setShowDietDropdown(false)
-            setShowMealsDropdown(false)
-          }}
-        />
-      )}
+          {(showDestinations || showCalendar || isHeaderSearchExpanded || showSortDropdown || showDietDropdown || showMealsDropdown) && (
+            <div
+              className="dropdown-overlay"
+              onClick={() => {
+                setShowDestinations(false)
+                setShowCalendar(false)
+                setActiveSearchField(null)
+                setIsHeaderSearchExpanded(false)
+                setShowSortDropdown(false)
+                setShowDietDropdown(false)
+                setShowMealsDropdown(false)
+              }}
+            />
+          )}
 
-      {/* Premium Airbnb-Style Header */}
-      <header className={`airbnb-header-container ${isSearchView ? 'airbnb-header-container--search' : ''} ${selectedVendorDetail ? 'airbnb-header-container--detail' : ''}`}>
-        {/* Row 1: Logo, Navigation Tabs, User Menu */}
-        <div className="airbnb-header-row">
-          {/* Left Section (flexible col) */}
-          <div className="header-left-col">
-            <div className="logo-section" onClick={() => window.location.href = window.location.origin + window.location.pathname}>
-              <span className="logo-text">myMooment</span>
-            </div>
-          </div>
-
-          {/* Center Section (flexible col, centered) */}
-          <div className="header-center-col">
-            {isSearchView ? (
-              <>
-                {/* Mobile Location Badge (Image 2 style) */}
-                <div
-                  className="mobile-location-badge"
-                  onClick={() => setShowMobileAddressModal(true)}
-                >
-                  {selectedAddress ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                    </svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                    </svg>
-                  )}
-                  <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
-                  <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
-                  <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
-                <div className="header-filters-wrapper">
-                  {renderFilters()}
-                </div>
-              </>
-            ) : selectedVendorDetail ? null : (
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div
-                  className="mobile-location-badge"
-                  onClick={() => setShowMobileAddressModal(true)}
-                >
-                  {selectedAddress ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                    </svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                    </svg>
-                  )}
-                  <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
-                  <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
-                  <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
-
-                <div className="center-tabs">
-
-                  <div
-                    className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('caters')}
-                  >
-                    <span className="tab-icon">🍽</span>
-                    <span>Caters</span>
-                  </div>
-
-                  <div
-                    className={`tab-item ${activeTab === 'mehendi' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('mehendi')}
-                  >
-                    <span className="tab-badge">Soon</span>
-                    <span className="tab-icon">🎨</span>
-                    <span>Mehendi</span>
-                  </div>
-
-                  <div
-                    className={`tab-item ${activeTab === 'makeup' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('makeup')}
-                  >
-                    <span className="tab-badge">Soon</span>
-                    <span className="tab-icon">💄</span>
-                    <span>Makeup</span>
-                  </div>
-
-                  <div
-                    className={`tab-item ${activeTab === 'theatres' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('theatres')}
-                  >
-                    <span className="tab-badge">Soon</span>
-                    <span className="tab-icon">🎬</span>
-                    <span>Private Theatres</span>
-                  </div>
-
-                  <div
-                    className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('photography')}
-                  >
-                    <span className="tab-badge">Soon</span>
-                    <span className="tab-icon">📸</span>
-                    <span>Photography</span>
-                  </div>
-
-                  <div
-                    className={`tab-item ${activeTab === 'decors' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('decors')}
-                  >
-                    <span className="tab-badge">Soon</span>
-                    <span className="tab-icon">🎭</span>
-                    <span>Decors</span>
-                  </div>
-
-                  <div
-                    className={`tab-item ${activeTab === 'venues' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('venues')}
-                  >
-                    <span className="tab-badge">Soon</span>
-                    <span className="tab-icon">🏛</span>
-                    <span>Venues</span>
-                  </div>
+          {/* Premium Airbnb-Style Header */}
+          <header className={`airbnb-header-container ${isSearchView ? 'airbnb-header-container--search' : ''} ${selectedVendorDetail ? 'airbnb-header-container--detail' : ''}`}>
+            {/* Row 1: Logo, Navigation Tabs, User Menu */}
+            <div className="airbnb-header-row">
+              {/* Left Section (flexible col) */}
+              <div className="header-left-col">
+                <div className="logo-section" onClick={() => window.location.href = window.location.origin + window.location.pathname}>
+                  <span className="logo-text">myMooment</span>
                 </div>
               </div>
-            )}
-          </div>
 
-          {/* Right Section (flexible col) */}
-          <div className="header-right-col">
-            <div className="right-actions">
-              <button
-                type="button"
-                aria-label="Menu"
-                onClick={() => setShowSidebar(true)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#FF35E0'
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Row 2: Large Floating Search Bar or Filters */}
-        {selectedVendorDetail ? null : isSearchView ? (
-          <div className="filters-bar-row mobile-filters-row">
-            {renderFilters()}
-          </div>
-        ) : null}
-      </header>
-
-      {/* Page Body: Listing Segments or Search Results Grid */}
-      {selectedVendorDetail ? (
-        <main className="detail-view-container">
-          <div className="detail-split-layout">
-            {/* Left side: Image and details */}
-            <div className="detail-left-pane">
-              <img src={selectedVendorDetail.image} alt={selectedVendorDetail.title} className="detail-large-image" />
-
-              <div className="detail-under-image-info">
-                <div className="detail-profile-header">
-                  <h1 className="detail-left-title">{selectedVendorDetail.title}</h1>
-                  <div className="detail-left-rating-row">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#ff385c', marginRight: '4px' }}>
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                    <span className="detail-left-rating-val">{selectedVendorDetail.rating}</span>
-                    <span className="detail-left-rating-count">· 48 reviews</span>
-                  </div>
-                </div>
-
-                <div className="detail-left-divider"></div>
-
-                <div className="detail-left-meta-section">
-                  <div className="detail-left-meta-item">
-                    <div className="detail-left-meta-label">CATEGORIES</div>
-                    <div className="detail-left-meta-value">{selectedVendorDetail.categories.join(' · ')}</div>
-                  </div>
-
-                  <div className="detail-left-meta-item">
-                    <div className="detail-left-meta-label">TYPE</div>
-                    <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span className="detail-type-icon">
-                        {renderFoodTypeIcons(selectedVendorDetail.title)}
-                      </span>
-                      <span className="detail-type-text">
-                        {getFoodType(selectedVendorDetail.title)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="detail-left-meta-item">
-                    <div className="detail-left-meta-label">TRAVEL INFO</div>
-                    <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      {animateTravelInfo ? (
-                        <span style={{ display: 'inline-block', perspective: '400px', transformStyle: 'preserve-3d' }}>
-                          {[...getCaterTravelInfo(selectedVendorDetail.title)].map((char, index) => (
-                            <span
-                              key={index}
-                              style={{
-                                display: 'inline-block',
-                                animationDelay: `${index * 0.04}s`,
-                                whiteSpace: char === ' ' ? 'pre' : 'normal'
-                              }}
-                              className="wave-char-pink"
-                            >
-                              {char}
-                            </span>
-                          ))}
-                        </span>
-                      ) : (
-                        getCaterTravelInfo(selectedVendorDetail.title)
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right side: Recommended Vendors */}
-            <div className="detail-right-pane">
-              <div className="detail-vendor-categories-box" style={{ marginBottom: '32px' }}>
-                <div className="hide-scrollbar category-filters-scroll-container" style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-                  <div
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      background: activeMenuCategory === 'All' ? '#222222' : '#ffffff',
-                      border: activeMenuCategory === 'All' ? '1px solid #222222' : '1px solid #dddddd',
-                      borderRadius: '24px',
-                      padding: '6px 16px',
-                      fontSize: '12px',
-                      fontWeight: activeMenuCategory === 'All' ? '600' : '500',
-                      color: activeMenuCategory === 'All' ? '#ffffff' : '#222222',
-                      cursor: 'pointer',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0
-                    }}
-                    onClick={() => setActiveMenuCategory('All')}
-                  >
-                    All
-                  </div>
-                  {selectedVendorDetail.categories.map(category => (
+              {/* Center Section (flexible col, centered) */}
+              <div className="header-center-col">
+                {isSearchView ? (
+                  <>
+                    {/* Mobile Location Badge (Image 2 style) */}
                     <div
-                      key={category}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        background: activeMenuCategory === category ? '#222222' : '#ffffff',
-                        border: activeMenuCategory === category ? '1px solid #222222' : '1px solid #dddddd',
-                        borderRadius: '24px',
-                        padding: '6px 16px',
-                        fontSize: '12px',
-                        fontWeight: activeMenuCategory === category ? '600' : '500',
-                        color: activeMenuCategory === category ? '#ffffff' : '#222222',
-                        cursor: 'pointer',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0
-                      }}
-                      onClick={() => setActiveMenuCategory(category)}
+                      className="mobile-location-badge"
+                      onClick={() => setShowMobileAddressModal(true)}
                     >
-                      {category}
+                      {selectedAddress ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                      )}
+                      <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
+                      <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
+                      <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <div className="header-filters-wrapper">
+                      {renderFilters()}
+                    </div>
+                  </>
+                ) : selectedVendorDetail ? null : (
+                  <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div
+                      className="mobile-location-badge"
+                      onClick={() => setShowMobileAddressModal(true)}
+                    >
+                      {selectedAddress ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                      )}
+                      <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
+                      <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
+                      <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
 
-              {/* Recommended Caters Section */}
-              <div className="detail-recommendations-section" style={{ marginTop: '0' }}>
-                <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Menu's
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                  {[
-                    {
-                      title: "Breakfast Menu 1",
-                      category: "Breakfast",
-                      type: "Veg & Non-Veg",
-                      guestCount: "Min 50 · Max 500",
-                      originalPrice: "₹79/plate",
-                      price: "₹49/plate",
-                      image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
-                    },
-                    {
-                      title: "Lunch Menu 1",
-                      category: "Lunch",
-                      type: "Non-Veg",
-                      guestCount: "Min 100 · Max 1000",
-                      originalPrice: "₹199/plate",
-                      price: "₹149/plate",
-                      image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80"
-                    },
-                    {
-                      title: "Snacks Menu 1",
-                      category: "Snacks",
-                      type: "Veg",
-                      guestCount: "Min 30 · Max 300 count",
-                      originalPrice: "₹99/plate",
-                      price: "₹69/plate",
-                      image: "https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&w=800&q=80"
-                    },
-                    {
-                      title: "Dinner Menu 1",
-                      category: "Dinner",
-                      type: "Veg & Non-Veg",
-                      guestCount: "Min 100 · Max 1500 count",
-                      originalPrice: "₹249/plate",
-                      price: "₹199/plate",
-                      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
-                    }
-                  ]
-                    .filter(menu => activeMenuCategory === 'All' || menu.category === activeMenuCategory)
-                    .map((menu, idx) => (
+                    <div className="center-tabs">
+
                       <div
-                        key={idx}
-                        className="detail-recommended-card"
-                        style={{ cursor: 'default' }}
+                        className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('caters')}
                       >
-                        <img src={menu.image} alt={menu.title} className="detail-recommended-img" />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '6px' }}>
-                          <span className="detail-recommended-title" style={{ margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={menu.title}>
-                            {menu.title}
-                          </span>
-                          <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, gap: '4px' }}>
-                            {(menu.type === 'Veg' || menu.type === 'Veg & Non-Veg') && (
-                              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #10b981', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
-                                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
-                              </div>
-                            )}
-                            {(menu.type === 'Non-Veg' || menu.type === 'Veg & Non-Veg') && (
-                              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #ef4444', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
-                                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' }} />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="detail-recommended-categories">{menu.guestCount}</div>
-                        <div className="detail-recommended-price-row">
-                          {menu.originalPrice && (
-                            <span className="detail-recommended-price-old">{menu.originalPrice}</span>
-                          )}
-                          <span className="detail-recommended-price-active">{menu.price}</span>
-                        </div>
-                        <button
-                          style={{
-                            marginTop: '14px',
-                            width: '100%',
-                            background: '#222222',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '10px 16px',
-                            fontSize: '13px',
-                            fontWeight: '500',
-                            color: '#ffffff',
-                            cursor: 'pointer',
-                            textAlign: 'center',
-                            transition: 'background-color 0.2s'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = '#000000'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = '#222222'}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedMenuForModal(menu.title);
-                            setModalStep(1);
-
-                            // Set default date from previous search screen selection
-                            let defaultDate: string | null = null;
-                            if (whenInput && whenInput !== 'Any week') {
-                              const parts = whenInput.split('-');
-                              if (parts.length === 3) {
-                                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                                const monthIndex = parseInt(parts[1], 10) - 1;
-                                const day = parseInt(parts[2], 10);
-                                if (monthIndex >= 0 && monthIndex < 12 && day > 0) {
-                                  defaultDate = `${monthNames[monthIndex]}-${day}`;
-                                }
-                              }
-                            }
-
-                            setModalSelectedDate(defaultDate);
-                            setModalSelectedSlot(null);
-                            setSelectedMenuData(menu);
-                            const parsedMin = (() => {
-                              if (!menu || !menu.guestCount) return 50;
-                              const match = menu.guestCount.match(/Min\s+(\d+)/i);
-                              return match ? parseInt(match[1], 10) : 50;
-                            })();
-                            setPreviewGuestCount(parsedMin);
-                            if (!isLoggedIn) {
-                              setShowLoginPopup(true);
-                            } else {
-                              setShowSelectItemsDrawer(true);
-                            }
-                          }}
-                        >
-                          Select Items
-                        </button>
-                        {confirmedSelection[menu.title] && (
-                          <div style={{
-                            marginTop: '12px',
-                            fontSize: '13px',
-                            color: '#222222',
-                            textAlign: 'center',
-                            fontWeight: '500'
-                          }}>
-                            Selected Date: <span style={{ fontWeight: '700', textDecoration: 'underline' }}>{confirmedSelection[menu.title].date}</span>
-                          </div>
-                        )}
+                        <span className="tab-icon">🍽</span>
+                        <span>Caters</span>
                       </div>
-                    ))
-                  }
-                </div>
-              </div>
 
-              {/* Active Offers Section Heading */}
-              <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginTop: '32px', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Active Offers
-              </h3>
+                      <div
+                        className={`tab-item ${activeTab === 'mehendi' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('mehendi')}
+                      >
+                        <span className="tab-badge">Soon</span>
+                        <span className="tab-icon">🎨</span>
+                        <span>Mehendi</span>
+                      </div>
 
-              {/* Coupon Card 1: 10% off */}
-              <div className="detail-offer-card" style={{
-                marginTop: 0,
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '12px',
-                padding: '10px 14px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
-                marginBottom: '12px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
-                    <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
-                  </svg>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
-                    Get upto 10% off on the booking
-                  </div>
-                  <a
-                    href="#terms"
-                    onClick={(e) => { e.preventDefault(); alert('Terms: Max discount up to ₹1000. Valid on all orders.'); }}
-                    style={{ fontSize: '12px', fontWeight: '600', color: '#222222', textDecoration: 'underline' }}
-                  >
-                    Terms apply
-                  </a>
-                </div>
-                <div
-                  style={{
-                    border: '1px dashed #717171',
-                    background: '#f5f5f5',
-                    color: '#717171',
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    letterSpacing: '1px',
-                    cursor: 'pointer',
-                    userSelect: 'none'
-                  }}
-                  title="Click to copy code"
-                  onClick={() => { navigator.clipboard.writeText('SAVE10'); alert('Code "SAVE10" copied to clipboard!'); }}
-                >
-                  SAVE10
-                </div>
-              </div>
+                      <div
+                        className={`tab-item ${activeTab === 'makeup' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('makeup')}
+                      >
+                        <span className="tab-badge">Soon</span>
+                        <span className="tab-icon">💄</span>
+                        <span>Makeup</span>
+                      </div>
 
-              {/* Coupon Card 2: Flat ₹500 off */}
-              <div className="detail-offer-card" style={{
-                marginTop: 0,
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '12px',
-                padding: '10px 14px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
-                    <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
-                  </svg>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
-                    Flat ₹500 off on the booking
-                  </div>
-                  <a
-                    href="#terms"
-                    onClick={(e) => { e.preventDefault(); alert('Terms: Min booking value must be ₹5000. Valid on first booking.'); }}
-                    style={{ fontSize: '12px', fontWeight: '600', color: '#222222', textDecoration: 'underline' }}
-                  >
-                    Terms apply
-                  </a>
-                </div>
-                <div
-                  style={{
-                    border: '1px dashed #717171',
-                    background: '#f5f5f5',
-                    color: '#717171',
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    letterSpacing: '1px',
-                    cursor: 'pointer',
-                    userSelect: 'none'
-                  }}
-                  title="Click to copy code"
-                  onClick={() => { navigator.clipboard.writeText('FLAT500'); alert('Code "FLAT500" copied to clipboard!'); }}
-                >
-                  FLAT500
-                </div>
-              </div>
-            </div>
-          </div>
+                      <div
+                        className={`tab-item ${activeTab === 'theatres' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('theatres')}
+                      >
+                        <span className="tab-badge">Soon</span>
+                        <span className="tab-icon">🎬</span>
+                        <span>Private Theatres</span>
+                      </div>
 
-          {/* Mobile Inline Calendar (Responsive Only) */}
-          <div className="mobile-inline-calendar">
-            <div style={{ marginTop: '32px' }}>
-              <div style={{ marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Calendar View
-                </h3>
-                {whenInput && (
-                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#0891b2', marginTop: '6px' }}>
-                    Selected date : {formatWhenInput(whenInput)}
+                      <div
+                        className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('photography')}
+                      >
+                        <span className="tab-badge">Soon</span>
+                        <span className="tab-icon">📸</span>
+                        <span>Photography</span>
+                      </div>
+
+                      <div
+                        className={`tab-item ${activeTab === 'decors' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('decors')}
+                      >
+                        <span className="tab-badge">Soon</span>
+                        <span className="tab-icon">🎭</span>
+                        <span>Decors</span>
+                      </div>
+
+                      <div
+                        className={`tab-item ${activeTab === 'venues' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('venues')}
+                      >
+                        <span className="tab-badge">Soon</span>
+                        <span className="tab-icon">🏛</span>
+                        <span>Venues</span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-                <button
-                  type="button"
-                  className="calendar-nav-btn"
-                  onClick={handlePrevMonth}
-                  disabled={isPrevDisabled}
-                  style={{ background: 'none', border: 'none', cursor: isPrevDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isPrevDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                </button>
-                <div style={{ fontWeight: '600', fontSize: '16px', color: '#222222' }}>
-                  {monthNames[currentMonth]} {currentYear}
-                </div>
-                <button
-                  type="button"
-                  className="calendar-nav-btn"
-                  onClick={handleNextMonth}
-                  disabled={isNextDisabled}
-                  style={{ background: 'none', border: 'none', cursor: isNextDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isNextDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </button>
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontSize: '12px', fontWeight: '700', color: '#717171', marginBottom: '12px' }}>
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
-                  <div key={`inline-cal-header-${idx}`}>
-                    {day}
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', rowGap: '8px', textAlign: 'center' }}>
-                {calendarDays.map((cell, idx) => {
-                  const isSelected = cell.day !== null &&
-                    whenInput === `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
-
-                  return (
-                    <div
-                      key={`inline-cal-${idx}`}
-                      className={`calendar-day-cell ${cell.day === null ? 'empty' : ''} ${cell.isPast ? 'past' : ''} ${isSelected ? 'selected' : ''}`}
-                      onClick={() => {
-                        if (cell.day !== null && !cell.isPast) {
-                          const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
-                          setWhenInput(dateString);
-                        }
-                      }}
-                      style={cell.isPast ? { color: '#d1d5db', textDecoration: 'line-through', fontWeight: '400', cursor: 'default' } : (cell.day !== null ? { cursor: 'pointer', color: '#222222', fontWeight: '600' } : {})}
-                    >
-                      {cell.day}
-                    </div>
-                  );
-                })}
-              </div>
-              <div style={{ marginTop: '24px', fontSize: '11px', color: '#717171', textAlign: 'center', fontWeight: '500' }}>
-                Max upto 1 year calender released
-              </div>
-            </div>
-          </div>
-
-          {/* Reviews and Ratings Section */}
-          <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #e2e8f0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Reviews & Ratings
-              </h3>
-              <button
-                onClick={() => { alert('Show all reviews modal would open'); }}
-                style={{
-                  border: 'none',
-                  background: '#f3f4f6',
-                  color: '#111827',
-                  borderRadius: '12px',
-                  padding: '12px 24px',
-                  fontSize: '15px',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                  outline: 'none'
-                }}
-                className="show-all-reviews-btn"
-              >
-                Show all reviews
-              </button>
-            </div>
-
-            <div className="reviews-grid-scrollable hide-scrollbar">
-              {[
-                {
-                  name: "Bhargav Ambati",
-                  firstName: "Bhargav",
-                  time: "1 month ago",
-                  rating: "4.0/5",
-                  stars: 4,
-                  ordered: "Breakfast Menu 1",
-                  text: "Food was good"
-                },
-                {
-                  name: "Anirudh Kumar",
-                  firstName: "Anirudh",
-                  time: "2 weeks ago",
-                  rating: "5.0/5",
-                  stars: 5,
-                  ordered: "Lunch Menu 1",
-                  text: "Extremely professional catering service. The biryani was outstanding and all guests loved the presentation."
-                },
-                {
-                  name: "Pooja Gupta",
-                  firstName: "Pooja",
-                  time: "3 months ago",
-                  rating: "4.5/5",
-                  stars: 4.5,
-                  ordered: "Breakfast Menu 1",
-                  text: "Very hygienic packaging and prompt delivery. Highly recommended for family events!"
-                },
-                {
-                  name: "Rajesh Verma",
-                  firstName: "Rajesh",
-                  time: "1 month ago",
-                  rating: "4.8/5",
-                  stars: 5,
-                  ordered: "Lunch Menu 2",
-                  text: "Excellent taste and quantity. The paneer tikka starter was exceptionally soft and delicious."
-                },
-                {
-                  name: "Sneha Reddy",
-                  firstName: "Sneha",
-                  time: "2 weeks ago",
-                  rating: "4.6/5",
-                  stars: 4.5,
-                  ordered: "Veg Breakfast",
-                  text: "On-time setup and clean presentation. The filter coffee was a huge hit among all our guests."
-                },
-                {
-                  name: "Amit Sharma",
-                  firstName: "Amit",
-                  time: "3 weeks ago",
-                  rating: "5.0/5",
-                  stars: 5,
-                  ordered: "Premium Dinner",
-                  text: "The service staff was very courteous. Highly professional management, everything went very smoothly."
-                }
-              ].map((rev, rIdx) => (
-                <div
-                  key={rIdx}
-                  style={{
-                    background: '#ffffff',
-                    border: '1px solid #e8e8e8',
-                    borderRadius: '24px',
-                    padding: '24px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '16px',
-                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.04)',
-                    width: '100%',
-                    flexShrink: 0,
-                    boxSizing: 'border-box',
-                    scrollSnapAlign: 'start'
-                  }}
-                >
-                  {/* Top Header Row */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      {/* Avatar Circle with Gray BG & Black First Name Initial */}
-                      <div style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '50%',
-                        background: '#e5e5e5',
-                        color: '#222222',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: '700',
-                        fontSize: '18px',
-                        textTransform: 'uppercase',
-                        overflow: 'hidden',
-                        padding: '4px',
-                        textAlign: 'center',
-                        boxSizing: 'border-box'
-                      }}>
-                        {rev.firstName.charAt(0)}
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222' }}>
-                          {rev.name}
-                        </div>
-                        <div style={{ fontSize: '13px', color: '#717171', marginTop: '2px' }}>
-                          {rev.time}
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                      <div style={{ display: 'flex', gap: '2px' }}>
-                        {renderReviewStars(rev.stars)}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#717171', fontWeight: '500' }}>
-                        {rev.rating}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Ordered Menu Row */}
-                  <div style={{ fontSize: '14px', color: '#717171' }}>
-                    Ordered : <strong style={{ color: '#222222', fontWeight: '600' }}>{rev.ordered}</strong>
-                  </div>
-
-                  {/* Dashed Line Divider */}
-                  <div style={{ borderTop: '1px dashed #e2e8f0' }}></div>
-
-                  {/* Review Text */}
-                  <div style={{ fontSize: '14px', color: '#484848', lineHeight: '1.5' }}>
-                    {rev.text}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </main>
-      ) : isSearchView ? (
-        <main className="search-split-layout">
-          {/* Left Pane: Caters Grid (60% width) */}
-          <div className="search-left-pane">
-            <div className="search-results-header">
-              <div className="header-text-group">
-                <h1> Caters Hyderabad, India</h1>
-                <p className="search-results-subtitle">Showing top-rated caters</p>
-              </div>
-              <div className="location-search-wrapper">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search partner name..."
-                  className="location-search-field"
-                  value={partnerSearchQuery}
-                  onChange={(e) => setPartnerSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-
-            {uniqueCaters.length > 0 ? (
-              <div className="search-results-grid">
-                {uniqueCaters.map((home, idx) => (
-                  <div key={idx} className="home-card search-card" onClick={() => handleCardClick(home.title)}>
-                    <div className="card-image-wrapper">
-                      <img src={home.image} alt={home.title} className="card-img" />
-                    </div>
-                    <div className="card-info">
-                      <div className="card-title-row">
-                        <span className="card-title">{home.title}</span>
-                      </div>
-                      <div className="card-categories-row" style={{ marginTop: '8px' }}>
-                        {home.categories.join(' · ')}
-                      </div>
-                      <div className="card-food-type-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '400' }}>
-                        {getFoodType(home.title)}
-                      </div>
-                      <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '500' }}>
-                        {getCaterTravelInfo(home.title)}
-                      </div>
-                      <div className="card-details-row" style={{ marginTop: '8px' }}>
-                        <span className="card-original-price">{home.originalPrice}</span>
-                        <span className="card-active-price">{home.price}</span>
-                        <span className="card-dot">·</span>
-                        <span className="card-rating-inline">
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                          </svg>
-                          {home.rating}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div style={{ textAlign: 'center', padding: '60px 20px', color: '#717171' }}>
-                <div style={{ fontSize: '32px', marginBottom: '16px' }}>🍽</div>
-                <h3 style={{ fontSize: '18px', color: '#222222', marginBottom: '8px' }}>No caters match your filters</h3>
-                <p style={{ fontSize: '14px', marginBottom: '24px' }}>Try choosing fewer filters or reset them to view all options.</p>
-                <button
-                  className="filter-pill active"
-                  onClick={() => {
-                    setFilterVegOnly(false)
-                    setFilterNonVeg(false)
-                    setSelectedMealFilters([])
-                  }}
-                >
-                  Clear all filters
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Right Pane: Address Manager (40% width) */}
-          <div className="search-right-pane">
-            <div className="address-manager-card">
-              {/* Search Box Input Bar */}
-              <div className="address-search-bar">
-                <input
-                  type="text"
-                  placeholder="Enter your address..."
-                  className="address-search-input"
-                  defaultValue=""
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const val = (e.target as HTMLInputElement).value.trim();
-                      if (val) {
-                        setSelectedAddress({
-                          name: 'Custom Location',
-                          full: val
-                        });
-                      }
-                    }
-                  }}
-                />
-                <div
-                  className="address-search-btn"
-                  onClick={() => {
-                    const inputEl = document.querySelector('.address-search-input') as HTMLInputElement;
-                    if (inputEl && inputEl.value.trim()) {
-                      setSelectedAddress({
-                        name: 'Custom Location',
-                        full: inputEl.value.trim()
-                      });
-                    }
-                  }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </div>
-              </div>
-
-
-              {/* Saved Addresses Section */}
-              <div className="saved-addresses-section">
-                <div className="saved-addresses-header">
-                  <div className="saved-addresses-title">Saved Addresses</div>
-                  <button className="add-address-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
+              {/* Right Section (flexible col) */}
+              <div className="header-right-col">
+                <div className="right-actions">
+                  <button
+                    type="button"
+                    aria-label="Menu"
+                    onClick={() => setShowSidebar(true)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#FF35E0'
+                    }}
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="3" y1="12" x2="21" y2="12"></line>
+                      <line x1="3" y1="6" x2="21" y2="6"></line>
+                      <line x1="3" y1="18" x2="21" y2="18"></line>
                     </svg>
-                    Add Address
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Large Floating Search Bar or Filters */}
+            {selectedVendorDetail ? null : isSearchView ? (
+              <div className="filters-bar-row mobile-filters-row">
+                {renderFilters()}
+              </div>
+            ) : null}
+          </header>
+
+          {/* Page Body: Listing Segments or Search Results Grid */}
+          {selectedVendorDetail ? (
+            <main className="detail-view-container">
+              <div className="detail-split-layout">
+                {/* Left side: Image and details */}
+                <div className="detail-left-pane">
+                  <img src={selectedVendorDetail.image} alt={selectedVendorDetail.title} className="detail-large-image" />
+
+                  <div className="detail-under-image-info">
+                    <div className="detail-profile-header">
+                      <h1 className="detail-left-title">{selectedVendorDetail.title}</h1>
+                      <div className="detail-left-rating-row">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#ff385c', marginRight: '4px' }}>
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <span className="detail-left-rating-val">{selectedVendorDetail.rating}</span>
+                        <span className="detail-left-rating-count">· 48 reviews</span>
+                      </div>
+                    </div>
+
+                    <div className="detail-left-divider"></div>
+
+                    <div className="detail-left-meta-section">
+                      <div className="detail-left-meta-item">
+                        <div className="detail-left-meta-label">CATEGORIES</div>
+                        <div className="detail-left-meta-value">{selectedVendorDetail.categories.join(' · ')}</div>
+                      </div>
+
+                      <div className="detail-left-meta-item">
+                        <div className="detail-left-meta-label">TYPE</div>
+                        <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span className="detail-type-icon">
+                            {renderFoodTypeIcons(selectedVendorDetail.title)}
+                          </span>
+                          <span className="detail-type-text">
+                            {getFoodType(selectedVendorDetail.title)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="detail-left-meta-item">
+                        <div className="detail-left-meta-label">TRAVEL INFO</div>
+                        <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          {animateTravelInfo ? (
+                            <span style={{ display: 'inline-block', perspective: '400px', transformStyle: 'preserve-3d' }}>
+                              {[...getCaterTravelInfo(selectedVendorDetail.title)].map((char, index) => (
+                                <span
+                                  key={index}
+                                  style={{
+                                    display: 'inline-block',
+                                    animationDelay: `${index * 0.04}s`,
+                                    whiteSpace: char === ' ' ? 'pre' : 'normal'
+                                  }}
+                                  className="wave-char-pink"
+                                >
+                                  {char}
+                                </span>
+                              ))}
+                            </span>
+                          ) : (
+                            getCaterTravelInfo(selectedVendorDetail.title)
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right side: Recommended Vendors */}
+                <div className="detail-right-pane">
+                  <div className="detail-vendor-categories-box" style={{ marginBottom: '32px' }}>
+                    <div className="hide-scrollbar category-filters-scroll-container" style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          background: activeMenuCategory === 'All' ? '#222222' : '#ffffff',
+                          border: activeMenuCategory === 'All' ? '1px solid #222222' : '1px solid #dddddd',
+                          borderRadius: '24px',
+                          padding: '6px 16px',
+                          fontSize: '12px',
+                          fontWeight: activeMenuCategory === 'All' ? '600' : '500',
+                          color: activeMenuCategory === 'All' ? '#ffffff' : '#222222',
+                          cursor: 'pointer',
+                          boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0
+                        }}
+                        onClick={() => setActiveMenuCategory('All')}
+                      >
+                        All
+                      </div>
+                      {selectedVendorDetail.categories.map(category => (
+                        <div
+                          key={category}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            background: activeMenuCategory === category ? '#222222' : '#ffffff',
+                            border: activeMenuCategory === category ? '1px solid #222222' : '1px solid #dddddd',
+                            borderRadius: '24px',
+                            padding: '6px 16px',
+                            fontSize: '12px',
+                            fontWeight: activeMenuCategory === category ? '600' : '500',
+                            color: activeMenuCategory === category ? '#ffffff' : '#222222',
+                            cursor: 'pointer',
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0
+                          }}
+                          onClick={() => setActiveMenuCategory(category)}
+                        >
+                          {category}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recommended Caters Section */}
+                  <div className="detail-recommendations-section" style={{ marginTop: '0' }}>
+                    <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Menu's
+                    </h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                      {[
+                        {
+                          title: "Breakfast Menu 1",
+                          category: "Breakfast",
+                          type: "Veg & Non-Veg",
+                          guestCount: "Min 50 · Max 500",
+                          originalPrice: "₹79/plate",
+                          price: "₹49/plate",
+                          image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
+                        },
+                        {
+                          title: "Lunch Menu 1",
+                          category: "Lunch",
+                          type: "Non-Veg",
+                          guestCount: "Min 100 · Max 1000",
+                          originalPrice: "₹199/plate",
+                          price: "₹149/plate",
+                          image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80"
+                        },
+                        {
+                          title: "Snacks Menu 1",
+                          category: "Snacks",
+                          type: "Veg",
+                          guestCount: "Min 30 · Max 300 count",
+                          originalPrice: "₹99/plate",
+                          price: "₹69/plate",
+                          image: "https://images.unsplash.com/photo-1541532713592-79a0317b6b77?auto=format&fit=crop&w=800&q=80"
+                        },
+                        {
+                          title: "Dinner Menu 1",
+                          category: "Dinner",
+                          type: "Veg & Non-Veg",
+                          guestCount: "Min 100 · Max 1500 count",
+                          originalPrice: "₹249/plate",
+                          price: "₹199/plate",
+                          image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
+                        }
+                      ]
+                        .filter(menu => activeMenuCategory === 'All' || menu.category === activeMenuCategory)
+                        .map((menu, idx) => (
+                          <div
+                            key={idx}
+                            className="detail-recommended-card"
+                            style={{ cursor: 'default' }}
+                          >
+                            <img src={menu.image} alt={menu.title} className="detail-recommended-img" />
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '6px' }}>
+                              <span className="detail-recommended-title" style={{ margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={menu.title}>
+                                {menu.title}
+                              </span>
+                              <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, gap: '4px' }}>
+                                {(menu.type === 'Veg' || menu.type === 'Veg & Non-Veg') && (
+                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #10b981', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
+                                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+                                  </div>
+                                )}
+                                {(menu.type === 'Non-Veg' || menu.type === 'Veg & Non-Veg') && (
+                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #ef4444', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
+                                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' }} />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="detail-recommended-categories">{menu.guestCount}</div>
+                            <div className="detail-recommended-price-row">
+                              {menu.originalPrice && (
+                                <span className="detail-recommended-price-old">{menu.originalPrice}</span>
+                              )}
+                              <span className="detail-recommended-price-active">{menu.price}</span>
+                            </div>
+                            <button
+                              style={{
+                                marginTop: '14px',
+                                width: '100%',
+                                background: '#222222',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '10px 16px',
+                                fontSize: '13px',
+                                fontWeight: '500',
+                                color: '#ffffff',
+                                cursor: 'pointer',
+                                textAlign: 'center',
+                                transition: 'background-color 0.2s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = '#000000'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = '#222222'}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedMenuForModal(menu.title);
+                                setModalStep(1);
+
+                                // Set default date from previous search screen selection
+                                let defaultDate: string | null = null;
+                                if (whenInput && whenInput !== 'Any week') {
+                                  const parts = whenInput.split('-');
+                                  if (parts.length === 3) {
+                                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                    const monthIndex = parseInt(parts[1], 10) - 1;
+                                    const day = parseInt(parts[2], 10);
+                                    if (monthIndex >= 0 && monthIndex < 12 && day > 0) {
+                                      defaultDate = `${monthNames[monthIndex]}-${day}`;
+                                    }
+                                  }
+                                }
+
+                                setModalSelectedDate(defaultDate);
+                                setModalSelectedSlot(null);
+                                setSelectedMenuData(menu);
+                                const parsedMin = (() => {
+                                  if (!menu || !menu.guestCount) return 50;
+                                  const match = menu.guestCount.match(/Min\s+(\d+)/i);
+                                  return match ? parseInt(match[1], 10) : 50;
+                                })();
+                                setPreviewGuestCount(parsedMin);
+                                if (!isLoggedIn) {
+                                  setShowLoginPopup(true);
+                                } else {
+                                  setShowSelectItemsDrawer(true);
+                                }
+                              }}
+                            >
+                              Select Items
+                            </button>
+                            {confirmedSelection[menu.title] && (
+                              <div style={{
+                                marginTop: '12px',
+                                fontSize: '13px',
+                                color: '#222222',
+                                textAlign: 'center',
+                                fontWeight: '500'
+                              }}>
+                                Selected Date: <span style={{ fontWeight: '700', textDecoration: 'underline' }}>{confirmedSelection[menu.title].date}</span>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      }
+                    </div>
+                  </div>
+
+                  {/* Active Offers Section Heading */}
+                  <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginTop: '32px', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Active Offers
+                  </h3>
+
+                  {/* Coupon Card 1: 10% off */}
+                  <div className="detail-offer-card" style={{
+                    marginTop: 0,
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    padding: '10px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                        <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                      </svg>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
+                        ₹100 off on this booking
+                      </div>
+                      <a
+                        href="#terms"
+                        onClick={(e) => { e.preventDefault(); setShowCouponTerms('SAVE10'); }}
+                        style={{ fontSize: '12px', fontWeight: '600', color: '#222222', textDecoration: 'underline' }}
+                      >
+                        Terms apply
+                      </a>
+                    </div>
+                    <div
+                      style={{
+                        border: '1px dashed #717171',
+                        background: '#f5f5f5',
+                        color: '#717171',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        letterSpacing: '1px',
+                        cursor: 'pointer',
+                        userSelect: 'none'
+                      }}
+                      title="Click to copy code"
+                      onClick={() => { navigator.clipboard.writeText('SAVE10'); alert('Code "SAVE10" copied to clipboard!'); }}
+                    >
+                      SAVE10
+                    </div>
+                  </div>
+
+                  {/* Coupon Card 2: Flat ₹500 off */}
+                  <div className="detail-offer-card" style={{
+                    marginTop: 0,
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    padding: '10px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                        <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                      </svg>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
+                        10% off on this booking
+                      </div>
+                      <a
+                        href="#terms"
+                        onClick={(e) => { e.preventDefault(); setShowCouponTerms('FLAT500'); }}
+                        style={{ fontSize: '12px', fontWeight: '600', color: '#222222', textDecoration: 'underline' }}
+                      >
+                        Terms apply
+                      </a>
+                    </div>
+                    <div
+                      style={{
+                        border: '1px dashed #717171',
+                        background: '#f5f5f5',
+                        color: '#717171',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        letterSpacing: '1px',
+                        cursor: 'pointer',
+                        userSelect: 'none'
+                      }}
+                      title="Click to copy code"
+                      onClick={() => { navigator.clipboard.writeText('FLAT500'); alert('Code "FLAT500" copied to clipboard!'); }}
+                    >
+                      FLAT500
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Inline Calendar (Responsive Only) */}
+              <div className="mobile-inline-calendar">
+                <div style={{ marginTop: '32px' }}>
+                  <div style={{ marginBottom: '16px' }}>
+                    <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Calendar View
+                    </h3>
+                    {whenInput && (
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#0891b2', marginTop: '6px' }}>
+                        Selected date : {formatWhenInput(whenInput)}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                    <button
+                      type="button"
+                      className="calendar-nav-btn"
+                      onClick={handlePrevMonth}
+                      disabled={isPrevDisabled}
+                      style={{ background: 'none', border: 'none', cursor: isPrevDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isPrevDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <div style={{ fontWeight: '600', fontSize: '16px', color: '#222222' }}>
+                      {monthNames[currentMonth]} {currentYear}
+                    </div>
+                    <button
+                      type="button"
+                      className="calendar-nav-btn"
+                      onClick={handleNextMonth}
+                      disabled={isNextDisabled}
+                      style={{ background: 'none', border: 'none', cursor: isNextDisabled ? 'default' : 'pointer', padding: '4px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isNextDisabled ? '#d1d5db' : '#222222'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontSize: '12px', fontWeight: '700', color: '#717171', marginBottom: '12px' }}>
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                      <div key={`inline-cal-header-${idx}`}>
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', rowGap: '8px', textAlign: 'center' }}>
+                    {calendarDays.map((cell, idx) => {
+                      const isSelected = cell.day !== null &&
+                        whenInput === `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+
+                      return (
+                        <div
+                          key={`inline-cal-${idx}`}
+                          className={`calendar-day-cell ${cell.day === null ? 'empty' : ''} ${cell.isPast ? 'past' : ''} ${isSelected ? 'selected' : ''}`}
+                          onClick={() => {
+                            if (cell.day !== null && !cell.isPast) {
+                              const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+                              setWhenInput(dateString);
+                            }
+                          }}
+                          style={cell.isPast ? { color: '#d1d5db', textDecoration: 'line-through', fontWeight: '400', cursor: 'default' } : (cell.day !== null ? { cursor: 'pointer', color: '#222222', fontWeight: '600' } : {})}
+                        >
+                          {cell.day}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={{ marginTop: '24px', fontSize: '11px', color: '#717171', textAlign: 'center', fontWeight: '500' }}>
+                    Max upto 1 year calender released
+                  </div>
+                </div>
+              </div>
+
+              {/* Reviews and Ratings Section */}
+              <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Reviews & Ratings
+                  </h3>
+                  <button
+                    onClick={() => { alert('Show all reviews modal would open'); }}
+                    style={{
+                      border: 'none',
+                      background: '#f3f4f6',
+                      color: '#111827',
+                      borderRadius: '12px',
+                      padding: '12px 24px',
+                      fontSize: '15px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      outline: 'none'
+                    }}
+                    className="show-all-reviews-btn"
+                  >
+                    Show all reviews
                   </button>
                 </div>
 
-                <div className="saved-addresses-list">
-                  {/* Item 1: Home */}
-                  <div
-                    className={`saved-address-item ${selectedAddress?.name === 'Home' ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedAddress({
-                        name: 'Home',
-                        full: 'Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032'
-                      })
-                    }}
-                  >
-                    <div className="address-icon-circle">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                      </svg>
+                <div className="reviews-grid-scrollable hide-scrollbar">
+                  {[
+                    {
+                      name: "Bhargav Ambati",
+                      firstName: "Bhargav",
+                      time: "1 month ago",
+                      rating: "4.0/5",
+                      stars: 4,
+                      ordered: "Breakfast Menu 1",
+                      text: "Food was good"
+                    },
+                    {
+                      name: "Anirudh Kumar",
+                      firstName: "Anirudh",
+                      time: "2 weeks ago",
+                      rating: "5.0/5",
+                      stars: 5,
+                      ordered: "Lunch Menu 1",
+                      text: "Extremely professional catering service. The biryani was outstanding and all guests loved the presentation."
+                    },
+                    {
+                      name: "Pooja Gupta",
+                      firstName: "Pooja",
+                      time: "3 months ago",
+                      rating: "4.5/5",
+                      stars: 4.5,
+                      ordered: "Breakfast Menu 1",
+                      text: "Very hygienic packaging and prompt delivery. Highly recommended for family events!"
+                    },
+                    {
+                      name: "Rajesh Verma",
+                      firstName: "Rajesh",
+                      time: "1 month ago",
+                      rating: "4.8/5",
+                      stars: 5,
+                      ordered: "Lunch Menu 2",
+                      text: "Excellent taste and quantity. The paneer tikka starter was exceptionally soft and delicious."
+                    },
+                    {
+                      name: "Sneha Reddy",
+                      firstName: "Sneha",
+                      time: "2 weeks ago",
+                      rating: "4.6/5",
+                      stars: 4.5,
+                      ordered: "Veg Breakfast",
+                      text: "On-time setup and clean presentation. The filter coffee was a huge hit among all our guests."
+                    },
+                    {
+                      name: "Amit Sharma",
+                      firstName: "Amit",
+                      time: "3 weeks ago",
+                      rating: "5.0/5",
+                      stars: 5,
+                      ordered: "Premium Dinner",
+                      text: "The service staff was very courteous. Highly professional management, everything went very smoothly."
+                    }
+                  ].map((rev, rIdx) => (
+                    <div
+                      key={rIdx}
+                      style={{
+                        background: '#ffffff',
+                        border: '1px solid #e8e8e8',
+                        borderRadius: '24px',
+                        padding: '24px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.04)',
+                        width: '100%',
+                        flexShrink: 0,
+                        boxSizing: 'border-box',
+                        scrollSnapAlign: 'start'
+                      }}
+                    >
+                      {/* Top Header Row */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {/* Avatar Circle with Gray BG & Black First Name Initial */}
+                          <div style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            background: '#e5e5e5',
+                            color: '#222222',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: '700',
+                            fontSize: '18px',
+                            textTransform: 'uppercase',
+                            overflow: 'hidden',
+                            padding: '4px',
+                            textAlign: 'center',
+                            boxSizing: 'border-box'
+                          }}>
+                            {rev.firstName.charAt(0)}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222' }}>
+                              {rev.name}
+                            </div>
+                            <div style={{ fontSize: '13px', color: '#717171', marginTop: '2px' }}>
+                              {rev.time}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                          <div style={{ display: 'flex', gap: '2px' }}>
+                            {renderReviewStars(rev.stars)}
+                          </div>
+                          <div style={{ fontSize: '12px', color: '#717171', fontWeight: '500' }}>
+                            {rev.rating}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ordered Menu Row */}
+                      <div style={{ fontSize: '14px', color: '#717171' }}>
+                        Ordered : <strong style={{ color: '#222222', fontWeight: '600' }}>{rev.ordered}</strong>
+                      </div>
+
+                      {/* Dashed Line Divider */}
+                      <div style={{ borderTop: '1px dashed #e2e8f0' }}></div>
+
+                      {/* Review Text */}
+                      <div style={{ fontSize: '14px', color: '#484848', lineHeight: '1.5' }}>
+                        {rev.text}
+                      </div>
                     </div>
-                    <div className="address-item-details">
-                      <div className="address-item-name">Home</div>
-                      <div className="address-item-text">Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032</div>
+                  ))}
+                </div>
+              </div>
+            </main>
+          ) : isSearchView ? (
+            <main className="search-split-layout">
+              {/* Left Pane: Caters Grid (60% width) */}
+              <div className="search-left-pane">
+                <div className="search-results-header">
+                  <div className="header-text-group">
+                    <h1> Caters Hyderabad, India</h1>
+                    <p className="search-results-subtitle">Showing top-rated caters</p>
+                  </div>
+                  <div className="location-search-wrapper">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input
+                      type="text"
+                      placeholder="Search partner name..."
+                      className="location-search-field"
+                      value={partnerSearchQuery}
+                      onChange={(e) => setPartnerSearchQuery(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {uniqueCaters.length > 0 ? (
+                  <div className="search-results-grid">
+                    {uniqueCaters.map((home, idx) => (
+                      <div key={idx} className="home-card search-card" onClick={() => handleCardClick(home.title)}>
+                        <div className="card-image-wrapper">
+                          <img src={home.image} alt={home.title} className="card-img" />
+                        </div>
+                        <div className="card-info">
+                          <div className="card-title-row">
+                            <span className="card-title">{home.title}</span>
+                          </div>
+                          <div className="card-categories-row" style={{ marginTop: '8px' }}>
+                            {home.categories.join(' · ')}
+                          </div>
+                          <div className="card-food-type-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '400' }}>
+                            {getFoodType(home.title)}
+                          </div>
+                          <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '500' }}>
+                            {getCaterTravelInfo(home.title)}
+                          </div>
+                          <div className="card-details-row" style={{ marginTop: '8px' }}>
+                            <span className="card-original-price">{home.originalPrice}</span>
+                            <span className="card-active-price">{home.price}</span>
+                            <span className="card-dot">·</span>
+                            <span className="card-rating-inline">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                              </svg>
+                              {home.rating}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '60px 20px', color: '#717171' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '16px' }}>🍽</div>
+                    <h3 style={{ fontSize: '18px', color: '#222222', marginBottom: '8px' }}>No caters match your filters</h3>
+                    <p style={{ fontSize: '14px', marginBottom: '24px' }}>Try choosing fewer filters or reset them to view all options.</p>
+                    <button
+                      className="filter-pill active"
+                      onClick={() => {
+                        setFilterVegOnly(false)
+                        setFilterNonVeg(false)
+                        setSelectedMealFilters([])
+                      }}
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Pane: Address Manager (40% width) */}
+              <div className="search-right-pane">
+                <div className="address-manager-card">
+                  {/* Search Box Input Bar */}
+                  <div className="address-search-bar">
+                    <input
+                      type="text"
+                      placeholder="Enter your address..."
+                      className="address-search-input"
+                      defaultValue=""
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const val = (e.target as HTMLInputElement).value.trim();
+                          if (val) {
+                            setSelectedAddress({
+                              name: 'Custom Location',
+                              full: val
+                            });
+                          }
+                        }
+                      }}
+                    />
+                    <div
+                      className="address-search-btn"
+                      onClick={() => {
+                        const inputEl = document.querySelector('.address-search-input') as HTMLInputElement;
+                        if (inputEl && inputEl.value.trim()) {
+                          setSelectedAddress({
+                            name: 'Custom Location',
+                            full: inputEl.value.trim()
+                          });
+                        }
+                      }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
                     </div>
                   </div>
 
-                  {/* Item 2: Work */}
-                  <div
-                    className={`saved-address-item ${selectedAddress?.name === 'Work' ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedAddress({
-                        name: 'Work',
-                        full: 'Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081'
-                      })
-                    }}
-                  >
-                    <div className="address-icon-circle">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                      </svg>
+
+                  {/* Saved Addresses Section */}
+                  <div className="saved-addresses-section">
+                    <div className="saved-addresses-header">
+                      <div className="saved-addresses-title">Saved Addresses</div>
+                      <button className="add-address-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Address
+                      </button>
                     </div>
-                    <div className="address-item-details">
-                      <div className="address-item-name">Work</div>
-                      <div className="address-item-text">Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081</div>
+
+                    <div className="saved-addresses-list">
+                      {/* Item 1: Home */}
+                      <div
+                        className={`saved-address-item ${selectedAddress?.name === 'Home' ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSelectedAddress({
+                            name: 'Home',
+                            full: 'Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032'
+                          })
+                        }}
+                      >
+                        <div className="address-icon-circle">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                          </svg>
+                        </div>
+                        <div className="address-item-details">
+                          <div className="address-item-name">Home</div>
+                          <div className="address-item-text">Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032</div>
+                        </div>
+                      </div>
+
+                      {/* Item 2: Work */}
+                      <div
+                        className={`saved-address-item ${selectedAddress?.name === 'Work' ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSelectedAddress({
+                            name: 'Work',
+                            full: 'Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081'
+                          })
+                        }}
+                      >
+                        <div className="address-icon-circle">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                          </svg>
+                        </div>
+                        <div className="address-item-details">
+                          <div className="address-item-name">Work</div>
+                          <div className="address-item-text">Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081</div>
+                        </div>
+                      </div>
+
+                      {/* Item 3: Parents' House */}
+                      <div
+                        className={`saved-address-item ${selectedAddress?.name === "Parents' House" ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSelectedAddress({
+                            name: "Parents' House",
+                            full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034'
+                          })
+                        }}
+                      >
+                        <div className="address-icon-circle">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                          </svg>
+                        </div>
+                        <div className="address-item-details">
+                          <div className="address-item-name">Parents' House</div>
+                          <div className="address-item-text">Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Item 3: Parents' House */}
-                  <div
-                    className={`saved-address-item ${selectedAddress?.name === "Parents' House" ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedAddress({
-                        name: "Parents' House",
-                        full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034'
-                      })
-                    }}
+                  <button
+                    className="add-select-address-mobile-btn"
+                    onClick={() => setShowMobileAddressModal(true)}
                   >
-                    <div className="address-icon-circle">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                    Add / Select address
+                  </button>
+                </div>
+              </div>
+            </main>
+          ) : (
+            <main className="listings-container">
+              {/* Segment 1: Popular Caters */}
+              <div className="listings-segment">
+                <div className="listings-header">
+                  <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
+                    <h2>Best caters in Hyderabad</h2>
+                    <span className="title-chevron">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
                       </svg>
+                    </span>
+                  </div>
+                  <div className="listings-nav-arrows">
+                    <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container', 'left')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+                    <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container', 'right')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="listings-scroll-row" id="listings-scroll-container">
+                  {homeListings.map((home, idx) => (
+                    <div key={idx} className="home-card" onClick={() => handleCardClick(home.title)}>
+                      <div className="card-image-wrapper">
+                        <img src={home.image} alt={home.title} className="card-img" />
+                      </div>
+                      <div className="card-info">
+                        <div className="card-title-row">
+                          <span className="card-title">{home.title}</span>
+                        </div>
+                        <div className="card-details-row">
+                          <span className="card-active-price">{home.price}</span>
+                          <span className="card-dot">·</span>
+                          <span className="card-rating-inline">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            {home.rating}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="address-item-details">
-                      <div className="address-item-name">Parents' House</div>
-                      <div className="address-item-text">Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Segment: Checkout Caters */}
+              <div className="listings-segment">
+                <div className="listings-header">
+                  <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
+                    <h2>Checkout caters in Hyderabad</h2>
+                    <span className="title-chevron">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                  <div className="listings-nav-arrows">
+                    <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-checkout', 'left')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+                    <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container-checkout', 'right')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="listings-scroll-row" id="listings-scroll-container-checkout">
+                  {checkoutListings.map((home, idx) => (
+                    <div key={idx} className="home-card" onClick={() => handleCardClick(home.title)}>
+                      <div className="card-image-wrapper">
+                        <img src={home.image} alt={home.title} className="card-img" />
+                      </div>
+                      <div className="card-info">
+                        <div className="card-title-row">
+                          <span className="card-title">{home.title}</span>
+                        </div>
+                        <div className="card-details-row">
+                          <span className="card-active-price">{home.price}</span>
+                          <span className="card-dot">·</span>
+                          <span className="card-rating-inline">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            {home.rating}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Promo Cards: The Latest */}
+              <div className="listings-segment">
+                <div className="listings-header">
+                  <div className="listings-title-row">
+                    <h2 className="promo-heading-bold">Special offers only for special occasions</h2>
+                  </div>
+                </div>
+
+                <div className="listings-scroll-row promo-scroll-row" id="promo-scroll-container">
+                  <div className="promo-card promo-card--light">
+                    <div className="promo-card__title">Premium<br />Catering Package</div>
+                    <div className="promo-card__subtitle">All-inclusive service for all occasions.</div>
+                    <div className="promo-card__price">From ₹399/plate</div>
+                  </div>
+                  <div className="promo-card promo-card--light">
+                    <div className="promo-card__title">Budget Catering<br />Made Easy</div>
+                    <div className="promo-card__subtitle">Great taste at the right price.</div>
+                    <div className="promo-card__price">From ₹49/plate</div>
+                  </div>
+                  <div className="promo-card promo-card--light">
+                    <div className="promo-card__title">Book Early,<br />Save Big.</div>
+                    <div className="promo-card__subtitle">Get 20% off on advance bookings of 3+ days.</div>
+                    <div className="promo-card__price">Offer ends soon</div>
+                  </div>
+                  <div className="promo-card promo-card--light">
+                    <div className="promo-card__title">Wedding<br />Special Menus</div>
+                    <div className="promo-card__subtitle">Curated multi-course meals for your big day.</div>
+                    <div className="promo-card__price">From ₹249/plate</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Segment 2: Best in Rating */}
+              <div className="listings-segment">
+                <div className="listings-header">
+                  <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
+                    <h2>Best in rating in Hyderabad</h2>
+                    <span className="title-chevron">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                  <div className="listings-nav-arrows">
+                    <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-best', 'left')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+                    <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container-best', 'right')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="listings-scroll-row" id="listings-scroll-container-best">
+                  {bestRatingListings.map((home, idx) => (
+                    <div key={idx} className="home-card" onClick={() => handleCardClick(home.title)}>
+                      <div className="card-image-wrapper">
+                        <img src={home.image} alt={home.title} className="card-img" />
+                      </div>
+                      <div className="card-info">
+                        <div className="card-title-row">
+                          <span className="card-title">{home.title}</span>
+                        </div>
+                        <div className="card-details-row">
+                          <span className="card-active-price">{home.price}</span>
+                          <span className="card-dot">·</span>
+                          <span className="card-rating-inline">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            {home.rating}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Big Banner Frame */}
+              <div className="banner-frame">
+                <div className="banner-frame__inner">
+                  <div className="banner-frame__left">
+                    <div className="banner-frame__eyebrow">myMooment</div>
+                    <h2 className="banner-frame__title">Find the best cater<br />for your next event.</h2>
+                    <p className="banner-frame__subtitle">Browse top-rated catering services across India from intimate gatherings to grand weddings.</p>
+                    <div className="banner-frame__actions">
+                      <button className="banner-frame__btn banner-frame__btn--primary">Explore all caters</button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <button
-                className="add-select-address-mobile-btn"
-                onClick={() => setShowMobileAddressModal(true)}
-              >
-                Add / Select address
+              {/* Booking.com Style Genius Card */}
+              <div className="genius-segment">
+                <h2 className="genius-section-title">Celebrate more with less effort</h2>
+                <div className="genius-card">
+                  <div className="genius-card__left">
+                    <h3 className="genius-card__title">Sign in to avail all offers</h3>
+                    <p className="genius-card__subtitle">Save 15% or more only in myMooment</p>
+                    <div className="genius-card__actions">
+                      <button className="genius-card__btn-primary" type="button" onClick={() => alert('Signing in...')}>Sign in</button>
+                      <button className="genius-card__btn-link" type="button" onClick={() => alert('Registering...')}>Register</button>
+                    </div>
+                  </div>
+                  <div className="genius-card__right">
+                    {/* Cute SVG Illustration of Gift Box with Ribbon & Confetti */}
+                    <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="genius-gift-svg">
+                      {/* Confetti / Sparks */}
+                      <circle cx="15" cy="50" r="2.5" fill="#f59e0b" />
+                      <circle cx="25" cy="25" r="2" fill="#3b82f6" />
+                      <circle cx="105" cy="35" r="3" fill="#f59e0b" />
+                      <circle cx="95" cy="70" r="2" fill="#ef4444" />
+                      <path d="M 15 80 Q 20 75 25 85" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+                      <path d="M 98 20 Q 103 25 100 30" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+
+                      {/* Gift Box Main Body (Blue) */}
+                      <rect x="35" y="55" width="50" height="40" rx="8" fill="#006ce4" />
+
+                      {/* Gift Box Lid (Blue, slightly larger) */}
+                      <rect x="31" y="47" width="58" height="10" rx="4" fill="#0056b3" />
+
+                      {/* Ribbon Vertical (Yellow) */}
+                      <rect x="56" y="47" width="8" height="48" fill="#f59e0b" />
+
+                      {/* Ribbon Horizontal (Yellow) */}
+                      <rect x="35" y="68" width="50" height="8" fill="#f59e0b" />
+
+                      {/* Bow Ribbons on Top */}
+                      <path d="M 60 47 C 50 32 38 42 56 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
+                      <path d="M 60 47 C 70 32 82 42 64 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
+
+                      {/* Gift Label text: Genius/Mooment */}
+                      <text x="60" y="80" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">Mooment</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </main>
+          )}
+
+          {/* Footer Section */}
+          <footer className="mooment-footer">
+            <div className="footer-inner">
+              <div className="footer-top-split">
+                {/* Left Col: Logo, Title, LinkedIn icon */}
+                <div className="footer-brand-col">
+                  <div className="footer-logo-row">
+                    <span className="logo-text">myMooment</span>
+                  </div>
+                  <h2 className="footer-tagline">
+                    India's 1st direct<br className="tagline-break" /> booking event platform
+                  </h2>
+                  <a
+                    href="#linkedin"
+                    className="footer-social-circle"
+                    aria-label="LinkedIn"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF35E0">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                    </svg>
+                  </a>
+                </div>
+
+                {/* Right Col: Navigation Links Stack */}
+                <div className="footer-links-stack">
+                  <a href="#about" className="footer-stack-link">About Us</a>
+                  <a href="#register-partner" className="footer-stack-link partner-link">
+                    Register as Partner
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '4px', verticalAlign: 'middle' }}>
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    <span className="free-badge">FREE</span>
+                  </a>
+                  <a href="mailto:info@mymooment.com" className="footer-stack-link email-link">
+                    info@mymooment.com
+                  </a>
+                </div>
+              </div>
+
+              <div className="footer-divider-line"></div>
+
+              <div className="footer-bottom-row">
+                <div className="footer-bottom-left">
+                  <span>© 2026 myMooment. All Rights Reserved</span>
+                </div>
+                <div className="footer-bottom-right-links">
+                  <a href="#privacy">Privacy Policy</a>
+                  <a href="#terms">Terms & Conditions</a>
+                </div>
+              </div>
+            </div>
+          </footer>
+          {/* Sidebar Drawer */}
+          <div className={`sidebar-backdrop ${showSidebar ? 'open' : ''}`} onClick={() => setShowSidebar(false)}></div>
+          <div className={`sidebar-drawer ${showSidebar ? 'open' : ''}`}>
+            <div className="sidebar-header">
+              <span className="sidebar-title">Menu</span>
+              <button className="sidebar-close-btn" onClick={() => setShowSidebar(false)} aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
               </button>
             </div>
-          </div>
-        </main>
-      ) : (
-        <main className="listings-container">
-          {/* Segment 1: Popular Caters */}
-          <div className="listings-segment">
-            <div className="listings-header">
-              <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
-                <h2>Best caters in Hyderabad</h2>
-                <span className="title-chevron">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </span>
-              </div>
-              <div className="listings-nav-arrows">
-                <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container', 'left')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                  </svg>
-                </button>
-                <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container', 'right')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="listings-scroll-row" id="listings-scroll-container">
-              {homeListings.map((home, idx) => (
-                <div key={idx} className="home-card" onClick={() => handleCardClick(home.title)}>
-                  <div className="card-image-wrapper">
-                    <img src={home.image} alt={home.title} className="card-img" />
-                  </div>
-                  <div className="card-info">
-                    <div className="card-title-row">
-                      <span className="card-title">{home.title}</span>
-                    </div>
-                    <div className="card-details-row">
-                      <span className="card-active-price">{home.price}</span>
-                      <span className="card-dot">·</span>
-                      <span className="card-rating-inline">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                        </svg>
-                        {home.rating}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Segment: Checkout Caters */}
-          <div className="listings-segment">
-            <div className="listings-header">
-              <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
-                <h2>Checkout caters in Hyderabad</h2>
-                <span className="title-chevron">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </span>
-              </div>
-              <div className="listings-nav-arrows">
-                <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-checkout', 'left')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                  </svg>
-                </button>
-                <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container-checkout', 'right')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="listings-scroll-row" id="listings-scroll-container-checkout">
-              {checkoutListings.map((home, idx) => (
-                <div key={idx} className="home-card" onClick={() => handleCardClick(home.title)}>
-                  <div className="card-image-wrapper">
-                    <img src={home.image} alt={home.title} className="card-img" />
-                  </div>
-                  <div className="card-info">
-                    <div className="card-title-row">
-                      <span className="card-title">{home.title}</span>
-                    </div>
-                    <div className="card-details-row">
-                      <span className="card-active-price">{home.price}</span>
-                      <span className="card-dot">·</span>
-                      <span className="card-rating-inline">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                        </svg>
-                        {home.rating}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Promo Cards: The Latest */}
-          <div className="listings-segment">
-            <div className="listings-header">
-              <div className="listings-title-row">
-                <h2 className="promo-heading-bold">Special offers only for special occasions</h2>
-              </div>
-            </div>
-
-            <div className="listings-scroll-row promo-scroll-row" id="promo-scroll-container">
-              <div className="promo-card promo-card--light">
-                <div className="promo-card__title">Premium<br />Catering Package</div>
-                <div className="promo-card__subtitle">All-inclusive service for all occasions.</div>
-                <div className="promo-card__price">From ₹399/plate</div>
-              </div>
-              <div className="promo-card promo-card--light">
-                <div className="promo-card__title">Budget Catering<br />Made Easy</div>
-                <div className="promo-card__subtitle">Great taste at the right price.</div>
-                <div className="promo-card__price">From ₹49/plate</div>
-              </div>
-              <div className="promo-card promo-card--light">
-                <div className="promo-card__title">Book Early,<br />Save Big.</div>
-                <div className="promo-card__subtitle">Get 20% off on advance bookings of 3+ days.</div>
-                <div className="promo-card__price">Offer ends soon</div>
-              </div>
-              <div className="promo-card promo-card--light">
-                <div className="promo-card__title">Wedding<br />Special Menus</div>
-                <div className="promo-card__subtitle">Curated multi-course meals for your big day.</div>
-                <div className="promo-card__price">From ₹249/plate</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Segment 2: Best in Rating */}
-          <div className="listings-segment">
-            <div className="listings-header">
-              <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
-                <h2>Best in rating in Hyderabad</h2>
-                <span className="title-chevron">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </span>
-              </div>
-              <div className="listings-nav-arrows">
-                <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-best', 'left')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                  </svg>
-                </button>
-                <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container-best', 'right')}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="listings-scroll-row" id="listings-scroll-container-best">
-              {bestRatingListings.map((home, idx) => (
-                <div key={idx} className="home-card" onClick={() => handleCardClick(home.title)}>
-                  <div className="card-image-wrapper">
-                    <img src={home.image} alt={home.title} className="card-img" />
-                  </div>
-                  <div className="card-info">
-                    <div className="card-title-row">
-                      <span className="card-title">{home.title}</span>
-                    </div>
-                    <div className="card-details-row">
-                      <span className="card-active-price">{home.price}</span>
-                      <span className="card-dot">·</span>
-                      <span className="card-rating-inline">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                        </svg>
-                        {home.rating}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Big Banner Frame */}
-          <div className="banner-frame">
-            <div className="banner-frame__inner">
-              <div className="banner-frame__left">
-                <div className="banner-frame__eyebrow">myMooment</div>
-                <h2 className="banner-frame__title">Find the best cater<br />for your next event.</h2>
-                <p className="banner-frame__subtitle">Browse top-rated catering services across India from intimate gatherings to grand weddings.</p>
-                <div className="banner-frame__actions">
-                  <button className="banner-frame__btn banner-frame__btn--primary">Explore all caters</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Booking.com Style Genius Card */}
-          <div className="genius-segment">
-            <h2 className="genius-section-title">Celebrate more with less effort</h2>
-            <div className="genius-card">
-              <div className="genius-card__left">
-                <h3 className="genius-card__title">Sign in to avail all offers</h3>
-                <p className="genius-card__subtitle">Save 15% or more only in myMooment</p>
-                <div className="genius-card__actions">
-                  <button className="genius-card__btn-primary" type="button" onClick={() => alert('Signing in...')}>Sign in</button>
-                  <button className="genius-card__btn-link" type="button" onClick={() => alert('Registering...')}>Register</button>
-                </div>
-              </div>
-              <div className="genius-card__right">
-                {/* Cute SVG Illustration of Gift Box with Ribbon & Confetti */}
-                <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="genius-gift-svg">
-                  {/* Confetti / Sparks */}
-                  <circle cx="15" cy="50" r="2.5" fill="#f59e0b" />
-                  <circle cx="25" cy="25" r="2" fill="#3b82f6" />
-                  <circle cx="105" cy="35" r="3" fill="#f59e0b" />
-                  <circle cx="95" cy="70" r="2" fill="#ef4444" />
-                  <path d="M 15 80 Q 20 75 25 85" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-                  <path d="M 98 20 Q 103 25 100 30" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-
-                  {/* Gift Box Main Body (Blue) */}
-                  <rect x="35" y="55" width="50" height="40" rx="8" fill="#006ce4" />
-
-                  {/* Gift Box Lid (Blue, slightly larger) */}
-                  <rect x="31" y="47" width="58" height="10" rx="4" fill="#0056b3" />
-
-                  {/* Ribbon Vertical (Yellow) */}
-                  <rect x="56" y="47" width="8" height="48" fill="#f59e0b" />
-
-                  {/* Ribbon Horizontal (Yellow) */}
-                  <rect x="35" y="68" width="50" height="8" fill="#f59e0b" />
-
-                  {/* Bow Ribbons on Top */}
-                  <path d="M 60 47 C 50 32 38 42 56 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
-                  <path d="M 60 47 C 70 32 82 42 64 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
-
-                  {/* Gift Label text: Genius/Mooment */}
-                  <text x="60" y="80" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">Mooment</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </main>
-      )}
-
-      {/* Footer Section */}
-      <footer className="mooment-footer">
-        <div className="footer-inner">
-          <div className="footer-top-split">
-            {/* Left Col: Logo, Title, LinkedIn icon */}
-            <div className="footer-brand-col">
-              <div className="footer-logo-row">
-                <span className="logo-text">myMooment</span>
-              </div>
-              <h2 className="footer-tagline">
-                India's 1st direct<br className="tagline-break" /> booking event platform
-              </h2>
-              <a
-                href="#linkedin"
-                className="footer-social-circle"
-                aria-label="LinkedIn"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF35E0">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                </svg>
-              </a>
-            </div>
-
-            {/* Right Col: Navigation Links Stack */}
-            <div className="footer-links-stack">
-              <a href="#about" className="footer-stack-link">About Us</a>
-              <a href="#register-partner" className="footer-stack-link partner-link">
-                Register as Partner
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: '4px', verticalAlign: 'middle' }}>
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-                <span className="free-badge">FREE</span>
-              </a>
-              <a href="mailto:info@mymooment.com" className="footer-stack-link email-link">
-                info@mymooment.com
-              </a>
-            </div>
-          </div>
-
-          <div className="footer-divider-line"></div>
-
-          <div className="footer-bottom-row">
-            <div className="footer-bottom-left">
-              <span>© 2026 myMooment. All Rights Reserved</span>
-            </div>
-            <div className="footer-bottom-right-links">
-              <a href="#privacy">Privacy Policy</a>
-              <a href="#terms">Terms & Conditions</a>
-            </div>
-          </div>
-        </div>
-      </footer>
-      {/* Sidebar Drawer */}
-      <div className={`sidebar-backdrop ${showSidebar ? 'open' : ''}`} onClick={() => setShowSidebar(false)}></div>
-      <div className={`sidebar-drawer ${showSidebar ? 'open' : ''}`}>
-        <div className="sidebar-header">
-          <span className="sidebar-title">Menu</span>
-          <button className="sidebar-close-btn" onClick={() => setShowSidebar(false)} aria-label="Close menu">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-        <div className="sidebar-content">
-          {/* Become Partner */}
-          <div className="sidebar-menu-item" onClick={() => { alert('Become Partner clicked'); setShowSidebar(false); }}>
-            <div className="sidebar-menu-text-col">
-              <span className="sidebar-menu-label">Become Partner</span>
-              <span className="sidebar-menu-subtitle">List your business in just under 5 mintues for FREE</span>
-              <div className="sidebar-offer-ticker">
-                <span className="sidebar-offer-text-wave">
-                  {"₹0 Onboarding & ₹0 Maintenance Fee".split('').map((char, index) => (
-                    <span
-                      key={index}
-                      style={{
-                        display: 'inline-block',
-                        animationDelay: `${index * 0.08}s`,
-                        whiteSpace: char === ' ' ? 'pre' : 'normal'
-                      }}
-                      className="wave-char"
-                    >
-                      {char}
+            <div className="sidebar-content">
+              {/* Become Partner */}
+              <div className="sidebar-menu-item" onClick={() => { alert('Become Partner clicked'); setShowSidebar(false); }}>
+                <div className="sidebar-menu-text-col">
+                  <span className="sidebar-menu-label">Become Partner</span>
+                  <span className="sidebar-menu-subtitle">List your business in just under 5 mintues for FREE</span>
+                  <div className="sidebar-offer-ticker">
+                    <span className="sidebar-offer-text-wave">
+                      {"₹0 Onboarding & ₹0 Maintenance Fee".split('').map((char, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            display: 'inline-block',
+                            animationDelay: `${index * 0.08}s`,
+                            whiteSpace: char === ' ' ? 'pre' : 'normal'
+                          }}
+                          className="wave-char"
+                        >
+                          {char}
+                        </span>
+                      ))}
                     </span>
-                  ))}
-                </span>
+                  </div>
+                </div>
+                <div className="sidebar-menu-arrow">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <div className="sidebar-menu-arrow">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
+
+              {isLoggedIn ? (
+                <>
+                  <div className="sidebar-divider"></div>
+                  <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                    <div className="sidebar-menu-text-col">
+                      <span className="sidebar-menu-label">Profile</span>
+                    </div>
+                    <div className="sidebar-menu-arrow">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="sidebar-divider"></div>
+                  <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                    <div className="sidebar-menu-text-col">
+                      <span className="sidebar-menu-label">Bookings</span>
+                    </div>
+                    <div className="sidebar-menu-arrow">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="sidebar-divider"></div>
+                  <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                    <div className="sidebar-menu-text-col">
+                      <span className="sidebar-menu-label">Add location</span>
+                    </div>
+                    <div className="sidebar-menu-arrow">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="sidebar-divider"></div>
+                  <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                    <div className="sidebar-menu-text-col">
+                      <span className="sidebar-menu-label">More</span>
+                    </div>
+                    <div className="sidebar-menu-arrow">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="sidebar-divider"></div>
+                  <div className="sidebar-menu-item" onClick={() => {
+                    setShowSidebar(false);
+
+                    setLoginStep(1);
+                    setShowFullScreenLogin(true);
+                  }}>
+                    <div className="sidebar-menu-text-col">
+                      <span className="sidebar-menu-label">Log in or sign up</span>
+                    </div>
+                    <div className="sidebar-menu-arrow">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
-
-          {isLoggedIn ? (
-            <>
-              <div className="sidebar-divider"></div>
-              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
-                <div className="sidebar-menu-text-col">
-                  <span className="sidebar-menu-label">Profile</span>
-                </div>
-                <div className="sidebar-menu-arrow">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-
-              <div className="sidebar-divider"></div>
-              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
-                <div className="sidebar-menu-text-col">
-                  <span className="sidebar-menu-label">Bookings</span>
-                </div>
-                <div className="sidebar-menu-arrow">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-
-              <div className="sidebar-divider"></div>
-              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
-                <div className="sidebar-menu-text-col">
-                  <span className="sidebar-menu-label">Add location</span>
-                </div>
-                <div className="sidebar-menu-arrow">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-
-              <div className="sidebar-divider"></div>
-              <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
-                <div className="sidebar-menu-text-col">
-                  <span className="sidebar-menu-label">More</span>
-                </div>
-                <div className="sidebar-menu-arrow">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="sidebar-divider"></div>
-              <div className="sidebar-menu-item" onClick={() => {
-                setShowSidebar(false);
-
-                setLoginStep(1);
-                setShowFullScreenLogin(true);
-              }}>
-                <div className="sidebar-menu-text-col">
-                  <span className="sidebar-menu-label">Log in or sign up</span>
-                </div>
-                <div className="sidebar-menu-arrow">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-      </>)}
+        </>)}
 
       {/* Initial Date Selection Modal */}
       {showInitialDateModal && (
@@ -4686,6 +4875,462 @@ function App() {
               </span>
             ))}
           </span>
+        </div>
+      )}
+
+      {/* Coupon Terms Bottom Sheet */}
+      {showCouponTerms && (
+        <div
+          className="modal-backdrop-animate bottom-sheet-on-mobile"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.4)',
+            zIndex: 2000000,
+            backdropFilter: 'blur(2px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center'
+          }}
+          onClick={() => setShowCouponTerms(null)}
+        >
+          <div
+            className="drawer-panel-animate"
+            style={{
+              background: '#ffffff',
+              width: '100%',
+              maxWidth: '600px',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px',
+              padding: '24px 16px',
+              boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
+              position: 'relative',
+              animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              fontFamily: "'Inter', sans-serif"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+              <div>
+                <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#222222', margin: 0, letterSpacing: '-0.3px' }}>Coupon details</h3>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginTop: '4px', fontWeight: '500' }}>We provide best offers only for you</div>
+              </div>
+              <button
+                onClick={() => setShowCouponTerms(null)}
+                style={{
+                  background: '#f3f4f6',
+                  border: 'none',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#e5e7eb'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#f3f4f6'}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <div style={{
+              background: '#f9fafb',
+              border: '1px solid #e5e7eb',
+              borderRadius: '16px',
+              padding: '20px',
+              marginBottom: '20px'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                paddingBottom: '20px',
+                borderBottom: '1px solid #e5e7eb',
+                marginBottom: '20px'
+              }}>
+                <div style={{ fontSize: '15px', fontWeight: '800', color: '#222222', lineHeight: '1.4', flex: 1, paddingRight: '12px' }}>
+                  {showCouponTerms === 'SAVE10' ? '₹100 off on this booking' : showCouponTerms === 'FLAT500' ? '10% off on this booking' : 'Flat ₹200 off on this booking'}
+                </div>
+                <div
+                  style={{
+                    border: '1px dashed #9ca3af',
+                    background: '#ffffff',
+                    padding: '6px 10px',
+                    borderRadius: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    flexShrink: 0
+                  }}
+                  onClick={() => { navigator.clipboard.writeText(showCouponTerms || ''); alert('Code copied!'); }}
+                >
+                  <span style={{ fontSize: '14px', fontWeight: '800', color: '#222222', letterSpacing: '0.5px' }}>
+                    {showCouponTerms}
+                  </span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: '2px' }}>
+                    <circle cx="12" cy="12" r="3" fill="#4b5563" />
+                  </svg>
+                  <span style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.5' }}>
+                    Use code {showCouponTerms} to apply the offer
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: '2px' }}>
+                    <circle cx="12" cy="12" r="3" fill="#4b5563" />
+                  </svg>
+                  <span style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.5' }}>
+                    Valid on minimum transaction value of {showCouponTerms === 'FLAT200' ? '₹5,000' : '₹0'}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: '2px' }}>
+                    <circle cx="12" cy="12" r="3" fill="#4b5563" />
+                  </svg>
+                  <span style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.5' }}>
+                    {showCouponTerms === 'FLAT500' ? '10% discount up to ₹500 will be applied' : 'Discount will be applied to your total immediately'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowCouponTerms(null)}
+              style={{
+                width: '100%',
+                padding: '16px',
+                background: '#000000',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#333333'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#000000'}
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* All Offers Bottom Sheet */}
+      {showAllOffers && (
+        <div
+          className="modal-backdrop-animate bottom-sheet-on-mobile"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.4)',
+            zIndex: 1000000,
+            backdropFilter: 'blur(2px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center'
+          }}
+          onClick={() => setShowAllOffers(false)}
+        >
+          <div
+            className="drawer-panel-animate"
+            style={{
+              background: '#f9fafb',
+              width: '100%',
+              maxWidth: '600px',
+              height: '90vh',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
+              position: 'relative',
+              animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              fontFamily: "'Inter', sans-serif"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 16px 16px 16px', background: '#ffffff', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', borderBottom: '1px solid #e5e7eb' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#222222', margin: 0, letterSpacing: '-0.3px' }}>Offers</h3>
+              <button
+                onClick={() => setShowAllOffers(false)}
+                style={{
+                  background: '#f3f4f6',
+                  border: 'none',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#e5e7eb'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#f3f4f6'}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 16px' }}>
+              <div style={{
+                display: 'flex',
+                gap: '12px',
+                marginBottom: '32px',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: '12px',
+                padding: '12px 16px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+              }}>
+                <input
+                  type="text"
+                  placeholder="Enter coupon code"
+                  value={manualCouponCode}
+                  onChange={(e) => setManualCouponCode(e.target.value.toUpperCase())}
+                  style={{
+                    flex: 1,
+                    border: 'none',
+                    outline: 'none',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    color: '#222222',
+                    textTransform: 'uppercase'
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    const inlineSubtotal = previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49);
+                    if (manualCouponCode.trim() === 'SAVE10' || manualCouponCode.trim() === 'FLAT500' || (manualCouponCode.trim() === 'FLAT200' && inlineSubtotal >= 5000)) {
+                      setAppliedCouponCode(manualCouponCode.trim());
+                      setShowAllOffers(false);
+                      setManualCouponCode('');
+                    } else if (manualCouponCode.trim() === 'FLAT200') {
+                      alert('Add more items to your cart to use this coupon.');
+                    } else {
+                      alert('Invalid coupon code');
+                    }
+                  }}
+                  disabled={!manualCouponCode.trim()}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    letterSpacing: '1px',
+                    cursor: manualCouponCode.trim() ? 'pointer' : 'not-allowed',
+                    background: manualCouponCode.trim() ? '#000000' : '#f3f4f6',
+                    color: manualCouponCode.trim() ? '#ffffff' : '#9ca3af',
+                    border: 'none',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  Apply
+                </button>
+              </div>
+
+              <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#717171', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '16px' }}>
+                AVAILABLE OFFERS
+              </h3>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* Coupon 1: SAVE10 */}
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '16px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '2px' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                      <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                    </svg>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222', lineHeight: '1.4' }}>
+                      ₹100 off on this booking
+                    </div>
+                    <div
+                      onClick={() => setShowCouponTerms('SAVE10')}
+                      style={{ fontSize: '13px', fontWeight: '600', color: '#222222', marginTop: '4px', textDecoration: 'underline', cursor: 'pointer' }}
+                    >
+                      Terms apply
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setAppliedCouponCode(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      letterSpacing: '1px',
+                      cursor: 'pointer',
+                      background: appliedCouponCode === 'SAVE10' ? '#fee2e2' : '#000000',
+                      color: appliedCouponCode === 'SAVE10' ? '#ef4444' : '#ffffff',
+                      border: appliedCouponCode === 'SAVE10' ? '1px dashed #ef4444' : '1px solid #000000',
+                      userSelect: 'none',
+                      minWidth: '80px',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    {appliedCouponCode === 'SAVE10' ? 'Remove' : 'Apply'}
+                  </button>
+                </div>
+
+                {/* Coupon 2: FLAT500 */}
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '16px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '2px' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                      <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                    </svg>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222', lineHeight: '1.4' }}>
+                      10% off on this booking
+                    </div>
+                    <div
+                      onClick={() => setShowCouponTerms('FLAT500')}
+                      style={{ fontSize: '13px', fontWeight: '600', color: '#222222', marginTop: '4px', textDecoration: 'underline', cursor: 'pointer' }}
+                    >
+                      Terms apply
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      letterSpacing: '1px',
+                      cursor: 'pointer',
+                      background: appliedCouponCode === 'FLAT500' ? '#fee2e2' : '#000000',
+                      color: appliedCouponCode === 'FLAT500' ? '#ef4444' : '#ffffff',
+                      border: appliedCouponCode === 'FLAT500' ? '1px dashed #ef4444' : '1px solid #000000',
+                      userSelect: 'none',
+                      minWidth: '80px',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    {appliedCouponCode === 'FLAT500' ? 'Remove' : 'Apply'}
+                  </button>
+                </div>
+
+                {/* Coupon 3: Disabled */}
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '16px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '2px' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                      <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                    </svg>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222', lineHeight: '1.4' }}>
+                      ₹200 off on this booking
+                    </div>
+                    {(previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49)) < 5000 && (
+                      <div style={{ fontSize: '12px', fontWeight: '500', color: '#ef4444', marginTop: '4px', marginBottom: '2px' }}>
+                        Add more ₹{Math.max(0, 5000 - (previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49)))} to apply
+                      </div>
+                    )}
+                    <div
+                      onClick={() => setShowCouponTerms('FLAT200')}
+                      style={{ fontSize: '13px', fontWeight: '600', color: '#222222', marginTop: '4px', textDecoration: 'underline', cursor: 'pointer' }}
+                    >
+                      Terms apply
+                    </div>
+                  </div>
+                  <button
+                    disabled={(previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49)) < 5000}
+                    onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')}
+                    style={
+                      (previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49)) < 5000 ? {
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        letterSpacing: '1px',
+                        cursor: 'not-allowed',
+                        background: '#f3f4f6',
+                        color: '#9ca3af',
+                        border: '1px solid #d1d5db',
+                        userSelect: 'none',
+                        minWidth: '80px',
+                        textTransform: 'uppercase'
+                      } : {
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        letterSpacing: '1px',
+                        cursor: 'pointer',
+                        background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000',
+                        color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff',
+                        border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000',
+                        userSelect: 'none',
+                        minWidth: '80px',
+                        textTransform: 'uppercase'
+                      }
+                    }
+                  >
+                    {(previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49)) >= 5000 && appliedCouponCode === 'FLAT200' ? 'Remove' : 'Apply'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

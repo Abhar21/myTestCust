@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './App.css'
 import './responsive.css'
 
@@ -365,6 +365,43 @@ if (typeof window !== 'undefined') {
     localStorage.removeItem('myMooment_selectedAddress');
   }
 }
+
+const ScrollRevealText = ({ children, style }: { children: string; style?: React.CSSProperties }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect();
+      }
+    });
+    if (ref.current) observer.observe(ref.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+  return (
+    <div ref={ref} style={{ ...style, perspective: '400px', transformStyle: 'preserve-3d' }}>
+      {isVisible
+        ? [...children].map((char, index) => (
+          <span
+            key={index}
+            style={{
+              display: 'inline-block',
+              animationDelay: `${index * 0.04}s`,
+              whiteSpace: char === ' ' ? 'pre' : 'normal'
+            }}
+            className="wave-char-pink"
+          >
+            {char}
+          </span>
+        ))
+        : <span style={{ opacity: 0 }}>{children}</span>
+      }
+    </div>
+  );
+};
 
 function App() {
   // Tabs: caters, mehendi, makeup, theatres, photography, decors, venues
@@ -1677,8 +1714,17 @@ function App() {
             })();
 
             const subtotal = previewGuestCount * actualPricePerPlate;
-            const taxes = Math.round(subtotal * 0.05); // 5% tax
-            const finalDiscountedPrice = Math.max(0, subtotal - couponDiscount) + taxes;
+            const originalPricePerPlate = (() => {
+              if (!selectedMenuData || !selectedMenuData.originalPrice) return actualPricePerPlate;
+              const match = selectedMenuData.originalPrice.match(/\d+/);
+              return match ? parseInt(match[0], 10) : actualPricePerPlate;
+            })();
+            const originalSubtotal = previewGuestCount * originalPricePerPlate;
+            const finalDiscountedPrice = Math.max(0, subtotal - couponDiscount);
+            const advance = Math.round(finalDiscountedPrice * 0.4);
+            const advancePay = advance + 11.8;
+            const totalSavedAmount = Math.max(0, originalSubtotal - subtotal) + couponDiscount;
+            const totalSavedPercentage = originalSubtotal > 0 ? Math.round((totalSavedAmount / originalSubtotal) * 100) : 0;
 
             return (
               <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '100px' }}>
@@ -2010,44 +2056,110 @@ function App() {
                   <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
 
                   {/* Price Details */}
-                  <h2 style={{ fontSize: '22px', fontWeight: '600', color: '#222222', marginBottom: '24px' }}>Price details</h2>
+                  <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', marginBottom: '16px' }}>Price details</h2>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '16px', color: '#222222' }}>
-                    <span>{previewGuestCount} guests x ₹{actualPricePerPlate}</span>
-                    <span>₹{subtotal.toLocaleString()}</span>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '16px', color: '#222222' }}>
-                    <span style={{ textDecoration: 'underline' }}>Taxes & fees</span>
-                    <span>₹{taxes.toLocaleString()}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span>{previewGuestCount} guests x ₹{actualPricePerPlate.toLocaleString()}</span>
+                      <span style={{ fontSize: '12px', color: '#717171', marginTop: '4px' }}>Incl taxes</span>
+                    </div>
+                    <div>
+                      {originalSubtotal > subtotal && (
+                        <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginRight: '8px', fontSize: '14px' }}>₹{originalSubtotal.toLocaleString()}</span>
+                      )}
+                      <span>₹{subtotal.toLocaleString()}</span>
+                    </div>
                   </div>
 
                   {couponDiscount > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '16px', color: '#059669', fontWeight: '500' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
                       <span>Coupon discount</span>
                       <span>-₹{couponDiscount.toLocaleString()}</span>
                     </div>
                   )}
 
-                  <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '600', color: '#222222', marginBottom: '24px' }}>
-                    <span>Total (INR)</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>Total</span>
+                      {(totalSavedAmount) > 0 && (
+                        <span style={{ background: '#ecfdf5', color: '#059669', fontSize: '11px', fontWeight: '600', padding: '2px 6px', borderRadius: '4px' }}>
+                          Saved ₹{totalSavedAmount.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
                     <span>₹{finalDiscountedPrice.toLocaleString()}</span>
                   </div>
 
+                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
+                    <span>Advance</span>
+                    <span>₹{advance.toLocaleString()}</span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
+                    <span>Platform fee</span>
+                    <span>₹11.80</span>
+                  </div>
+
+                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span>Advance pay</span>
+                      <span style={{ fontSize: '12px', color: '#717171', fontWeight: '400', marginTop: '4px' }}>Incl. applicable taxes</span>
+                    </div>
+                    <span>₹{advancePay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+
+                  {totalSavedPercentage > 0 && (
+                    <div style={{
+                      background: '#f0fdf4',
+                      border: '1px solid #bbf7d0',
+                      borderRadius: '6px',
+                      padding: '10px 14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      marginBottom: '16px'
+                    }}>
+                      <div style={{ background: '#22c55e', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" />
+                          <circle cx="16.5" cy="7.5" r="1.5" fill="#22c55e" />
+                        </svg>
+                      </div>
+                      <div style={{ fontSize: '13px', fontWeight: '700', color: '#166534' }}>
+                        You saved {totalSavedPercentage}% with this booking!
+                      </div>
+                    </div>
+                  )}
+
+                  <ScrollRevealText style={{ fontSize: '13px', color: '#ec4899', marginBottom: '16px', textAlign: 'center', fontWeight: '500' }}>
+                    Pay remaining amount on event day directly to Partner
+                  </ScrollRevealText>
+
+                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+
+                  <div style={{ marginBottom: '24px' }}>
+                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#636363ff', marginBottom: '6px' }}>Cancellation Policy</div>
+                    <div style={{ fontSize: '13px', color: '#717171', lineHeight: '1.5' }}>Please verify your event details before booking. Once an order is placed, it cannot be refunded.</div>
+                  </div>
 
                   <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
 
                   {/* Disclaimer */}
-                  <div style={{ fontSize: '12px', color: '#717171', marginBottom: '32px' }}>
+                  <div style={{ fontSize: '12px', color: '#717171', marginBottom: '12px', textAlign: 'center' }}>
                     You'll be directed to Razorpay to complete payment securely.
                   </div>
 
                   {/* Checkout Button */}
                   <button
                     onClick={() => {
-                      alert('Proceeding to Razorpay with total: ₹' + finalDiscountedPrice);
+                      alert('Proceeding to Razorpay with total: ₹' + advancePay);
                       setShowCheckoutPage(false);
                       setConfirmedSelection(prev => ({
                         ...prev,
@@ -2059,7 +2171,7 @@ function App() {
                     }}
                     style={{
                       width: '100%',
-                      background: '#e61e4d',
+                      background: '#222222',
                       color: 'white',
                       border: 'none',
                       borderRadius: '8px',
@@ -2067,10 +2179,19 @@ function App() {
                       fontSize: '16px',
                       fontWeight: '600',
                       cursor: 'pointer',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
                     }}
                   >
-                    Confirm and pay
+                    <span style={{ fontWeight: '700' }}>Continue with</span>
+                    <img
+                      src="Razorpay.png"
+                      alt="Razorpay"
+                      style={{ height: '22px', fontWeight: '400', objectFit: 'contain', verticalAlign: 'middle', filter: 'brightness(0) invert(1)' }}
+                    />
                   </button>
 
                 </div>

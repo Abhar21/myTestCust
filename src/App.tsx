@@ -1674,7 +1674,7 @@ function App() {
               <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '100px' }}>
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 24px 32px 24px' }}>
-                  <h1 style={{ fontSize: '26px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
+                  <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
                   <button onClick={() => setShowCheckoutPage(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
                     <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: '3', overflow: 'visible' }}><path d="m6 6 20 20M26 6 6 26"></path></svg>
                   </button>
@@ -1687,8 +1687,8 @@ function App() {
                     <img src={selectedVendorDetail?.image || '/homes/flat_kondapur.png'} alt="Vendor" style={{ width: '84px', height: '84px', borderRadius: '12px', objectFit: 'cover' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
                       <div style={{ fontSize: '12px', color: '#717171', marginBottom: '4px', fontWeight: '400' }}>Cater</div>
-                      <div style={{ fontSize: '18px', fontWeight: '500', color: '#222222', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{selectedVendorDetail?.title || 'Vendor Name'}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '14px', color: '#222222', fontWeight: '600' }}>
+                      <div style={{ fontSize: '16px', fontWeight: '550', color: '#222222', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{selectedVendorDetail?.title || 'Vendor Name'}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#222222', fontWeight: '500' }}>
                         <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '14px', width: '14px', fill: 'currentcolor' }}><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
                         <span>{selectedVendorDetail?.rating || '4.96'}</span>
                         <span style={{ fontWeight: '400', color: '#717171' }}>(23)</span>
@@ -1697,12 +1697,12 @@ function App() {
                   </div>
 
                   {/* Booking Details Box */}
-                  <div style={{ border: '1px solid #dddddd', borderRadius: '12px', padding: '24px', display: 'flex', flexDirection: 'column', marginBottom: '24px', backgroundColor: '#ffffff' }}>
+                  <div style={{ border: '1px solid #dddddd', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', marginBottom: '24px', backgroundColor: '#ffffff' }}>
 
                     {/* Dates */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
                       <div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222', marginBottom: '8px' }}>Date & Slot</div>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Date & Slot</div>
                         <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>
                           {modalSelectedDate ? `${modalSelectedDate.split('-')[0]} ${modalSelectedDate.split('-')[1]}, 2026` : 'Select date'}
                         </div>
@@ -1723,7 +1723,7 @@ function App() {
                     {/* Menu and Guests Merged */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222', marginBottom: '8px' }}>Menu</div>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Menu</div>
                         <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
                         <div style={{ fontSize: '12px', color: '#717171' }}>Min: {minGuests} -  Max: {maxGuests}</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
@@ -1769,6 +1769,18 @@ function App() {
                         >
                           +
                         </button>
+                      </div>
+                    </div>
+
+                    <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                    {/* Location */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Location</div>
+                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
+                          {selectedAddress ? selectedAddress.full : 'Choose a location...'}
+                        </div>
                       </div>
                     </div>
 

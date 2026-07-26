@@ -27,6 +27,7 @@
   .mobile-location-badge {
     display: flex !important;
     width: 100% !important;
+    box-sizing: border-box;
     align-items: center;
     background: #eaf4fd;
     /* Very light blue background */
@@ -35,6 +36,12 @@
     margin: 2px 0 10px 0 !important;
     cursor: pointer;
     overflow: hidden;
+  }
+
+  .home-mobile-location-badge {
+    width: max-content !important;
+    margin: 0 !important;
+    flex-shrink: 0;
   }
 
   .mobile-location-badge svg {

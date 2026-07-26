@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import './responsive.css'
 
@@ -349,6 +349,23 @@ const formatWhenInput = (val: string) => {
   return val;
 };
 
+if (typeof window !== 'undefined') {
+  let isReload = false;
+  const navEntries = performance.getEntriesByType('navigation');
+  if (navEntries.length > 0) {
+    if ((navEntries[0] as any).type === 'reload') {
+      isReload = true;
+    }
+  } else if (window.performance && (window.performance as any).navigation && (window.performance as any).navigation.type === 1) {
+    isReload = true;
+  }
+
+  if (isReload) {
+    localStorage.removeItem('myMooment_isLoggedIn');
+    localStorage.removeItem('myMooment_selectedAddress');
+  }
+}
+
 function App() {
   // Tabs: caters, mehendi, makeup, theatres, photography, decors, venues
   const [activeTab, setActiveTab] = useState<TabType>('caters')
@@ -410,7 +427,18 @@ function App() {
   const [showCalendar, setShowCalendar] = useState(false)
   const [showInitialDateModal, setShowInitialDateModal] = useState(false)
   const [activeSearchField, setActiveSearchField] = useState<'where' | 'when' | null>(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('myMooment_isLoggedIn') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('myMooment_isLoggedIn', String(isLoggedIn));
+    }
+  }, [isLoggedIn]);
   const [showLoginPopup, setShowLoginPopup] = useState(false)
   const [showFullScreenLogin, setShowFullScreenLogin] = useState(false)
   const [loginStep, setLoginStep] = useState(0)
@@ -433,16 +461,34 @@ function App() {
   const [modalMonth, setModalMonth] = useState(6)
 
   // Address Manager selected address state (initialized to null for Screen 2)
-  const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(null)
+  const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('myMooment_selectedAddress');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {}
+      }
+    }
+    return null;
+  });
   const [showMobileAddressModal, setShowMobileAddressModal] = useState(false)
   const [animateTravelInfo, setAnimateTravelInfo] = useState(false)
 
+  const prevAddress = useRef(selectedAddress)
+
   useEffect(() => {
     if (selectedAddress) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setAnimateTravelInfo(true);
-      const timer = setTimeout(() => setAnimateTravelInfo(false), 2500);
-      return () => clearTimeout(timer);
+      localStorage.setItem('myMooment_selectedAddress', JSON.stringify(selectedAddress));
+      setWhereInput(selectedAddress.full);
+      
+      if (prevAddress.current !== selectedAddress) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setAnimateTravelInfo(true);
+        prevAddress.current = selectedAddress;
+        const timer = setTimeout(() => setAnimateTravelInfo(false), 2500);
+        return () => clearTimeout(timer);
+      }
     }
   }, [selectedAddress]);
 
@@ -1612,7 +1658,29 @@ function App() {
                 </div>
               </>
             ) : selectedVendorDetail ? null : (
-              <div className="center-tabs">
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div
+                  className="mobile-location-badge"
+                  onClick={() => setShowMobileAddressModal(true)}
+                >
+                  {selectedAddress ? (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                    </svg>
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+                  )}
+                  <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
+                  <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
+                  <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+
+                <div className="center-tabs">
+
                 <div
                   className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
                   onClick={() => setActiveTab('caters')}
@@ -1674,6 +1742,7 @@ function App() {
                   <span className="tab-icon">🏛</span>
                   <span>Venues</span>
                 </div>
+              </div>
               </div>
             )}
           </div>

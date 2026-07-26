@@ -55,6 +55,7 @@
     color: #222;
     margin-left: 6px;
     margin-right: 4px;
+    white-space: nowrap;
   }
 
   .mobile-location-badge .badge-full {

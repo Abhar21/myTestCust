@@ -380,7 +380,7 @@ function App() {
   const [showSelectItemsDrawer, setShowSelectItemsDrawer] = useState(false);
   const [activeItemCategory, setActiveItemCategory] = useState<string>('Starters');
   const [selectedMenuData, setSelectedMenuData] = useState<any>(null);
-  const [drawerSelectedItems, setDrawerSelectedItems] = useState<string[]>(['Idli']);
+  const [drawerSelectedItems, setDrawerSelectedItems] = useState<string[]>([]);
   const [previewGuestCount, setPreviewGuestCount] = useState<number>(50);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
 
@@ -442,7 +442,7 @@ function App() {
   const [showLoginPopup, setShowLoginPopup] = useState(false)
   const [showFullScreenLogin, setShowFullScreenLogin] = useState(false)
   const [loginStep, setLoginStep] = useState(0)
-  const [loginOrigin, setLoginOrigin] = useState<'address' | 'sidebar'>('address')
+
   const [loginMobile, setLoginMobile] = useState('')
   const [loginOTP, setLoginOTP] = useState('')
   const [otpTimer, setOtpTimer] = useState(59)
@@ -467,7 +467,7 @@ function App() {
       if (saved) {
         try {
           return JSON.parse(saved);
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     return null;
@@ -481,7 +481,7 @@ function App() {
     if (selectedAddress) {
       localStorage.setItem('myMooment_selectedAddress', JSON.stringify(selectedAddress));
       setWhereInput(selectedAddress.full);
-      
+
       if (prevAddress.current !== selectedAddress) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setAnimateTravelInfo(true);
@@ -1681,68 +1681,68 @@ function App() {
 
                 <div className="center-tabs">
 
-                <div
-                  className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('caters')}
-                >
-                  <span className="tab-icon">🍽</span>
-                  <span>Caters</span>
-                </div>
+                  <div
+                    className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('caters')}
+                  >
+                    <span className="tab-icon">🍽</span>
+                    <span>Caters</span>
+                  </div>
 
-                <div
-                  className={`tab-item ${activeTab === 'mehendi' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('mehendi')}
-                >
-                  <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">🎨</span>
-                  <span>Mehendi</span>
-                </div>
+                  <div
+                    className={`tab-item ${activeTab === 'mehendi' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('mehendi')}
+                  >
+                    <span className="tab-badge">Soon</span>
+                    <span className="tab-icon">🎨</span>
+                    <span>Mehendi</span>
+                  </div>
 
-                <div
-                  className={`tab-item ${activeTab === 'makeup' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('makeup')}
-                >
-                  <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">💄</span>
-                  <span>Makeup</span>
-                </div>
+                  <div
+                    className={`tab-item ${activeTab === 'makeup' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('makeup')}
+                  >
+                    <span className="tab-badge">Soon</span>
+                    <span className="tab-icon">💄</span>
+                    <span>Makeup</span>
+                  </div>
 
-                <div
-                  className={`tab-item ${activeTab === 'theatres' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('theatres')}
-                >
-                  <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">🎬</span>
-                  <span>Private Theatres</span>
-                </div>
+                  <div
+                    className={`tab-item ${activeTab === 'theatres' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('theatres')}
+                  >
+                    <span className="tab-badge">Soon</span>
+                    <span className="tab-icon">🎬</span>
+                    <span>Private Theatres</span>
+                  </div>
 
-                <div
-                  className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('photography')}
-                >
-                  <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">📸</span>
-                  <span>Photography</span>
-                </div>
+                  <div
+                    className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('photography')}
+                  >
+                    <span className="tab-badge">Soon</span>
+                    <span className="tab-icon">📸</span>
+                    <span>Photography</span>
+                  </div>
 
-                <div
-                  className={`tab-item ${activeTab === 'decors' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('decors')}
-                >
-                  <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">🎭</span>
-                  <span>Decors</span>
-                </div>
+                  <div
+                    className={`tab-item ${activeTab === 'decors' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('decors')}
+                  >
+                    <span className="tab-badge">Soon</span>
+                    <span className="tab-icon">🎭</span>
+                    <span>Decors</span>
+                  </div>
 
-                <div
-                  className={`tab-item ${activeTab === 'venues' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('venues')}
-                >
-                  <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">🏛</span>
-                  <span>Venues</span>
+                  <div
+                    className={`tab-item ${activeTab === 'venues' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('venues')}
+                  >
+                    <span className="tab-badge">Soon</span>
+                    <span className="tab-icon">🏛</span>
+                    <span>Venues</span>
+                  </div>
                 </div>
-              </div>
               </div>
             )}
           </div>
@@ -3001,9 +3001,9 @@ function App() {
           ) : (
             <>
               <div className="sidebar-divider"></div>
-              <div className="sidebar-menu-item" onClick={() => { 
+              <div className="sidebar-menu-item" onClick={() => {
                 setShowSidebar(false);
-                setLoginOrigin('sidebar');
+
                 setLoginStep(1);
                 setShowFullScreenLogin(true);
               }}>
@@ -3957,7 +3957,7 @@ function App() {
               <button
                 onClick={() => {
                   setShowLoginPopup(false);
-                  setLoginOrigin('address');
+
                   setLoginStep(1);
                   setShowFullScreenLogin(true);
                 }}
@@ -4023,144 +4023,140 @@ function App() {
           </button>
 
 
-            {loginStep === 1 && (
-              <>
-                <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                  Welcome
-                </h2>
-                <div style={{ textAlign: 'left', marginBottom: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                    Enter your mobile number
-                  </label>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: '100%',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    padding: '12px 16px',
-                    boxSizing: 'border-box',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-                  }}>
-                    <span style={{ color: '#717171', fontSize: '16px', marginRight: '8px' }}>+91</span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={10}
-                      value={loginMobile}
-                      onChange={(e) => setLoginMobile(e.target.value.replace(/\D/g, ''))}
-                      placeholder=""
-                      style={{
-                        flex: 1,
-                        border: 'none',
-                        outline: 'none',
-                        fontSize: '16px',
-                        padding: 0,
-                        background: 'transparent',
-                        color: '#222222',
-                        fontFamily: 'inherit'
-                      }}
-                    />
-                  </div>
-                </div>
-                <button
-                  disabled={loginMobile.length !== 10}
-                  onClick={() => {
-                    if (loginMobile.length === 10) {
-                      setLoginStep(2);
-                      setOtpTimer(59);
-                    }
-                  }}
-                  style={{
-                    width: '100%',
-                    background: '#222222',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '14px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: loginMobile.length === 10 ? 'pointer' : 'not-allowed',
-                    opacity: loginMobile.length === 10 ? 1 : 0.5,
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-                  }}
-                >
-                  Continue
-                </button>
-              </>
-            )}
-
-            {loginStep === 2 && (
-              <>
-                <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                  Enter OTP
-                </h2>
-                <div style={{ textAlign: 'left', marginBottom: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                    Code sent to {loginMobile}
-                  </label>
+          {loginStep === 1 && (
+            <>
+              <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                Welcome
+              </h2>
+              <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  Enter your mobile number
+                </label>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: '100%',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  boxSizing: 'border-box',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                }}>
+                  <span style={{ color: '#717171', fontSize: '16px', marginRight: '8px' }}>+91</span>
                   <input
                     type="text"
                     inputMode="numeric"
-                    maxLength={6}
-                    value={loginOTP}
-                    onChange={(e) => setLoginOTP(e.target.value.replace(/\D/g, ''))}
-                    placeholder="0 0 0 0 0 0"
+                    maxLength={10}
+                    value={loginMobile}
+                    onChange={(e) => setLoginMobile(e.target.value.replace(/\D/g, ''))}
+                    placeholder=""
                     style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      fontSize: '20px',
-                      letterSpacing: '8px',
-                      textAlign: 'center',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '8px',
+                      flex: 1,
+                      border: 'none',
                       outline: 'none',
-                      boxSizing: 'border-box',
-                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                      fontSize: '16px',
+                      padding: 0,
+                      background: 'transparent',
+                      color: '#222222',
+                      fontFamily: 'inherit'
                     }}
                   />
                 </div>
-                <button
-                  disabled={loginOTP.length !== 6}
-                  onClick={() => {
-                    if (loginOTP.length === 6) {
-                      setIsLoggedIn(true);
-                      setShowFullScreenLogin(false);
-                      setLoginStep(0);
-                      if (loginOrigin === 'sidebar') {
-                        setShowSidebar(true);
-                      } else {
-                        setShowMobileAddressModal(true);
-                      }
-                    }
-                  }}
+              </div>
+              <button
+                disabled={loginMobile.length !== 10}
+                onClick={() => {
+                  if (loginMobile.length === 10) {
+                    setLoginStep(2);
+                    setOtpTimer(59);
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  background: '#222222',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '14px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: loginMobile.length === 10 ? 'pointer' : 'not-allowed',
+                  opacity: loginMobile.length === 10 ? 1 : 0.5,
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                }}
+              >
+                Continue
+              </button>
+            </>
+          )}
+
+          {loginStep === 2 && (
+            <>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                Enter OTP
+              </h2>
+              <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  Code sent to {loginMobile}
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={loginOTP}
+                  onChange={(e) => setLoginOTP(e.target.value.replace(/\D/g, ''))}
+                  placeholder="0 0 0 0 0 0"
                   style={{
                     width: '100%',
-                    background: '#222222',
-                    color: '#ffffff',
-                    border: 'none',
+                    padding: '12px 16px',
+                    fontSize: '20px',
+                    letterSpacing: '8px',
+                    textAlign: 'center',
+                    border: '1px solid #d1d5db',
                     borderRadius: '8px',
-                    padding: '14px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: loginOTP.length === 6 ? 'pointer' : 'not-allowed',
-                    opacity: loginOTP.length === 6 ? 1 : 0.5,
+                    outline: 'none',
+                    boxSizing: 'border-box',
                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
                   }}
-                >
-                  Verify & Continue
-                </button>
-                <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#717171', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                  {otpTimer > 0 ? (
-                    `Didn't receive? 0:${String(otpTimer).padStart(2, '0')}`
-                  ) : (
-                    <>
-                      Didn't receive? <span onClick={() => setOtpTimer(59)} style={{ color: '#222222', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}>Send again</span>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
+                />
+              </div>
+              <button
+                disabled={loginOTP.length !== 6}
+                onClick={() => {
+                  if (loginOTP.length === 6) {
+                    setIsLoggedIn(true);
+                    setShowFullScreenLogin(false);
+                    setLoginStep(0);
+                    setShowMobileAddressModal(true);
+                  }
+                }}
+                style={{
+                  width: '100%',
+                  background: '#222222',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '14px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: loginOTP.length === 6 ? 'pointer' : 'not-allowed',
+                  opacity: loginOTP.length === 6 ? 1 : 0.5,
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                }}
+              >
+                Verify & Continue
+              </button>
+              <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#717171', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                {otpTimer > 0 ? (
+                  `Didn't receive? 0:${String(otpTimer).padStart(2, '0')}`
+                ) : (
+                  <>
+                    Didn't receive? <span onClick={() => setOtpTimer(59)} style={{ color: '#222222', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}>Send again</span>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
       )}
 
@@ -4309,34 +4305,76 @@ function App() {
                   borderRadius: '16px',
                   marginTop: '2px'
                 }}>
-                  {activeItemCategory === 'Starters'
-                    ? `Added ${['Idli', 'Vada', 'Medu Vada', 'Poha'].filter(x => drawerSelectedItems.includes(x)).length}/2`
-                    : 'All items included'}
+                  {(() => {
+                    const limits: Record<string, number | null> = { 'Starters': 2, 'Main Course': 2, 'Desserts': 2, 'Curries': 2, 'Tiffins': 2, 'Rice & Breads': null, 'Beverages': null, 'Extra Items': null };
+                    const limit = limits[activeItemCategory];
+                    if (limit !== null && limit !== undefined) {
+                      const allItems = activeItemCategory === 'Starters' ? ['Idli', 'Vada', 'Medu Vada', 'Poha'] :
+                        activeItemCategory === 'Main Course' ? ['Dal Tadka', 'Paneer Butter Masala', 'Aloo Matar', 'Mixed Veg Curry'] :
+                          activeItemCategory === 'Curries' ? ['Veg Kurma', 'Gutti Vankaya', 'Mushroom Masala', 'Palak Paneer'] :
+                            activeItemCategory === 'Tiffins' ? ['Dosa', 'Upma', 'Bonda', 'Uttapam'] :
+                              ['Kesari Bath', 'Gulab Jamun', 'Payasam'];
+                      return `Added ${allItems.filter(x => drawerSelectedItems.includes(x)).length}/${limit}`;
+                    }
+                    return 'All items included';
+                  })()}
                 </div>
               </div>
 
               {/* Tabs Row */}
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {['Starters', 'Main Course', 'Rice & Breads', 'Beverages', 'Desserts'].map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveItemCategory(cat)}
-                    style={{
-                      background: activeItemCategory === cat ? '#222222' : '#f3f4f6',
-                      border: activeItemCategory === cat ? '1px solid #222222' : '1px solid #e5e7eb',
-                      borderRadius: '24px',
-                      padding: '6px 14px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: activeItemCategory === cat ? '#ffffff' : '#4b5563',
-                      cursor: 'pointer',
-                      boxShadow: activeItemCategory === cat ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
-                      transition: 'all 0.15s'
-                    }}
-                  >
-                    {cat}
-                  </button>
-                ))}
+              <div className="hide-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflowX: 'auto', paddingBottom: '8px', margin: '0 -24px', paddingLeft: '24px', paddingRight: '24px' }}>
+                {(() => {
+                  const catLimits: Record<string, number | null> = { 'Starters': 2, 'Main Course': 2, 'Desserts': 2, 'Curries': 2, 'Tiffins': 2, 'Rice & Breads': null, 'Beverages': null, 'Extra Items': null };
+                  const getCatItems = (cat: string) =>
+                    cat === 'Starters' ? ['Idli', 'Vada', 'Medu Vada', 'Poha'] :
+                      cat === 'Main Course' ? ['Dal Tadka', 'Paneer Butter Masala', 'Aloo Matar', 'Mixed Veg Curry'] :
+                        cat === 'Curries' ? ['Veg Kurma', 'Gutti Vankaya', 'Mushroom Masala', 'Palak Paneer'] :
+                          cat === 'Tiffins' ? ['Dosa', 'Upma', 'Bonda', 'Uttapam'] :
+                            ['Kesari Bath', 'Gulab Jamun', 'Payasam'];
+
+                  return [
+                    ['Starters', 'Rice & Breads', 'Desserts', 'Extra Items'],
+                    ['Main Course', 'Beverages', 'Curries', 'Tiffins']
+                  ].map((rowCats, rowIndex) => (
+                    <div key={rowIndex} style={{ display: 'flex', gap: '8px', width: 'max-content' }}>
+                      {rowCats.map(cat => {
+                        const limit = catLimits[cat];
+                        const isFull = limit === null || getCatItems(cat).filter(x => drawerSelectedItems.includes(x)).length >= limit;
+                        const isActive = activeItemCategory === cat;
+
+                        const bg = isFull ? (isActive ? '#d1fae5' : '#f0fdf4') : (isActive ? '#222222' : '#f3f4f6');
+                        const color = isFull ? (isActive ? '#047857' : '#10b981') : (isActive ? '#ffffff' : '#4b5563');
+                        const border = isFull ? (isActive ? '1px solid #10b981' : '1px solid #bbf7d0') : (isActive ? '1px solid #222222' : '1px solid #e5e7eb');
+
+                        return (
+                          <button
+                            key={cat}
+                            onClick={() => setActiveItemCategory(cat)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0,
+                              background: bg,
+                              border: border,
+                              borderRadius: '24px',
+                              padding: '6px 12px',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              color: color,
+                              cursor: 'pointer',
+                              boxShadow: isActive ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+                              transition: 'all 0.15s'
+                            }}
+                          >
+                            {cat}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ));
+                })()}
               </div>
 
               {/* Items List */}
@@ -4370,6 +4408,24 @@ function App() {
                     { id: 'Gulab Jamun', name: 'Gulab Jamun', desc: 'Soft milk-solid dumplings soaked in rose sugar syrup' },
                     { id: 'Payasam', name: 'Payasam', desc: 'Creamy vermicelli & milk pudding with cashews & raisins' },
                   ],
+                  'Curries': [
+                    { id: 'Veg Kurma', name: 'Veg Kurma', desc: 'Mixed vegetables in a coconut and cashew gravy' },
+                    { id: 'Gutti Vankaya', name: 'Gutti Vankaya', desc: 'Stuffed eggplants cooked in a rich peanut and sesame sauce' },
+                    { id: 'Mushroom Masala', name: 'Mushroom Masala', desc: 'Earthy mushrooms in a spicy tomato and onion base' },
+                    { id: 'Palak Paneer', name: 'Palak Paneer', desc: 'Cottage cheese cubes in a creamy spinach puree' },
+                  ],
+                  'Extra Items': [
+                    { id: 'Papad', name: 'Papad', desc: 'Crispy roasted lentil wafers' },
+                    { id: 'Pickle', name: 'Pickle', desc: 'Spicy and tangy mixed vegetable pickle' },
+                    { id: 'Raita', name: 'Raita', desc: 'Cool yogurt with cucumber, onions, and mild spices' },
+                    { id: 'Salad', name: 'Salad', desc: 'Fresh cucumber, carrot, and onion slices with lemon' },
+                  ],
+                  'Tiffins': [
+                    { id: 'Dosa', name: 'Dosa', desc: 'Crispy fermented crepe made from rice and lentils' },
+                    { id: 'Upma', name: 'Upma', desc: 'Savory semolina porridge with vegetables and spices' },
+                    { id: 'Bonda', name: 'Bonda', desc: 'Deep-fried potato dumplings in a gram flour batter' },
+                    { id: 'Uttapam', name: 'Uttapam', desc: 'Thick savory pancake topped with onions and tomatoes' },
+                  ],
                 };
 
                 /* Photo / image placeholder icon — dims when disabled */
@@ -4389,26 +4445,29 @@ function App() {
                   </div>
                 );
 
-                const STARTER_MAX = 2;
-                const starterSelectedCount = starterItems.filter(i => drawerSelectedItems.includes(i.id)).length;
-                const starterLimitReached = starterSelectedCount >= STARTER_MAX;
+                const limits: Record<string, number | null> = { 'Starters': 2, 'Main Course': 2, 'Desserts': 2, 'Curries': 2, 'Tiffins': 2, 'Rice & Breads': null, 'Beverages': null, 'Extra Items': null };
+                const limit = limits[activeItemCategory];
+                const currentItems = activeItemCategory === 'Starters' ? starterItems : (fixedSections[activeItemCategory] || []);
+                const currentSelectedCount = currentItems.filter(i => drawerSelectedItems.includes(i.id)).length;
+                const limitReached = limit !== null && currentSelectedCount >= limit;
 
-                if (activeItemCategory === 'Starters') {
-                  return (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      {starterItems.map(item => {
-                        const isSelected = drawerSelectedItems.includes(item.id);
-                        const isDisabled = !isSelected && starterLimitReached;
-                        return (
-                          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                              {getItemThumbnail(isDisabled)}
-                              <div>
-                                <div style={{ fontSize: '14px', fontWeight: '600', color: isDisabled ? '#9ca3af' : '#222222' }}>{item.name}</div>
-                                <div style={{ fontSize: '12px', color: '#717171', marginTop: '3px', lineHeight: '1.4' }}>{item.desc}</div>
-                              </div>
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {currentItems.map(item => {
+                      const isSelected = limit !== null ? drawerSelectedItems.includes(item.id) : true;
+                      const isDisabled = limit !== null ? (!isSelected && limitReached) : true;
+
+                      return (
+                        <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                            {getItemThumbnail(isDisabled && limit !== null)}
+                            <div>
+                              <div style={{ fontSize: '14px', fontWeight: '600', color: (isDisabled && limit !== null) ? '#9ca3af' : '#222222' }}>{item.name}</div>
+                              <div style={{ fontSize: '12px', color: '#717171', marginTop: '3px', lineHeight: '1.4' }}>{item.desc}</div>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '78px', flexShrink: 0 }}>
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '78px', flexShrink: 0 }}>
+                            {limit !== null ? (
                               <button
                                 disabled={isDisabled}
                                 onClick={() => {
@@ -4429,52 +4488,51 @@ function App() {
                               >
                                 {isSelected ? 'Remove' : 'Add'}
                               </button>
-                              <span style={{
-                                fontSize: '11px',
-                                fontWeight: isSelected ? '500' : '400',
-                                color: isSelected ? '#10b981' : '#8e8e93',
-                                marginTop: '8px'
-                              }}>
-                                {isSelected ? 'Selected' : 'Select'}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                }
+                            ) : (
+                              <button
+                                disabled={true}
+                                style={{
+                                  background: '#f9fafb', color: '#9ca3af',
+                                  border: '1px solid #e5e7eb', borderRadius: '10px',
+                                  padding: '6px 12px', fontWeight: '500', fontSize: '12px', cursor: 'default',
+                                  width: '100%', textAlign: 'center'
+                                }}
+                              >
+                                Add
+                              </button>
+                            )}
 
-                const currentItems = fixedSections[activeItemCategory] || [];
-                return (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {currentItems.map(item => (
-                      <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                          {getItemThumbnail(false)}
-                          <div>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>{item.name}</div>
-                            <div style={{ fontSize: '12px', color: '#717171', marginTop: '3px', lineHeight: '1.4' }}>{item.desc}</div>
+                            <span style={{
+                              fontSize: '11px',
+                              fontWeight: isSelected ? '500' : '400',
+                              color: isSelected ? '#10b981' : '#8e8e93',
+                              marginTop: '8px'
+                            }}>
+                              {isSelected ? 'Selected' : 'Select'}
+                            </span>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '78px', flexShrink: 0 }}>
-                          <button
-                            disabled={true}
-                            style={{
-                              background: '#f9fafb', color: '#9ca3af',
-                              border: '1px solid #e5e7eb', borderRadius: '10px',
-                              padding: '6px 12px', fontWeight: '500', fontSize: '12px',
-                              cursor: 'default', width: '100%', textAlign: 'center'
-                            }}
-                          >
-                            Add
-                          </button>
-                          <span style={{ fontSize: '11px', fontWeight: '500', color: '#10b981', marginTop: '8px' }}>
-                            Selected
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
+
+                    <div style={{ marginTop: '32px', textAlign: 'center', paddingBottom: '16px' }}>
+                      <button
+                        onClick={() => setDrawerSelectedItems([])}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#475569',
+                          textDecoration: 'underline',
+                          textUnderlineOffset: '4px',
+                          textDecorationThickness: '1px',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          fontWeight: '500'
+                        }}
+                      >
+                        Clear all items
+                      </button>
+                    </div>
                   </div>
                 );
               })()}
@@ -4486,28 +4544,48 @@ function App() {
               borderTop: '1px solid #e2e8f0',
               background: '#ffffff'
             }}>
-              <button
-                onClick={() => {
-                  setModalStep(2);
-                  setShowSelectItemsModal(true);
-                  setShowSelectItemsDrawer(false);
-                }}
-                style={{
-                  background: '#222222',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  width: '100%',
-                  transition: 'background-color 0.2s'
-                }}
-              >
-                Next
-              </button>
+              {(() => {
+                const catLimits: Record<string, number | null> = { 'Starters': 2, 'Main Course': 2, 'Desserts': 2, 'Curries': 2, 'Tiffins': 2, 'Rice & Breads': null, 'Beverages': null, 'Extra Items': null };
+                const getCatItems = (cat: string) =>
+                  cat === 'Starters' ? ['Idli', 'Vada', 'Medu Vada', 'Poha'] :
+                    cat === 'Main Course' ? ['Dal Tadka', 'Paneer Butter Masala', 'Aloo Matar', 'Mixed Veg Curry'] :
+                      cat === 'Curries' ? ['Veg Kurma', 'Gutti Vankaya', 'Mushroom Masala', 'Palak Paneer'] :
+                        cat === 'Tiffins' ? ['Dosa', 'Upma', 'Bonda', 'Uttapam'] :
+                          ['Kesari Bath', 'Gulab Jamun', 'Payasam'];
+
+                const isAllItemsSelected = Object.entries(catLimits).every(([cat, limit]) => {
+                  if (limit === null) return true;
+                  const catItems = getCatItems(cat);
+                  const selectedCount = catItems.filter(x => drawerSelectedItems.includes(x)).length;
+                  return selectedCount === limit;
+                });
+
+                return (
+                  <button
+                    disabled={!isAllItemsSelected}
+                    onClick={() => {
+                      setModalStep(2);
+                      setShowSelectItemsModal(true);
+                      setShowSelectItemsDrawer(false);
+                    }}
+                    style={{
+                      background: isAllItemsSelected ? '#222222' : '#e5e7eb',
+                      color: isAllItemsSelected ? '#ffffff' : '#9ca3af',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '14px',
+                      fontWeight: '600',
+                      fontSize: '14px',
+                      cursor: isAllItemsSelected ? 'pointer' : 'not-allowed',
+                      textAlign: 'center',
+                      width: '100%',
+                      transition: 'background-color 0.2s'
+                    }}
+                  >
+                    {isAllItemsSelected ? 'Next' : 'Select all required items'}
+                  </button>
+                );
+              })()}
             </div>
 
           </div>

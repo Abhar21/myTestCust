@@ -1639,8 +1639,8 @@ function App() {
       {/* Checkout Page Full Screen Overlay */}
       {showCheckoutPage && (
         <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: '#ffffff', zIndex: 999999, overflowY: 'auto',
+          minHeight: '100vh',
+          background: '#ffffff',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
         }}>
           {(() => {
@@ -1891,7 +1891,9 @@ function App() {
         </div>
       )}
 
-      {/* Background Catcher Overlay to close dropdown when clicking outside */}
+      {!showCheckoutPage && (
+        <>
+          {/* Background Catcher Overlay to close dropdown when clicking outside */}
       {(showDestinations || showCalendar || isHeaderSearchExpanded || showSortDropdown || showDietDropdown || showMealsDropdown) && (
         <div
           className="dropdown-overlay"
@@ -3305,6 +3307,7 @@ function App() {
           )}
         </div>
       </div>
+      </>)}
 
       {/* Initial Date Selection Modal */}
       {showInitialDateModal && (

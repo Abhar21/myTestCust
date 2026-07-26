@@ -3122,3 +3122,59 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 .mobile-inline-calendar {
   display: none;
 }
+
+
+@keyframes charWave3DPink {
+  0% {
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1);
+    text-shadow: 0 0 0 rgba(255, 53, 224, 0);
+    color: #222222;
+  }
+  30% {
+    transform: translate3d(0, -6px, 12px) rotateX(15deg) rotateY(-10deg) scale(1.12);
+    text-shadow: 0 4px 8px rgba(255, 53, 224, 0.35);
+    color: #FF35E0;
+  }
+  60%, 100% {
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1);
+    text-shadow: 0 0 0 rgba(255, 53, 224, 0);
+    color: #222222;
+  }
+}
+
+.wave-char-pink {
+  display: inline-block;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  transform-style: preserve-3d;
+  animation: charWave3DPink 1.5s ease-in-out forwards;
+}
+
+
+@keyframes slideFadeToast {
+  0% { transform: translate(-50%, 20px); opacity: 0; }
+  15% { transform: translate(-50%, 0); opacity: 1; }
+  85% { transform: translate(-50%, 0); opacity: 1; }
+  100% { transform: translate(-50%, 20px); opacity: 0; }
+}
+
+.travel-toast-pill {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  color: #222222;
+  padding: 10px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 99999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  animation: slideFadeToast 2.5s ease-in-out forwards;
+  white-space: nowrap;
+  width: max-content;
+}

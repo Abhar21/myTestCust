@@ -410,6 +410,20 @@ function App() {
   const [showCalendar, setShowCalendar] = useState(false)
   const [showInitialDateModal, setShowInitialDateModal] = useState(false)
   const [activeSearchField, setActiveSearchField] = useState<'where' | 'when' | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showLoginPopup, setShowLoginPopup] = useState(false)
+  const [showFullScreenLogin, setShowFullScreenLogin] = useState(false)
+  const [loginStep, setLoginStep] = useState(0)
+  const [loginMobile, setLoginMobile] = useState('')
+  const [loginOTP, setLoginOTP] = useState('')
+  const [otpTimer, setOtpTimer] = useState(59)
+
+  useEffect(() => {
+    if (loginStep === 2 && otpTimer > 0) {
+      const timer = setInterval(() => setOtpTimer((prev) => prev - 1), 1000)
+      return () => clearInterval(timer)
+    }
+  }, [loginStep, otpTimer])
 
   // Year and Month navigation states (Locks initial to July 2026)
   const [currentYear, setCurrentYear] = useState(2026)
@@ -420,6 +434,16 @@ function App() {
   // Address Manager selected address state (initialized to null for Screen 2)
   const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(null)
   const [showMobileAddressModal, setShowMobileAddressModal] = useState(false)
+  const [animateTravelInfo, setAnimateTravelInfo] = useState(false)
+
+  useEffect(() => {
+    if (selectedAddress) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setAnimateTravelInfo(true);
+      const timer = setTimeout(() => setAnimateTravelInfo(false), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedAddress]);
 
   const [showSidebar, setShowSidebar] = useState(false)
   const [activeMenuCategory, setActiveMenuCategory] = useState("All")
@@ -716,7 +740,7 @@ function App() {
   const getCalendarDays = (year: number, month: number) => {
     const firstDayIndex = new Date(year, month, 1).getDay();
     const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
-    
+
     const days: Array<{ day: number | null, isPast: boolean }> = [];
     // Add empty leading cells
     for (let i = 0; i < firstDayIndex; i++) {
@@ -1732,7 +1756,25 @@ function App() {
                   <div className="detail-left-meta-item">
                     <div className="detail-left-meta-label">TRAVEL INFO</div>
                     <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      {getCaterTravelInfo(selectedVendorDetail.title)}
+                      {animateTravelInfo ? (
+                        <span style={{ display: 'inline-block', perspective: '400px', transformStyle: 'preserve-3d' }}>
+                          {[...getCaterTravelInfo(selectedVendorDetail.title)].map((char, index) => (
+                            <span
+                              key={index}
+                              style={{
+                                display: 'inline-block',
+                                animationDelay: `${index * 0.04}s`,
+                                whiteSpace: char === ' ' ? 'pre' : 'normal'
+                              }}
+                              className="wave-char-pink"
+                            >
+                              {char}
+                            </span>
+                          ))}
+                        </span>
+                      ) : (
+                        getCaterTravelInfo(selectedVendorDetail.title)
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1914,7 +1956,11 @@ function App() {
                               return match ? parseInt(match[1], 10) : 50;
                             })();
                             setPreviewGuestCount(parsedMin);
-                            setShowSelectItemsDrawer(true);
+                            if (!isLoggedIn) {
+                              setShowLoginPopup(true);
+                            } else {
+                              setShowSelectItemsDrawer(true);
+                            }
                           }}
                         >
                           Select Items
@@ -2093,7 +2139,7 @@ function App() {
                 {calendarDays.map((cell, idx) => {
                   const isSelected = cell.day !== null &&
                     whenInput === `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
-                  
+
                   return (
                     <div
                       key={`inline-cal-${idx}`}
@@ -2953,7 +2999,7 @@ function App() {
                 {modalCalendarDays.map((cell, idx) => {
                   const isSelected = cell.day !== null &&
                     whenInput === `${modalYear}-${String(modalMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
-                  
+
                   return (
                     <div
                       key={`modal-cal-${idx}`}
@@ -2962,15 +3008,15 @@ function App() {
                         if (cell.day !== null && !cell.isPast) {
                           const dateString = `${modalYear}-${String(modalMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
                           setWhenInput(dateString);
-                          
+
                           const url = new URL(window.location.href);
                           url.searchParams.set('when', dateString);
                           window.history.replaceState({}, '', url.toString());
-                          
+
                           // Optional: Auto-sync inline calendar to chosen date's month
                           setCurrentMonth(modalMonth);
                           setCurrentYear(modalYear);
-                          
+
                           setShowInitialDateModal(false);
                         }
                       }}
@@ -3718,6 +3764,273 @@ function App() {
           </div>
         </div>
       )}
+      {/* Login Popup */}
+      {showLoginPopup && (
+        <div
+          className="modal-overlay-animate"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={() => { setShowLoginPopup(false); setLoginStep(0); }}
+        >
+          <div
+            className="modal-content-animate"
+            style={{
+              width: '320px',
+              maxWidth: '100%',
+              background: '#ffffff',
+              borderRadius: '24px',
+              padding: '24px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              textAlign: 'center',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', marginTop: 0, marginBottom: '12px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+              Login Required
+            </h3>
+            <p style={{ fontSize: '14px', color: '#717171', marginTop: '2px', marginBottom: '24px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+              Please login to proceed with selection.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => {
+                  setShowLoginPopup(false);
+                  setLoginStep(0);
+                }}
+                style={{
+                  flex: 1,
+                  background: '#f3f4f6',
+                  color: '#222222',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowLoginPopup(false);
+                  setLoginStep(1);
+                  setShowFullScreenLogin(true);
+                }}
+                style={{
+                  flex: 1,
+                  background: '#222222',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                }}
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full Screen Login Flow */}
+      {showFullScreenLogin && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: '#ffffff',
+            zIndex: 100000,
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '40px 24px',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+          }}
+        >
+          <button
+            onClick={() => {
+              if (loginStep === 2) {
+                setLoginStep(1);
+              } else {
+                setShowFullScreenLogin(false);
+                setLoginStep(0);
+              }
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '28px',
+              cursor: 'pointer',
+              marginBottom: '32px',
+              textAlign: 'left',
+              width: 'fit-content',
+              color: '#222222',
+              padding: 0
+            }}
+          >
+            ←
+          </button>
+
+
+            {loginStep === 1 && (
+              <>
+                <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  Welcome
+                </h2>
+                <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                    Enter your mobile number
+                  </label>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    boxSizing: 'border-box',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                  }}>
+                    <span style={{ color: '#717171', fontSize: '16px', marginRight: '8px' }}>+91</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={loginMobile}
+                      onChange={(e) => setLoginMobile(e.target.value.replace(/\D/g, ''))}
+                      placeholder=""
+                      style={{
+                        flex: 1,
+                        border: 'none',
+                        outline: 'none',
+                        fontSize: '16px',
+                        padding: 0,
+                        background: 'transparent',
+                        color: '#222222',
+                        fontFamily: 'inherit'
+                      }}
+                    />
+                  </div>
+                </div>
+                <button
+                  disabled={loginMobile.length !== 10}
+                  onClick={() => {
+                    if (loginMobile.length === 10) {
+                      setLoginStep(2);
+                      setOtpTimer(59);
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    background: '#222222',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '14px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: loginMobile.length === 10 ? 'pointer' : 'not-allowed',
+                    opacity: loginMobile.length === 10 ? 1 : 0.5,
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                  }}
+                >
+                  Continue
+                </button>
+              </>
+            )}
+
+            {loginStep === 2 && (
+              <>
+                <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  Enter OTP
+                </h2>
+                <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                    Code sent to {loginMobile}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={loginOTP}
+                    onChange={(e) => setLoginOTP(e.target.value.replace(/\D/g, ''))}
+                    placeholder="0 0 0 0 0 0"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '20px',
+                      letterSpacing: '8px',
+                      textAlign: 'center',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                    }}
+                  />
+                </div>
+                <button
+                  disabled={loginOTP.length !== 6}
+                  onClick={() => {
+                    if (loginOTP.length === 6) {
+                      setIsLoggedIn(true);
+                      setShowFullScreenLogin(false);
+                      setLoginStep(0);
+                      setShowMobileAddressModal(true);
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    background: '#222222',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '14px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: loginOTP.length === 6 ? 'pointer' : 'not-allowed',
+                    opacity: loginOTP.length === 6 ? 1 : 0.5,
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                  }}
+                >
+                  Verify & Continue
+                </button>
+                <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#717171', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  {otpTimer > 0 ? (
+                    `Didn't receive? 0:${String(otpTimer).padStart(2, '0')}`
+                  ) : (
+                    <>
+                      Didn't receive? <span onClick={() => setOtpTimer(59)} style={{ color: '#222222', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}>Send again</span>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+        </div>
+      )}
 
       {/* Select Items Sliding Drawer */}
       {showSelectItemsDrawer && (
@@ -4160,54 +4473,78 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Work */}
-                  <div
-                    className={`saved-address-item ${selectedAddress?.name === 'Work' ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedAddress({
-                        name: 'Work',
-                        full: 'Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081'
-                      });
-                      setShowMobileAddressModal(false);
-                    }}
-                  >
-                    <div className="address-icon-circle">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                      </svg>
-                    </div>
-                    <div className="address-item-details">
-                      <div className="address-item-name">Work</div>
-                      <div className="address-item-text">Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081</div>
-                    </div>
-                  </div>
+                  {isLoggedIn && (
+                    <>
+                      {/* Work */}
+                      <div
+                        className={`saved-address-item ${selectedAddress?.name === 'Work' ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSelectedAddress({
+                            name: 'Work',
+                            full: 'Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081'
+                          });
+                          setShowMobileAddressModal(false);
+                        }}
+                      >
+                        <div className="address-icon-circle">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                          </svg>
+                        </div>
+                        <div className="address-item-details">
+                          <div className="address-item-name">Work</div>
+                          <div className="address-item-text">Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081</div>
+                        </div>
+                      </div>
 
-                  {/* Parents' House */}
-                  <div
-                    className={`saved-address-item ${selectedAddress?.name === "Parents' House" ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedAddress({
-                        name: "Parents' House",
-                        full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034'
-                      });
-                      setShowMobileAddressModal(false);
-                    }}
-                  >
-                    <div className="address-icon-circle">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                      </svg>
-                    </div>
-                    <div className="address-item-details">
-                      <div className="address-item-name">Parents' House</div>
-                      <div className="address-item-text">Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034</div>
-                    </div>
-                  </div>
+                      {/* Parents' House */}
+                      <div
+                        className={`saved-address-item ${selectedAddress?.name === "Parents' House" ? 'selected' : ''}`}
+                        onClick={() => {
+                          setSelectedAddress({
+                            name: "Parents' House",
+                            full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034'
+                          });
+                          setShowMobileAddressModal(false);
+                        }}
+                      >
+                        <div className="address-icon-circle">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                          </svg>
+                        </div>
+                        <div className="address-item-details">
+                          <div className="address-item-name">Parents' House</div>
+                          <div className="address-item-text">Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {animateTravelInfo && (
+        <div className="travel-toast-pill">
+          <span style={{ fontSize: '16px' }}>🚚</span>
+          <span style={{ display: 'inline-block', perspective: '400px', transformStyle: 'preserve-3d', fontSize: '12px', fontWeight: '600', whiteSpace: 'nowrap' }}>
+            {[..."Travel Distance is updated"].map((char, index) => (
+              <span
+                key={index}
+                style={{
+                  display: 'inline-block',
+                  animationDelay: `${index * 0.04}s`,
+                  whiteSpace: char === ' ' ? 'pre' : 'normal'
+                }}
+                className="wave-char-pink"
+              >
+                {char}
+              </span>
+            ))}
+          </span>
         </div>
       )}
     </div>

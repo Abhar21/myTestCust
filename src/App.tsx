@@ -453,6 +453,7 @@ function App() {
   const [modalSelectedSlot, setModalSelectedSlot] = useState<string | null>(null);
   const [confirmedSelection, setConfirmedSelection] = useState<{ [menuTitle: string]: { date: string, slot: string } }>({});
   const [showSelectItemsDrawer, setShowSelectItemsDrawer] = useState(false);
+  const [pendingDrawerOpen, setPendingDrawerOpen] = useState(false);
   const [activeItemCategory, setActiveItemCategory] = useState<string>('Starters');
   const [selectedMenuData, setSelectedMenuData] = useState<any>(null);
   const [drawerSelectedItems, setDrawerSelectedItems] = useState<string[]>([]);
@@ -531,14 +532,21 @@ function App() {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (isLoggedIn && pendingDrawerOpen) {
+      setShowSelectItemsDrawer(true);
+      setPendingDrawerOpen(false);
+    }
+  }, [isLoggedIn, pendingDrawerOpen]);
+
   const [otpTimer, setOtpTimer] = useState(59)
 
   useEffect(() => {
-    if (loginStep === 2 && otpTimer > 0) {
+    if ((loginStep === 2 || showProfileOTPPage) && otpTimer > 0) {
       const timer = setInterval(() => setOtpTimer((prev) => prev - 1), 1000)
       return () => clearInterval(timer)
     }
-  }, [loginStep, otpTimer])
+  }, [loginStep, showProfileOTPPage, otpTimer])
 
   // Year and Month navigation states (Locks initial to July 2026)
   const [currentYear, setCurrentYear] = useState(2026)
@@ -590,10 +598,9 @@ function App() {
     return null;
   })
 
+  // Auto-show date modal removed based on request
   useEffect(() => {
-    if (selectedVendorDetail) {
-      setShowInitialDateModal(true);
-    }
+    // Intentionally empty: date popup shouldn't show on vendor profile load
   }, [selectedVendorDetail]);
 
   useEffect(() => {
@@ -2650,7 +2657,7 @@ function App() {
                                 if (!isLoggedIn) {
                                   setShowLoginPopup(true);
                                 } else {
-                                  setShowSelectItemsDrawer(true);
+                                  setShowInitialDateModal(true);
                                 }
                               }}
                             >
@@ -3770,8 +3777,18 @@ function App() {
                           // Optional: Auto-sync inline calendar to chosen date's month
                           setCurrentMonth(modalMonth);
                           setCurrentYear(modalYear);
+                          
+                          const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                          setModalSelectedDate(`${monthNames[modalMonth]}-${cell.day}`);
 
                           setShowInitialDateModal(false);
+                          
+                          if (!isLoggedIn) {
+                            setPendingDrawerOpen(true);
+                            setShowLoginPopup(true);
+                          } else {
+                            setShowSelectItemsDrawer(true);
+                          }
                         }
                       }}
                       style={cell.isPast ? { color: '#d1d5db', textDecoration: 'line-through', fontWeight: '400', cursor: 'default' } : (cell.day !== null ? { cursor: 'pointer', color: '#222222', fontWeight: '600' } : {})}
@@ -4130,6 +4147,23 @@ function App() {
             </button>
           </div>
 
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', borderRadius: '20px', marginBottom: '32px', backgroundColor: '#ffffff' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', fontWeight: '600', color: '#222222', flexShrink: 0 }}>
+              {profileName ? profileName.charAt(0).toUpperCase() : 'U'}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflow: 'hidden' }}>
+              <div style={{ fontSize: '22px', fontWeight: '700', color: '#222222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {profileName || 'User'}
+              </div>
+              <div style={{ fontSize: '16px', color: '#717171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {profileMobile}
+              </div>
+              <div style={{ fontSize: '16px', color: '#717171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {profileEmail}
+              </div>
+            </div>
+          </div>
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Name</label>
@@ -4183,6 +4217,7 @@ function App() {
                     if (editingProfileField === 'mobile') {
                       if (profileMobile !== origProfileMobile) {
                         setShowProfilePage(false);
+                        setOtpTimer(59);
                         setShowProfileOTPPage(true);
                       }
                       setEditingProfileField(null);
@@ -4223,6 +4258,7 @@ function App() {
                     if (editingProfileField === 'email') {
                       if (profileEmail !== origProfileEmail) {
                         setShowProfilePage(false);
+                        setOtpTimer(59);
                         setShowProfileOTPPage(true);
                       }
                       setEditingProfileField(null);
@@ -4337,11 +4373,35 @@ function App() {
               fontWeight: '600',
               cursor: profileOTP.length === 6 ? 'pointer' : 'not-allowed',
               opacity: profileOTP.length === 6 ? 1 : 0.5,
-              marginTop: 'auto'
+              marginTop: '24px'
             }}
           >
             Verify & Save
           </button>
+
+          {profileMobile !== origProfileMobile && (
+            <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '14px', color: '#717171' }}>
+              Didn't receive OTP?{' '}
+              {otpTimer > 0 ? (
+                <span style={{ color: '#222222', fontWeight: '600' }}>0:{String(otpTimer).padStart(2, '0')}</span>
+              ) : (
+                <button
+                  onClick={() => setOtpTimer(59)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#e61e4d',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    padding: 0,
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Send again
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 

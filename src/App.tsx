@@ -407,6 +407,7 @@ function App() {
   // Tabs: caters, mehendi, makeup, theatres, photography, decors, venues
   const [activeTab, setActiveTab] = useState<TabType>('caters')
   const [showLoginPopup, setShowLoginPopup] = useState(false)
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false)
   const [showFullScreenLogin, setShowFullScreenLogin] = useState(false)
   const [loginStep, setLoginStep] = useState(0) // 0=none, 1=mobile, 2=otp
 
@@ -3620,14 +3621,11 @@ function App() {
                   </div>
 
                   <div className="sidebar-divider"></div>
-                  <div className="sidebar-menu-item" onClick={() => setShowSidebar(false)}>
+                  <div className="sidebar-menu-item" onClick={() => {
+                    setShowLogoutPopup(true);
+                  }}>
                     <div className="sidebar-menu-text-col">
-                      <span className="sidebar-menu-label">More</span>
-                    </div>
-                    <div className="sidebar-menu-arrow">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
+                      <span className="sidebar-menu-label" style={{ color: '#e61e4d' }}>Logout</span>
                     </div>
                   </div>
                 </>
@@ -3777,12 +3775,12 @@ function App() {
                           // Optional: Auto-sync inline calendar to chosen date's month
                           setCurrentMonth(modalMonth);
                           setCurrentYear(modalYear);
-                          
+
                           const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                           setModalSelectedDate(`${monthNames[modalMonth]}-${cell.day}`);
 
                           setShowInitialDateModal(false);
-                          
+
                           if (!isLoggedIn) {
                             setPendingDrawerOpen(true);
                             setShowLoginPopup(true);
@@ -4148,17 +4146,17 @@ function App() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', borderRadius: '20px', marginBottom: '32px', backgroundColor: '#ffffff' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', fontWeight: '600', color: '#222222', flexShrink: 0 }}>
+            <div style={{ width: '70px', height: '70px', borderRadius: '50%', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', fontWeight: '600', color: '#222222', flexShrink: 0 }}>
               {profileName ? profileName.charAt(0).toUpperCase() : 'U'}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflow: 'hidden' }}>
-              <div style={{ fontSize: '22px', fontWeight: '700', color: '#222222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ fontSize: '18px', fontWeight: '700', color: '#222222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {profileName || 'User'}
               </div>
-              <div style={{ fontSize: '16px', color: '#717171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ fontSize: '14px', color: '#717171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {profileMobile}
               </div>
-              <div style={{ fontSize: '16px', color: '#717171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ fontSize: '14px', color: '#717171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {profileEmail}
               </div>
             </div>
@@ -4402,6 +4400,92 @@ function App() {
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Logout Popup */}
+      {showLogoutPopup && (
+        <div
+          className="modal-overlay-animate"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px'
+          }}
+          onClick={() => setShowLogoutPopup(false)}
+        >
+          <div
+            className="modal-content-animate"
+            style={{
+              width: '320px',
+              maxWidth: '100%',
+              background: '#ffffff',
+              borderRadius: '24px',
+              padding: '24px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              textAlign: 'center',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', marginTop: 0, marginBottom: '12px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+              Confirm Logout
+            </h3>
+            <p style={{ fontSize: '14px', color: '#717171', marginTop: '2px', marginBottom: '24px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+              Are you sure you want to log out?
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setShowLogoutPopup(false)}
+                style={{
+                  flex: 1,
+                  background: '#f3f4f6',
+                  color: '#222222',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setIsLoggedIn(false);
+                  setShowSidebar(false);
+                  setShowLogoutPopup(false);
+                }}
+                style={{
+                  flex: 1,
+                  background: '#e61e4d',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

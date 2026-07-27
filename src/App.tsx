@@ -410,6 +410,7 @@ function App() {
   // Select Items Modal state
   const [showSelectItemsModal, setShowSelectItemsModal] = useState(false);
   const [showCheckoutPage, setShowCheckoutPage] = useState(false);
+  const [checkoutFrom, setCheckoutFrom] = useState<'modal' | 'drawer'>('modal');
   const [checkoutContactName, setCheckoutContactName] = useState('John Doe');
   const [checkoutContactPhone, setCheckoutContactPhone] = useState('+91 98765 43210');
   const [isEditingContact, setIsEditingContact] = useState(false);
@@ -1720,7 +1721,9 @@ function App() {
               return match ? parseInt(match[0], 10) : actualPricePerPlate;
             })();
             const originalSubtotal = previewGuestCount * originalPricePerPlate;
-            const finalDiscountedPrice = Math.max(0, subtotal - couponDiscount);
+            const gst = Math.round(subtotal * 0.18);
+            const subtotalWithGST = subtotal + gst;
+            const finalDiscountedPrice = Math.max(0, subtotalWithGST - couponDiscount);
             const advance = Math.round(finalDiscountedPrice * 0.4);
             const advancePay = advance + 11.8;
             const totalSavedAmount = Math.max(0, originalSubtotal - subtotal) + couponDiscount;
@@ -1731,7 +1734,14 @@ function App() {
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 16px 32px 16px' }}>
                   <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
-                  <button onClick={() => setShowCheckoutPage(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
+                  <button onClick={() => {
+                    setShowCheckoutPage(false);
+                    if (checkoutFrom === 'drawer') {
+                      setShowSelectItemsDrawer(true);
+                    } else {
+                      setShowSelectItemsModal(true);
+                    }
+                  }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
                     <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: '3', overflow: 'visible' }}><path d="m6 6 20 20M26 6 6 26"></path></svg>
                   </button>
                 </div>
@@ -2058,32 +2068,34 @@ function App() {
                   {/* Price Details */}
                   <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', marginBottom: '16px' }}>Price details</h2>
 
+                  {/* Total price - MRP, no strikethrough */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span>{previewGuestCount} guests x ₹{actualPricePerPlate.toLocaleString()}</span>
-                      <span style={{ fontSize: '12px', color: '#717171', marginTop: '4px' }}>Incl taxes</span>
+                      <span>Total price</span>
+                      <span style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>Incl. applicable taxes</span>
                     </div>
-                    <div>
-                      {originalSubtotal > subtotal && (
-                        <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginRight: '8px', fontSize: '14px' }}>₹{originalSubtotal.toLocaleString()}</span>
-                      )}
-                      <span>₹{subtotal.toLocaleString()}</span>
-                    </div>
+                    <span>₹{(originalSubtotal + Math.round(originalSubtotal * 0.18)).toLocaleString()}</span>
                   </div>
 
-                  {couponDiscount > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
-                      <span>Coupon discount</span>
-                      <span>-₹{couponDiscount.toLocaleString()}</span>
-                    </div>
-                  )}
+                  {/* Discount = MRP - actual price */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
+                    <span>Discount</span>
+                    <span>-₹{Math.max(0, originalSubtotal - subtotal).toLocaleString()}</span>
+                  </div>
+
+                  {/* Coupon discount */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
+                    <span>Coupon discount</span>
+                    <span>{couponDiscount > 0 ? `-₹${couponDiscount.toLocaleString()}` : '₹0'}</span>
+                  </div>
 
                   <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
 
+                  {/* Total after discounts */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>Total</span>
-                      {(totalSavedAmount) > 0 && (
+                      {totalSavedAmount > 0 && (
                         <span style={{ background: '#ecfdf5', color: '#059669', fontSize: '11px', fontWeight: '600', padding: '2px 6px', borderRadius: '4px' }}>
                           Saved ₹{totalSavedAmount.toLocaleString()}
                         </span>
@@ -4035,6 +4047,8 @@ function App() {
                   <button
                     disabled={!modalSelectedSlot}
                     onClick={() => {
+                      const isDesktop = window.innerWidth >= 768;
+                      setCheckoutFrom(isDesktop ? 'modal' : 'drawer');
                       setShowSelectItemsModal(false);
                       setShowSelectItemsDrawer(false);
                       setShowCheckoutPage(true);

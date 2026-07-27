@@ -308,36 +308,6 @@ const renderFoodTypeIcons = (title: string) => {
   );
 };
 
-const renderReviewStars = (rating: number) => {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    if (i <= rating) {
-      stars.push(
-        <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#ffb100' }}>
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-        </svg>
-      );
-    } else if (i - 0.5 === rating) {
-      stars.push(
-        <span key={i} style={{ display: 'inline-flex', position: 'relative', width: '14px', height: '14px' }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#e2e8f0" stroke="none" style={{ position: 'absolute' }}>
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#ffb100', position: 'absolute', clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }}>
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-        </span>
-      );
-    } else {
-      stars.push(
-        <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#e2e8f0" stroke="none">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-        </svg>
-      );
-    }
-  }
-  return stars;
-};
 
 const formatWhenInput = (val: string) => {
   if (!val) return '';
@@ -415,11 +385,11 @@ function App() {
   const [showProfilePage, setShowProfilePage] = useState(false)
   const [showProfileOTPPage, setShowProfileOTPPage] = useState(false)
   const [editingProfileField, setEditingProfileField] = useState<'name' | 'mobile' | 'email' | null>(null)
-  const [profileName, setProfileName] = useState('John Doe')
+  const [profileName, setProfileName] = useState('Bhargav A')
   const [profileMobile, setProfileMobile] = useState('9876543210')
-  const [profileEmail, setProfileEmail] = useState('john@example.com')
+  const [profileEmail, setProfileEmail] = useState('bhargav@example.com')
   const [origProfileMobile, setOrigProfileMobile] = useState('9876543210')
-  const [origProfileEmail, setOrigProfileEmail] = useState('john@example.com')
+  const [origProfileEmail, setOrigProfileEmail] = useState('bhargav@example.com')
   const [profileOTP, setProfileOTP] = useState('')
 
   const [loginMobile, setLoginMobile] = useState('')
@@ -1774,10 +1744,12 @@ function App() {
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
                       <div style={{ fontSize: '12px', color: '#717171', marginBottom: '4px', fontWeight: '400' }}>Cater</div>
                       <div style={{ fontSize: '16px', fontWeight: '550', color: '#222222', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{selectedVendorDetail?.title || 'Vendor Name'}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#222222', fontWeight: '500' }}>
-                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '14px', width: '14px', fill: 'currentcolor' }}><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
-                        <span>{selectedVendorDetail?.rating || '4.96'}</span>
-                        <span style={{ fontWeight: '400', color: '#717171' }}>(23)</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#3b82f6', fontWeight: '600' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
+                          <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
+                          <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
+                        </svg>
+                        <span>Verified</span>
                       </div>
                     </div>
                   </div>
@@ -2428,11 +2400,11 @@ function App() {
                     <div className="detail-profile-header">
                       <h1 className="detail-left-title">{selectedVendorDetail.title}</h1>
                       <div className="detail-left-rating-row">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: '#ff385c', marginRight: '4px' }}>
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '4px' }}>
+                          <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
+                          <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
                         </svg>
-                        <span className="detail-left-rating-val">{selectedVendorDetail.rating}</span>
-                        <span className="detail-left-rating-count">· 48 reviews</span>
+                        <span style={{ color: '#3b82f6', fontWeight: '500', fontSize: '12px' }}>Verified</span>
                       </div>
                     </div>
 
@@ -2861,165 +2833,6 @@ function App() {
                   </div>
                 </div>
               </div>
-
-              {/* Reviews and Ratings Section */}
-              <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #e2e8f0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-                  <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Reviews & Ratings
-                  </h3>
-                  <button
-                    onClick={() => { alert('Show all reviews modal would open'); }}
-                    style={{
-                      border: 'none',
-                      background: '#f3f4f6',
-                      color: '#111827',
-                      borderRadius: '12px',
-                      padding: '12px 24px',
-                      fontSize: '15px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                      outline: 'none'
-                    }}
-                    className="show-all-reviews-btn"
-                  >
-                    Show all reviews
-                  </button>
-                </div>
-
-                <div className="reviews-grid-scrollable hide-scrollbar">
-                  {[
-                    {
-                      name: "Bhargav Ambati",
-                      firstName: "Bhargav",
-                      time: "1 month ago",
-                      rating: "4.0/5",
-                      stars: 4,
-                      ordered: "Breakfast Menu 1",
-                      text: "Food was good"
-                    },
-                    {
-                      name: "Anirudh Kumar",
-                      firstName: "Anirudh",
-                      time: "2 weeks ago",
-                      rating: "5.0/5",
-                      stars: 5,
-                      ordered: "Lunch Menu 1",
-                      text: "Extremely professional catering service. The biryani was outstanding and all guests loved the presentation."
-                    },
-                    {
-                      name: "Pooja Gupta",
-                      firstName: "Pooja",
-                      time: "3 months ago",
-                      rating: "4.5/5",
-                      stars: 4.5,
-                      ordered: "Breakfast Menu 1",
-                      text: "Very hygienic packaging and prompt delivery. Highly recommended for family events!"
-                    },
-                    {
-                      name: "Rajesh Verma",
-                      firstName: "Rajesh",
-                      time: "1 month ago",
-                      rating: "4.8/5",
-                      stars: 5,
-                      ordered: "Lunch Menu 2",
-                      text: "Excellent taste and quantity. The paneer tikka starter was exceptionally soft and delicious."
-                    },
-                    {
-                      name: "Sneha Reddy",
-                      firstName: "Sneha",
-                      time: "2 weeks ago",
-                      rating: "4.6/5",
-                      stars: 4.5,
-                      ordered: "Veg Breakfast",
-                      text: "On-time setup and clean presentation. The filter coffee was a huge hit among all our guests."
-                    },
-                    {
-                      name: "Amit Sharma",
-                      firstName: "Amit",
-                      time: "3 weeks ago",
-                      rating: "5.0/5",
-                      stars: 5,
-                      ordered: "Premium Dinner",
-                      text: "The service staff was very courteous. Highly professional management, everything went very smoothly."
-                    }
-                  ].map((rev, rIdx) => (
-                    <div
-                      key={rIdx}
-                      style={{
-                        background: '#ffffff',
-                        border: '1px solid #e8e8e8',
-                        borderRadius: '24px',
-                        padding: '24px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '16px',
-                        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.04)',
-                        width: '100%',
-                        flexShrink: 0,
-                        boxSizing: 'border-box',
-                        scrollSnapAlign: 'start'
-                      }}
-                    >
-                      {/* Top Header Row */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {/* Avatar Circle with Gray BG & Black First Name Initial */}
-                          <div style={{
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '50%',
-                            background: '#e5e5e5',
-                            color: '#222222',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: '700',
-                            fontSize: '18px',
-                            textTransform: 'uppercase',
-                            overflow: 'hidden',
-                            padding: '4px',
-                            textAlign: 'center',
-                            boxSizing: 'border-box'
-                          }}>
-                            {rev.firstName.charAt(0)}
-                          </div>
-                          <div>
-                            <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222' }}>
-                              {rev.name}
-                            </div>
-                            <div style={{ fontSize: '13px', color: '#717171', marginTop: '2px' }}>
-                              {rev.time}
-                            </div>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                          <div style={{ display: 'flex', gap: '2px' }}>
-                            {renderReviewStars(rev.stars)}
-                          </div>
-                          <div style={{ fontSize: '12px', color: '#717171', fontWeight: '500' }}>
-                            {rev.rating}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Ordered Menu Row */}
-                      <div style={{ fontSize: '14px', color: '#717171' }}>
-                        Ordered : <strong style={{ color: '#222222', fontWeight: '600' }}>{rev.ordered}</strong>
-                      </div>
-
-                      {/* Dashed Line Divider */}
-                      <div style={{ borderTop: '1px dashed #e2e8f0' }}></div>
-
-                      {/* Review Text */}
-                      <div style={{ fontSize: '14px', color: '#484848', lineHeight: '1.5' }}>
-                        {rev.text}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </main>
           ) : isSearchView ? (
             <main className="search-split-layout">
@@ -3069,11 +2882,12 @@ function App() {
                             <span className="card-original-price">{home.originalPrice}</span>
                             <span className="card-active-price">{home.price}</span>
                             <span className="card-dot">·</span>
-                            <span className="card-rating-inline">
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '4px' }}>
+                                <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
+                                <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
                               </svg>
-                              {home.rating}
+                              <span style={{ color: '#3b82f6', fontWeight: '600', fontSize: '13px' }}>Verified</span>
                             </span>
                           </div>
                         </div>
@@ -3268,14 +3082,18 @@ function App() {
                         <div className="card-title-row">
                           <span className="card-title">{home.title}</span>
                         </div>
+                        <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
+                          {getCaterTravelInfo(home.title)}
+                        </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
                           <span className="card-dot">·</span>
-                          <span className="card-rating-inline">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                          <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '4px' }}>
+                              <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
+                              <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
                             </svg>
-                            {home.rating}
+                            <span style={{ color: '#3b82f6', fontWeight: '600', fontSize: '13px' }}>Verified</span>
                           </span>
                         </div>
                       </div>
@@ -3319,14 +3137,18 @@ function App() {
                         <div className="card-title-row">
                           <span className="card-title">{home.title}</span>
                         </div>
+                        <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
+                          {getCaterTravelInfo(home.title)}
+                        </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
                           <span className="card-dot">·</span>
-                          <span className="card-rating-inline">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                          <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '4px' }}>
+                              <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
+                              <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
                             </svg>
-                            {home.rating}
+                            <span style={{ color: '#3b82f6', fontWeight: '600', fontSize: '13px' }}>Verified</span>
                           </span>
                         </div>
                       </div>
@@ -3371,7 +3193,7 @@ function App() {
               <div className="listings-segment">
                 <div className="listings-header">
                   <div className="listings-title-row" onClick={() => window.open('?page=search', '_self')}>
-                    <h2>Best in rating in Hyderabad</h2>
+                    <h2>Verified caters in Hyderabad</h2>
                     <span className="title-chevron">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -3402,14 +3224,18 @@ function App() {
                         <div className="card-title-row">
                           <span className="card-title">{home.title}</span>
                         </div>
+                        <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
+                          {getCaterTravelInfo(home.title)}
+                        </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
                           <span className="card-dot">·</span>
-                          <span className="card-rating-inline">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: '2px' }}>
-                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                          <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '4px' }}>
+                              <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
+                              <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
                             </svg>
-                            {home.rating}
+                            <span style={{ color: '#3b82f6', fontWeight: '600', fontSize: '13px' }}>Verified</span>
                           </span>
                         </div>
                       </div>

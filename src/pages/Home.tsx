@@ -427,6 +427,7 @@ function App() {
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const [showCouponTerms, setShowCouponTerms] = useState<string | null>(null);
   const [showAllOffers, setShowAllOffers] = useState(false);
+
   const [manualCouponCode, setManualCouponCode] = useState('');
   // Lock body scroll when popup or drawer is open
   useEffect(() => {
@@ -897,7 +898,7 @@ function App() {
 
   const calendarDays = getCalendarDays(currentYear, currentMonth);
   const modalCalendarDays = getCalendarDays(modalYear, modalMonth);
-  
+
   const detailCalendarDays1 = getCalendarDays(detailYear, detailMonth);
   const detailNextMonth = detailMonth === 11 ? 0 : detailMonth + 1;
   const detailNextYear = detailMonth === 11 ? detailYear + 1 : detailYear;
@@ -2519,7 +2520,7 @@ function App() {
                                 {monthNames[detailMonth]} {detailYear}
                               </div>
                             </div>
-                            
+
                             <div className="calendar-weekdays" style={{ borderBottom: 'none' }}>
                               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
                                 <div key={idx} className="calendar-day-header" style={{ color: '#717171', fontWeight: '500' }}>
@@ -2527,7 +2528,7 @@ function App() {
                                 </div>
                               ))}
                             </div>
-                            
+
                             <div className="calendar-grid" style={{ gap: '4px' }}>
                               {detailCalendarDays1.map((cell, idx) => (
                                 <div
@@ -2559,7 +2560,7 @@ function App() {
                                 </svg>
                               </button>
                             </div>
-                            
+
                             <div className="calendar-weekdays" style={{ borderBottom: 'none' }}>
                               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
                                 <div key={idx} className="calendar-day-header" style={{ color: '#717171', fontWeight: '500' }}>
@@ -2567,7 +2568,7 @@ function App() {
                                 </div>
                               ))}
                             </div>
-                            
+
                             <div className="calendar-grid" style={{ gap: '4px' }}>
                               {detailCalendarDays2.map((cell, idx) => (
                                 <div
@@ -2973,7 +2974,7 @@ function App() {
               <div className="detail-reviews-section" style={{ paddingBottom: '32px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                   <h2 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Rating & Reviews</h2>
-                  <button style={{ background: 'none', border: 'none', padding: 0, fontSize: '13px', fontWeight: '600', color: '#222222', cursor: 'pointer', textDecoration: 'underline' }}>
+                  <button onClick={() => navigate('/reviews')} style={{ background: 'none', border: 'none', padding: 0, fontSize: '13px', fontWeight: '600', color: '#222222', cursor: 'pointer', textDecoration: 'underline' }}>
                     Show all
                   </button>
                 </div>
@@ -3066,10 +3067,10 @@ function App() {
                           Ordered : Breakfast Menu 1
                         </span>
                       </div>
-                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
             </main>
           ) : isSearchView ? (
             <main className="search-split-layout">
@@ -5631,6 +5632,8 @@ function App() {
           </div>
         </div>
       )}
+
+
     </div>
   )
 }

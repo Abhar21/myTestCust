@@ -36,7 +36,6 @@ const BookingDetail = () => {
   const advance = Math.round(total * 0.4); // 40% advance
   const platformFee = 11.80;
   const advancePay = advance + platformFee;
-  const remainingBalance = total - advance;
 
 
   // Countdown for upcoming bookings
@@ -312,12 +311,6 @@ const BookingDetail = () => {
               <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹{advancePay.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             </div>
 
-            {/* Remaining balance */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
-              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>Remaining balance</div>
-              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹{remainingBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            </div>
-
             {/* Savings banner */}
             <div style={{
               marginTop: '16px',
@@ -346,7 +339,7 @@ const BookingDetail = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>Cancellation Policy</div>
                   <div style={{ fontSize: '12px', color: '#717171', lineHeight: '1.6' }}>
-                    Please verify your event details before booking. Once an order is placed, it cannot be refunded.
+                    Once an order is placed, vendors immediately begin reserving time and resources for your event. Therefore, cancellations, modifications, or refunds are not permitted after order confirmation.
                   </div>
                 </div>
               </>
@@ -394,21 +387,25 @@ const BookingDetail = () => {
               <button style={{ background: 'none', border: 'none', color: '#059669', fontSize: '14px', fontWeight: '600', cursor: 'pointer', padding: 0 }}>View</button>
             </div>
             
-            <div style={{ height: '1px', backgroundColor: '#e2e8f0' }}></div>
+            {booking.status !== 'Upcoming' && (
+              <>
+                <div style={{ height: '1px', backgroundColor: '#e2e8f0' }}></div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                  <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222' }}>Tax invoice</div>
-              </div>
-              <button style={{ background: 'none', border: 'none', color: '#059669', fontSize: '14px', fontWeight: '600', cursor: 'pointer', padding: 0 }}>View</button>
-            </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222' }}>Tax invoice</div>
+                  </div>
+                  <button style={{ background: 'none', border: 'none', color: '#059669', fontSize: '14px', fontWeight: '600', cursor: 'pointer', padding: 0 }}>View</button>
+                </div>
+              </>
+            )}
           </div>
         </div>
 

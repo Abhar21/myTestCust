@@ -2201,10 +2201,28 @@ function App() {
           <header className={`airbnb-header-container ${isSearchView ? 'airbnb-header-container--search' : ''} ${selectedVendorDetail ? 'airbnb-header-container--detail' : ''}`}>
             {/* Row 1: Logo, Navigation Tabs, User Menu */}
             <div className="airbnb-header-row">
-              {/* Left Section (flexible col) */}
               <div className="header-left-col">
-                <div className="logo-section" onClick={() => window.location.href = window.location.origin + window.location.pathname}>
-                  <span className="logo-text">myMooment</span>
+                <div className="logo-section" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => {
+                  if (window.innerWidth <= 768 && (isSearchView || selectedVendorDetail)) {
+                    if (selectedVendorDetail) {
+                      setSelectedVendorDetail(null);
+                    } else {
+                      setIsSearchView(false);
+                    }
+                  } else {
+                    window.location.href = window.location.origin + window.location.pathname;
+                  }
+                }}>
+                  <span className={`logo-text ${(isSearchView || selectedVendorDetail) ? 'hide-on-mobile' : ''}`}>myMooment</span>
+                  {(isSearchView || selectedVendorDetail) && (
+                    <span className="mobile-back-button" style={{ display: 'flex', alignItems: 'center', color: '#222222' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                      </svg>
+                      <span style={{ fontSize: '16px', fontWeight: '600' }}>Back</span>
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -2832,17 +2850,19 @@ function App() {
                     Max upto 1 year calender released
                   </div>
                 </div>
+              </div>
 
-                <div style={{ width: '100%', height: '1px', backgroundColor: '#e2e8f0', marginTop: '48px', marginBottom: '48px' }}></div>
+              <div style={{ width: '100%', height: '1px', backgroundColor: '#e2e8f0', marginTop: '48px', marginBottom: '48px' }}></div>
 
-                <div className="detail-reviews-section" style={{ paddingBottom: '32px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-                    <h2 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Rating & Reviews</h2>
-                    <button style={{ background: 'none', border: 'none', padding: 0, fontSize: '13px', fontWeight: '600', color: '#222222', cursor: 'pointer', textDecoration: 'underline' }}>
-                      Show all
-                    </button>
-                  </div>
-                  <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <div className="detail-reviews-section" style={{ paddingBottom: '32px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                  <h2 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Rating & Reviews</h2>
+                  <button style={{ background: 'none', border: 'none', padding: 0, fontSize: '13px', fontWeight: '600', color: '#222222', cursor: 'pointer', textDecoration: 'underline' }}>
+                    Show all
+                  </button>
+                </div>
+                <div className="detail-reviews-container">
+                  <div className="detail-reviews-summary-container">
                     <div style={{ fontSize: '48px', fontWeight: '800', color: '#222222', lineHeight: '1', letterSpacing: '-1px' }}>4.9</div>
                     <div style={{ fontSize: '15px', color: '#717171', fontWeight: '500', marginTop: '8px' }}>112 reviews</div>
                     <div style={{ marginTop: '12px', display: 'inline-flex', backgroundColor: '#ffffff', padding: '6px 16px', borderRadius: '16px', boxShadow: '0 0 16px rgba(0,0,0,0.08)' }}>
@@ -2851,10 +2871,11 @@ function App() {
                       </ScrollRevealText>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', overflowX: 'auto', gap: '20px', paddingBottom: '24px', margin: '-16px -24px -8px -24px', padding: '16px 24px 24px 24px', msOverflowStyle: 'none', scrollbarWidth: 'none', scrollSnapType: 'x mandatory', scrollPaddingLeft: '24px' }}>
+                  <div className="detail-reviews-cards-container" style={{ display: 'flex', overflowX: 'auto', gap: '20px', paddingBottom: '24px', margin: '-16px -24px -8px -24px', padding: '16px 24px 24px 24px', msOverflowStyle: 'none', scrollbarWidth: 'none', scrollSnapType: 'x mandatory', scrollPaddingLeft: '24px' }}>
+
 
                     {/* Card 1 */}
-                    <div style={{ minWidth: '280px', maxWidth: '280px', boxShadow: '0 0 16px rgba(0,0,0,0.08)', border: 'none', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff', scrollSnapAlign: 'start' }}>
+                    <div className="review-card-item">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
                         <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>P</div>
                         <div>
@@ -2880,7 +2901,7 @@ function App() {
                     </div>
 
                     {/* Card 2 */}
-                    <div style={{ minWidth: '280px', maxWidth: '280px', boxShadow: '0 0 16px rgba(0,0,0,0.08)', border: 'none', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff', scrollSnapAlign: 'start' }}>
+                    <div className="review-card-item">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
                         <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>S</div>
                         <div>
@@ -2906,7 +2927,7 @@ function App() {
                     </div>
 
                     {/* Card 3 */}
-                    <div style={{ minWidth: '280px', maxWidth: '280px', boxShadow: '0 0 16px rgba(0,0,0,0.08)', border: 'none', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff', scrollSnapAlign: 'start' }}>
+                    <div className="review-card-item">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
                         <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>B</div>
                         <div>
@@ -2929,12 +2950,10 @@ function App() {
                           Ordered : Breakfast Menu 1
                         </span>
                       </div>
+                      </div>
                     </div>
                   </div>
-
                 </div>
-
-              </div>
             </main>
           ) : isSearchView ? (
             <main className="search-split-layout">

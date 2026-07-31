@@ -19,6 +19,26 @@ const BookingDetail = () => {
   const location = useLocation();
   const booking = location.state?.booking;
 
+  // Menu & Pricing Data
+  const guests = 120;
+  const serviceType = 'Sit-down';
+  const servicePricePerPerson = 10;
+  
+  const basePrice = 3461;
+  const totalServiceCost = serviceType === 'Sit-down' ? guests * servicePricePerPerson : 0;
+  const subtotal = basePrice + totalServiceCost; // e.g. 4661
+  
+  const discount = 1500;
+  const couponDiscount = 0;
+  const totalSavings = discount + couponDiscount;
+  
+  const total = subtotal - totalSavings;
+  const advance = Math.round(total * 0.4); // 40% advance
+  const platformFee = 11.80;
+  const advancePay = advance + platformFee;
+  const remainingBalance = total - advance;
+
+
   // Countdown for upcoming bookings
   const getTimeLeft = (dateStr: string) => {
     const eventDate = new Date(dateStr);
@@ -80,7 +100,7 @@ const BookingDetail = () => {
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '52px 24px 20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '52px 16px 20px' }}>
         <button
           onClick={() => navigate(-1)}
           style={{
@@ -98,7 +118,7 @@ const BookingDetail = () => {
       </div>
 
       {/* Booking Detail Card */}
-      <div style={{ padding: '0 24px 64px' }}>
+      <div style={{ padding: '0 16px 64px' }}>
         <div style={{
           display: 'flex', flexDirection: 'column',
           border: '1px solid #e2e8f0', borderRadius: '24px',
@@ -115,6 +135,7 @@ const BookingDetail = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#222222', margin: 0 }}>{booking.name}</h3>
               <div style={{ fontSize: '12px', fontWeight: '500', color: '#717171' }}>Event: {booking.eventDate}</div>
+              <div style={{ fontSize: '12px', color: '#9ca3af' }}>Order placed on: 15 Jul, 2:30 PM</div>
               <div style={{
                 fontSize: '12px', fontWeight: '500',
                 color: booking.status === 'Upcoming' ? '#059669' : '#9ca3af'
@@ -137,7 +158,6 @@ const BookingDetail = () => {
                 <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222' }}>31 July 2026</div>
                 <div style={{ fontSize: '12px', color: '#717171' }}>8:00 AM – 8:15 AM</div>
               </div>
-              <div style={{ fontSize: '12px', color: '#9ca3af' }}>Order placed on: 15 Jul, 2:30 PM</div>
             </div>
 
             <div style={{ height: '1px', backgroundColor: '#e2e8f0' }}></div>
@@ -160,7 +180,13 @@ const BookingDetail = () => {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                   <div style={{ fontSize: '11px', fontWeight: '500', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Guests</div>
-                  <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222' }}>120</div>
+                  <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222' }}>{guests}</div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '500', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Service Type</div>
+                  <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222' }}>
+                    {serviceType} {serviceType === 'Sit-down' && `(₹${servicePricePerPerson}/person)`}
+                  </div>
                 </div>
               </div>
             </div>
@@ -235,19 +261,19 @@ const BookingDetail = () => {
                 <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222' }}>Total price</div>
                 <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '2px' }}>Incl. applicable taxes</div>
               </div>
-              <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222' }}>₹4,661</div>
+              <div style={{ fontSize: '13px', fontWeight: '500', color: '#222222' }}>₹{subtotal.toLocaleString('en-IN')}</div>
             </div>
 
             {/* Discount */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
               <div style={{ fontSize: '13px', fontWeight: '500', color: '#059669' }}>Discount</div>
-              <div style={{ fontSize: '13px', fontWeight: '500', color: '#059669' }}>-₹1,500</div>
+              <div style={{ fontSize: '13px', fontWeight: '500', color: '#059669' }}>-₹{discount.toLocaleString('en-IN')}</div>
             </div>
 
             {/* Coupon discount */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
               <div style={{ fontSize: '13px', fontWeight: '500', color: '#059669' }}>Coupon discount</div>
-              <div style={{ fontSize: '13px', fontWeight: '500', color: '#059669' }}>₹0</div>
+              <div style={{ fontSize: '13px', fontWeight: '500', color: '#059669' }}>-₹{couponDiscount.toLocaleString('en-IN')}</div>
             </div>
 
             <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '14px 0' }}></div>
@@ -256,9 +282,9 @@ const BookingDetail = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>Total</div>
-                <div style={{ backgroundColor: '#dcfce7', color: '#059669', fontSize: '11px', fontWeight: '600', borderRadius: '20px', padding: '2px 8px' }}>Saved ₹1,500</div>
+                <div style={{ backgroundColor: '#dcfce7', color: '#059669', fontSize: '11px', fontWeight: '600', borderRadius: '20px', padding: '2px 8px' }}>Saved ₹{totalSavings.toLocaleString('en-IN')}</div>
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹2,891</div>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹{total.toLocaleString('en-IN')}</div>
             </div>
 
             <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '14px 0' }}></div>
@@ -266,13 +292,13 @@ const BookingDetail = () => {
             {/* Advance */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
               <div style={{ fontSize: '13px', color: '#222222' }}>Advance</div>
-              <div style={{ fontSize: '13px', color: '#222222' }}>₹1,156</div>
+              <div style={{ fontSize: '13px', color: '#222222' }}>₹{advance.toLocaleString('en-IN')}</div>
             </div>
 
             {/* Platform fee */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontSize: '13px', color: '#222222' }}>Platform fee</div>
-              <div style={{ fontSize: '13px', color: '#222222' }}>₹11.80</div>
+              <div style={{ fontSize: '13px', color: '#222222' }}>₹{platformFee.toFixed(2)}</div>
             </div>
 
             <div style={{ height: '1px', backgroundColor: '#e2e8f0', margin: '14px 0' }}></div>
@@ -283,13 +309,13 @@ const BookingDetail = () => {
                 <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>Advance pay</div>
                 <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '2px' }}>Incl. applicable taxes</div>
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹1,167.80</div>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹{advancePay.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             </div>
 
             {/* Remaining balance */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
               <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>Remaining balance</div>
-              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹1,723.20</div>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹{remainingBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             </div>
 
             {/* Savings banner */}
@@ -341,6 +367,48 @@ const BookingDetail = () => {
               </div>
             </div>
 
+          </div>
+        </div>
+
+        {/* ── Documents Card ── */}
+        <div style={{
+          marginTop: '16px',
+          border: '1px solid #e2e8f0', borderRadius: '24px',
+          backgroundColor: '#ffffff',
+          overflow: 'hidden'
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', padding: '20px 16px', gap: '16px' }}>
+            <div style={{ fontSize: '16px', fontWeight: '700', color: '#222222' }}>Documents</div>
+            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222' }}>Advance receipt</div>
+              </div>
+              <button style={{ background: 'none', border: 'none', color: '#059669', fontSize: '14px', fontWeight: '600', cursor: 'pointer', padding: 0 }}>View</button>
+            </div>
+            
+            <div style={{ height: '1px', backgroundColor: '#e2e8f0' }}></div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222' }}>Tax invoice</div>
+              </div>
+              <button style={{ background: 'none', border: 'none', color: '#059669', fontSize: '14px', fontWeight: '600', cursor: 'pointer', padding: 0 }}>View</button>
+            </div>
           </div>
         </div>
 

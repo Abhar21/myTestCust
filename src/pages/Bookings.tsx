@@ -74,7 +74,7 @@ const Bookings = () => {
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', padding: '40px 24px 0 24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', padding: '40px 16px 0 16px' }}>
         <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#222222', margin: 0 }}>
           Bookings
         </h2>
@@ -99,7 +99,7 @@ const Bookings = () => {
         </button>
       </div>
 
-      <div style={{ position: 'relative', marginBottom: '24px', padding: '0 24px' }}>
+      <div style={{ position: 'relative', marginBottom: '24px', padding: '0 16px' }}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5" style={{ position: 'absolute', left: '40px', top: '50%', transform: 'translateY(-50%)' }}>
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -121,7 +121,7 @@ const Bookings = () => {
         />
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px 24px 64px 24px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px 16px 64px 16px' }}>
 
         {/* ── Upcoming Booking Card ── */}
         <div

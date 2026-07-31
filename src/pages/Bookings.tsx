@@ -70,13 +70,11 @@ const Bookings = () => {
         bottom: 0,
         backgroundColor: '#ffffff',
         zIndex: 100000,
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '40px 0 0 0',
+        overflowY: 'auto',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', padding: '0 24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', padding: '40px 24px 0 24px' }}>
         <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#222222', margin: 0 }}>
           Bookings
         </h2>
@@ -123,10 +121,13 @@ const Bookings = () => {
         />
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', padding: '16px 24px 64px 24px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px 24px 64px 24px' }}>
 
         {/* ── Upcoming Booking Card ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0', borderRadius: '24px', backgroundColor: '#ffffff', filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.08))' }}>
+        <div
+          onClick={() => navigate('/booking-detail', { state: { booking: { name: 'Sri Venkata Carters', eventDate: '31 July 2026', eventDateRaw: '2026-07-31T08:00:00', status: 'Upcoming', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=200&h=200', location: 'Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032' } } })}
+          style={{ display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0', borderRadius: '24px', backgroundColor: '#ffffff', filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.08))', cursor: 'pointer' }}
+        >
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', padding: '16px' }}>
             <img
               src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=200&h=200"
@@ -146,7 +147,7 @@ const Bookings = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>Location</div>
               <div style={{ fontSize: '12px', color: '#717171', lineHeight: '1.5' }}>
-                Road No. 21, Building 3B, Flat 406, Gachibowli,<br />Hyderabad, Telangana, 500032
+                Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032
               </div>
             </div>
 
@@ -170,7 +171,10 @@ const Bookings = () => {
         </div>
 
         {/* ── Completed Booking Card ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0', borderRadius: '24px', backgroundColor: '#ffffff', filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.08))' }}>
+        <div
+          onClick={() => navigate('/booking-detail', { state: { booking: { name: 'Grand Spice Kitchen', eventDate: '10 June 2026', eventDateRaw: '2026-06-10T08:00:00', status: 'Completed', image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=200&h=200', location: 'Plot 12, Jubilee Hills, Hyderabad, Telangana, 500033' } } })}
+          style={{ display: 'flex', flexDirection: 'column', border: '1px solid #e2e8f0', borderRadius: '24px', backgroundColor: '#ffffff', filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.08))', cursor: 'pointer' }}
+        >
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', padding: '16px' }}>
             <img
               src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=200&h=200"

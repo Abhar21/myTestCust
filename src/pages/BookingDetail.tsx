@@ -317,6 +317,15 @@ const BookingDetail = ({ bookingData, isDesktop }: { bookingData?: any, isDeskto
               <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹{advancePay.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             </div>
 
+            {booking.status === 'Upcoming' && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '12px' }}>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>Remaining amount</div>
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>₹{(total - advancePay).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              </div>
+            )}
+
             {/* Savings banner */}
             <div style={{
               marginTop: '16px',

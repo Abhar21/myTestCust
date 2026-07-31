@@ -1836,11 +1836,12 @@ function App() {
                                 flex: 1,
                                 padding: '12px',
                                 borderRadius: '12px',
-                                border: checkoutDiningStyle === 'buffet' ? '2px solid #222222' : '1px solid #dddddd',
+                                border: 'none',
+                                boxShadow: checkoutDiningStyle === 'buffet' ? 'inset 0 0 0 2px #222222' : 'inset 0 0 0 1px #dddddd',
                                 backgroundColor: checkoutDiningStyle === 'buffet' ? '#f9fafb' : '#ffffff',
-                                color: '#222222',
+                                color: checkoutDiningStyle === 'buffet' ? '#222222' : '#9ca3af',
                                 fontSize: '14px',
-                                fontWeight: checkoutDiningStyle === 'buffet' ? '600' : '500',
+                                fontWeight: '600',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
                               }}
@@ -1853,11 +1854,12 @@ function App() {
                                 flex: 1,
                                 padding: '12px',
                                 borderRadius: '12px',
-                                border: checkoutDiningStyle === 'sit-down' ? '2px solid #222222' : '1px solid #dddddd',
+                                border: 'none',
+                                boxShadow: checkoutDiningStyle === 'sit-down' ? 'inset 0 0 0 2px #222222' : 'inset 0 0 0 1px #dddddd',
                                 backgroundColor: checkoutDiningStyle === 'sit-down' ? '#f9fafb' : '#ffffff',
-                                color: '#222222',
+                                color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#9ca3af',
                                 fontSize: '14px',
-                                fontWeight: checkoutDiningStyle === 'sit-down' ? '600' : '500',
+                                fontWeight: '600',
                                 cursor: 'pointer',
                                 transition: 'all 0.2s',
                                 display: 'flex',
@@ -1868,7 +1870,7 @@ function App() {
                               }}
                             >
                               <span>Sit-Down</span>
-                              <span style={{ fontSize: '11px', color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#717171', fontWeight: '400' }}>+₹10/person</span>
+                              <span style={{ fontSize: '11px', color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#9ca3af', fontWeight: '400' }}>+₹10/person</span>
                             </button>
                           </div>
                         </div>
@@ -1924,11 +1926,7 @@ function App() {
                         <span>-₹{Math.max(0, originalSubtotal - subtotal).toLocaleString()}</span>
                       </div>
 
-                      {/* Coupon discount */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
-                        <span>Coupon discount</span>
-                        <span>{couponDiscount > 0 ? `-₹${couponDiscount.toLocaleString()}` : '₹0'}</span>
-                      </div>
+
 
                       <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
 
@@ -4780,29 +4778,53 @@ function App() {
                 });
 
                 return (
-                  <button
-                    disabled={!isAllItemsSelected}
-                    onClick={() => {
-                      setModalStep(modalSelectedDate ? 2 : 1);
-                      setShowSelectItemsModal(true);
-                      // Drawer stays open in the background
-                    }}
-                    style={{
-                      background: isAllItemsSelected ? '#222222' : '#e5e7eb',
-                      color: isAllItemsSelected ? '#ffffff' : '#9ca3af',
-                      border: 'none',
-                      borderRadius: '12px',
-                      padding: '14px',
-                      fontWeight: '600',
-                      fontSize: '14px',
-                      cursor: isAllItemsSelected ? 'pointer' : 'not-allowed',
-                      textAlign: 'center',
-                      width: '100%',
-                      transition: 'background-color 0.2s'
-                    }}
-                  >
-                    {isAllItemsSelected ? 'Next' : 'Select all required items'}
-                  </button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <button
+                      onClick={() => {
+                        setModalStep(modalSelectedDate ? 2 : 1);
+                        setShowSelectItemsModal(true);
+                      }}
+                      style={{
+                        background: '#ffffff',
+                        color: '#222222',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '14px',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        width: '100%',
+                        transition: 'background-color 0.2s',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                      }}
+                    >
+                      Skip
+                    </button>
+                    <button
+                      disabled={!isAllItemsSelected}
+                      onClick={() => {
+                        setModalStep(modalSelectedDate ? 2 : 1);
+                        setShowSelectItemsModal(true);
+                        // Drawer stays open in the background
+                      }}
+                      style={{
+                        background: isAllItemsSelected ? '#222222' : '#e5e7eb',
+                        color: isAllItemsSelected ? '#ffffff' : '#9ca3af',
+                        border: 'none',
+                        borderRadius: '12px',
+                        padding: '14px',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                        cursor: isAllItemsSelected ? 'pointer' : 'not-allowed',
+                        textAlign: 'center',
+                        width: '100%',
+                        transition: 'background-color 0.2s'
+                      }}
+                    >
+                      {isAllItemsSelected ? 'Next' : 'Select all required items'}
+                    </button>
+                  </div>
                 );
               })()}
             </div>

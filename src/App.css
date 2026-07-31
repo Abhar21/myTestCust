@@ -3575,6 +3575,8 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
     flex: 0 0 350px !important; /* Fixed width for list */
     height: calc(100vh - 120px);
     overflow-y: auto;
+    padding: 12px;
+    margin: -12px;
   }
   .bookings-detail-pane {
     display: block !important;

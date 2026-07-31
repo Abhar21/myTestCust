@@ -1719,323 +1719,323 @@ function App() {
                 {checkoutStep === 1 ? (
                   <>
                     {/* Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 16px 32px 16px' }}>
-                  <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
-                  <button onClick={() => {
-                    setShowCheckoutPage(false);
-                    if (checkoutFrom === 'drawer') {
-                      setShowSelectItemsDrawer(true);
-                    } else {
-                      setShowSelectItemsModal(true);
-                    }
-                  }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
-                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: '3', overflow: 'visible' }}><path d="m6 6 20 20M26 6 6 26"></path></svg>
-                  </button>
-                </div>
-
-                <div style={{ padding: '0 16px' }}>
-
-                  {/* Vendor Card */}
-                  <div style={{ border: '1px solid #dddddd', borderRadius: '24px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', padding: '16px', display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                    <img src={selectedVendorDetail?.image || '/homes/flat_kondapur.png'} alt="Vendor" style={{ width: '84px', height: '84px', borderRadius: '12px', objectFit: 'cover' }} />
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
-                      <div style={{ fontSize: '12px', color: '#717171', marginBottom: '4px', fontWeight: '400' }}>Cater</div>
-                      <div style={{ fontSize: '16px', fontWeight: '550', color: '#222222', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{selectedVendorDetail?.title || 'Vendor Name'}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#3b82f6', fontWeight: '500' }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
-                          <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
-                          <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
-                        </svg>
-                        <span>Verified</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Booking Details Box */}
-                  <div style={{ border: '1px solid #dddddd', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', marginBottom: '24px', backgroundColor: '#ffffff' }}>
-
-                    {/* Dates */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-                      <div>
-                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Date & Slot</div>
-                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>
-                          {modalSelectedDate ? `${modalSelectedDate.split('-')[0]} ${modalSelectedDate.split('-')[1]}, 2026` : 'Select date'}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span
-                            onClick={() => { setModalStep(2); setShowSelectItemsModal(true); }}
-                            style={{ fontSize: '14px', fontWeight: '500', color: '#FF35E0', textDecoration: 'underline', cursor: 'pointer' }}
-                          >
-                            {modalSelectedSlot || 'Select time slot'}
-                          </span>
-                        </div>
-                      </div>
-                      <button onClick={() => { setModalStep(1); setShowSelectItemsModal(true); }} style={{ background: '#f3f4f6', border: 'none', borderRadius: '8px', fontWeight: '500', fontSize: '14px', color: '#222222', cursor: 'pointer', padding: '8px 16px', height: 'fit-content' }}>Change</button>
-                    </div>
-
-                    <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
-
-                    {/* Menu and Guests Merged */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Menu</div>
-                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
-                        <div style={{ fontSize: '12px', color: '#717171' }}>Min: {minGuests} -  Max: {maxGuests}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
-                          {selectedMenuData?.originalPrice && (
-                            <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>{selectedMenuData.originalPrice}</span>
-                          )}
-                          <span style={{ fontSize: '12px', fontWeight: '500', color: '#222222' }}>{selectedMenuData?.price || `₹49/plate`}</span>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <button
-                          disabled={typeof previewGuestCount === 'number' && previewGuestCount <= minGuests}
-                          onClick={() => setPreviewGuestCount(Math.max(minGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) - 5))}
-                          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
-                        >
-                          -
-                        </button>
-                        <input
-                          type="text"
-                          value={previewGuestCount}
-                          onChange={(e) => {
-                            const valRaw = e.target.value.replace(/\D/g, '');
-                            if (valRaw === '') {
-                              setPreviewGuestCount('' as any);
-                            } else {
-                              const valNum = parseInt(valRaw, 10);
-                              setPreviewGuestCount(valNum > maxGuests ? maxGuests : valNum);
-                            }
-                          }}
-                          onBlur={() => {
-                            let val = typeof previewGuestCount === 'number' ? previewGuestCount : 0;
-                            if (val < minGuests) val = minGuests;
-                            if (val > maxGuests) val = maxGuests;
-                            setPreviewGuestCount(val);
-                          }}
-                          style={{ fontSize: '16px', color: '#222222', width: '36px', textAlign: 'center', border: 'none', outline: 'none', background: 'transparent', padding: 0 }}
-                        />
-                        <button
-                          disabled={typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests}
-                          onClick={() => setPreviewGuestCount(Math.min(maxGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) + 5))}
-                          style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Dining Style */}
-                    <div style={{ marginTop: '24px' }}>
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <button
-                          onClick={() => setCheckoutDiningStyle('buffet')}
-                          style={{
-                            flex: 1,
-                            padding: '12px',
-                            borderRadius: '12px',
-                            border: checkoutDiningStyle === 'buffet' ? '2px solid #222222' : '1px solid #dddddd',
-                            backgroundColor: checkoutDiningStyle === 'buffet' ? '#f9fafb' : '#ffffff',
-                            color: '#222222',
-                            fontSize: '14px',
-                            fontWeight: checkoutDiningStyle === 'buffet' ? '600' : '500',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                          }}
-                        >
-                          Buffet
-                        </button>
-                        <button
-                          onClick={() => setCheckoutDiningStyle('sit-down')}
-                          style={{
-                            flex: 1,
-                            padding: '12px',
-                            borderRadius: '12px',
-                            border: checkoutDiningStyle === 'sit-down' ? '2px solid #222222' : '1px solid #dddddd',
-                            backgroundColor: checkoutDiningStyle === 'sit-down' ? '#f9fafb' : '#ffffff',
-                            color: '#222222',
-                            fontSize: '14px',
-                            fontWeight: checkoutDiningStyle === 'sit-down' ? '600' : '500',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '4px'
-                          }}
-                        >
-                          <span>Sit-Down</span>
-                          <span style={{ fontSize: '11px', color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#717171', fontWeight: '400' }}>+₹10/person</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
-
-                    {/* Location */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div>
-                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Location</div>
-                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
-                          {selectedAddress ? selectedAddress.full : 'Choose a location...'}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
-
-                    {/* Contact Details */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Contact details</div>
-                        <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
-                          <div>{checkoutContactName}</div>
-                          <div style={{ color: '#717171', marginTop: '2px' }}>{checkoutContactPhone}</div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setIsEditingContact(true)}
-                        style={{ background: '#f3f4f6', border: 'none', borderRadius: '8px', fontWeight: '500', fontSize: '14px', color: '#222222', cursor: 'pointer', padding: '8px 16px', height: 'fit-content', flexShrink: 0, marginLeft: '16px' }}
-                      >
-                        Change
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 16px 32px 16px' }}>
+                      <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
+                      <button onClick={() => {
+                        setShowCheckoutPage(false);
+                        if (checkoutFrom === 'drawer') {
+                          setShowSelectItemsDrawer(true);
+                        } else {
+                          setShowSelectItemsModal(true);
+                        }
+                      }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: '3', overflow: 'visible' }}><path d="m6 6 20 20M26 6 6 26"></path></svg>
                       </button>
                     </div>
 
-                  </div>
+                    <div style={{ padding: '0 16px' }}>
 
-                  {/* Price Details */}
-                  <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', marginBottom: '16px' }}>Price details</h2>
+                      {/* Vendor Card */}
+                      <div style={{ border: '1px solid #dddddd', borderRadius: '24px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', padding: '16px', display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                        <img src={selectedVendorDetail?.image || '/homes/flat_kondapur.png'} alt="Vendor" style={{ width: '84px', height: '84px', borderRadius: '12px', objectFit: 'cover' }} />
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
+                          <div style={{ fontSize: '12px', color: '#717171', marginBottom: '4px', fontWeight: '400' }}>Cater</div>
+                          <div style={{ fontSize: '16px', fontWeight: '550', color: '#222222', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{selectedVendorDetail?.title || 'Vendor Name'}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#3b82f6', fontWeight: '500' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
+                              <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
+                              <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
+                            </svg>
+                            <span>Verified</span>
+                          </div>
+                        </div>
+                      </div>
 
-                  {/* Total price - MRP, no strikethrough */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span>Total price</span>
-                      <span style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>Incl. applicable taxes</span>
-                    </div>
-                    <span>₹{(originalSubtotal + Math.round(originalSubtotal * 0.18)).toLocaleString()}</span>
-                  </div>
+                      {/* Booking Details Box */}
+                      <div style={{ border: '1px solid #dddddd', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', marginBottom: '24px', backgroundColor: '#ffffff' }}>
 
-                  {/* Discount = MRP - actual price */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
-                    <span>Discount</span>
-                    <span>-₹{Math.max(0, originalSubtotal - subtotal).toLocaleString()}</span>
-                  </div>
+                        {/* Dates */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Date & Slot</div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>
+                              {modalSelectedDate ? `${modalSelectedDate.split('-')[0]} ${modalSelectedDate.split('-')[1]}, 2026` : 'Select date'}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span
+                                onClick={() => { setModalStep(2); setShowSelectItemsModal(true); }}
+                                style={{ fontSize: '14px', fontWeight: '500', color: '#FF35E0', textDecoration: 'underline', cursor: 'pointer' }}
+                              >
+                                {modalSelectedSlot || 'Select time slot'}
+                              </span>
+                            </div>
+                          </div>
+                          <button onClick={() => { setModalStep(1); setShowSelectItemsModal(true); }} style={{ background: '#f3f4f6', border: 'none', borderRadius: '8px', fontWeight: '500', fontSize: '14px', color: '#222222', cursor: 'pointer', padding: '8px 16px', height: 'fit-content' }}>Change</button>
+                        </div>
 
-                  {/* Coupon discount */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
-                    <span>Coupon discount</span>
-                    <span>{couponDiscount > 0 ? `-₹${couponDiscount.toLocaleString()}` : '₹0'}</span>
-                  </div>
+                        <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
 
-                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+                        {/* Menu and Guests Merged */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Menu</div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
+                            <div style={{ fontSize: '12px', color: '#717171' }}>Min: {minGuests} -  Max: {maxGuests}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                              {selectedMenuData?.originalPrice && (
+                                <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>{selectedMenuData.originalPrice}</span>
+                              )}
+                              <span style={{ fontSize: '12px', fontWeight: '500', color: '#222222' }}>{selectedMenuData?.price || `₹49/plate`}</span>
+                            </div>
+                          </div>
 
-                  {/* Total after discounts */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span>Total</span>
-                      {totalSavedAmount > 0 && (
-                        <span style={{ background: '#ecfdf5', color: '#059669', fontSize: '11px', fontWeight: '600', padding: '2px 6px', borderRadius: '4px' }}>
-                          Saved ₹{totalSavedAmount.toLocaleString()}
-                        </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <button
+                              disabled={typeof previewGuestCount === 'number' && previewGuestCount <= minGuests}
+                              onClick={() => setPreviewGuestCount(Math.max(minGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) - 5))}
+                              style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
+                            >
+                              -
+                            </button>
+                            <input
+                              type="text"
+                              value={previewGuestCount}
+                              onChange={(e) => {
+                                const valRaw = e.target.value.replace(/\D/g, '');
+                                if (valRaw === '') {
+                                  setPreviewGuestCount('' as any);
+                                } else {
+                                  const valNum = parseInt(valRaw, 10);
+                                  setPreviewGuestCount(valNum > maxGuests ? maxGuests : valNum);
+                                }
+                              }}
+                              onBlur={() => {
+                                let val = typeof previewGuestCount === 'number' ? previewGuestCount : 0;
+                                if (val < minGuests) val = minGuests;
+                                if (val > maxGuests) val = maxGuests;
+                                setPreviewGuestCount(val);
+                              }}
+                              style={{ fontSize: '16px', color: '#222222', width: '36px', textAlign: 'center', border: 'none', outline: 'none', background: 'transparent', padding: 0 }}
+                            />
+                            <button
+                              disabled={typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests}
+                              onClick={() => setPreviewGuestCount(Math.min(maxGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) + 5))}
+                              style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Dining Style */}
+                        <div style={{ marginTop: '24px' }}>
+                          <div style={{ display: 'flex', gap: '12px' }}>
+                            <button
+                              onClick={() => setCheckoutDiningStyle('buffet')}
+                              style={{
+                                flex: 1,
+                                padding: '12px',
+                                borderRadius: '12px',
+                                border: checkoutDiningStyle === 'buffet' ? '2px solid #222222' : '1px solid #dddddd',
+                                backgroundColor: checkoutDiningStyle === 'buffet' ? '#f9fafb' : '#ffffff',
+                                color: '#222222',
+                                fontSize: '14px',
+                                fontWeight: checkoutDiningStyle === 'buffet' ? '600' : '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                              }}
+                            >
+                              Buffet
+                            </button>
+                            <button
+                              onClick={() => setCheckoutDiningStyle('sit-down')}
+                              style={{
+                                flex: 1,
+                                padding: '12px',
+                                borderRadius: '12px',
+                                border: checkoutDiningStyle === 'sit-down' ? '2px solid #222222' : '1px solid #dddddd',
+                                backgroundColor: checkoutDiningStyle === 'sit-down' ? '#f9fafb' : '#ffffff',
+                                color: '#222222',
+                                fontSize: '14px',
+                                fontWeight: checkoutDiningStyle === 'sit-down' ? '600' : '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '4px'
+                              }}
+                            >
+                              <span>Sit-Down</span>
+                              <span style={{ fontSize: '11px', color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#717171', fontWeight: '400' }}>+₹10/person</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                        {/* Location */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Location</div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
+                              {selectedAddress ? selectedAddress.full : 'Choose a location...'}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                        {/* Contact Details */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Contact details</div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', lineHeight: '1.4' }}>
+                              <div>{checkoutContactName}</div>
+                              <div style={{ color: '#717171', marginTop: '2px' }}>{checkoutContactPhone}</div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => setIsEditingContact(true)}
+                            style={{ background: '#f3f4f6', border: 'none', borderRadius: '8px', fontWeight: '500', fontSize: '14px', color: '#222222', cursor: 'pointer', padding: '8px 16px', height: 'fit-content', flexShrink: 0, marginLeft: '16px' }}
+                          >
+                            Change
+                          </button>
+                        </div>
+
+                      </div>
+
+                      {/* Price Details */}
+                      <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', marginBottom: '16px' }}>Price details</h2>
+
+                      {/* Total price - MRP, no strikethrough */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span>Total price</span>
+                          <span style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>Incl. applicable taxes</span>
+                        </div>
+                        <span>₹{(originalSubtotal + Math.round(originalSubtotal * 0.18)).toLocaleString()}</span>
+                      </div>
+
+                      {/* Discount = MRP - actual price */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
+                        <span>Discount</span>
+                        <span>-₹{Math.max(0, originalSubtotal - subtotal).toLocaleString()}</span>
+                      </div>
+
+                      {/* Coupon discount */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
+                        <span>Coupon discount</span>
+                        <span>{couponDiscount > 0 ? `-₹${couponDiscount.toLocaleString()}` : '₹0'}</span>
+                      </div>
+
+                      <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+
+                      {/* Total after discounts */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span>Total</span>
+                          {totalSavedAmount > 0 && (
+                            <span style={{ background: '#ecfdf5', color: '#059669', fontSize: '11px', fontWeight: '600', padding: '2px 6px', borderRadius: '4px' }}>
+                              Saved ₹{totalSavedAmount.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        <span>₹{finalDiscountedPrice.toLocaleString()}</span>
+                      </div>
+
+                      <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
+                        <span>Advance</span>
+                        <span>₹{advance.toLocaleString()}</span>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
+                        <span>Platform fee</span>
+                        <span>₹11.80</span>
+                      </div>
+
+                      <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span>Advance pay</span>
+                          <span style={{ fontSize: '12px', color: '#717171', fontWeight: '400', marginTop: '4px' }}>Incl. applicable taxes</span>
+                        </div>
+                        <span>₹{advancePay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      </div>
+
+                      {totalSavedPercentage > 0 && (
+                        <div style={{
+                          background: '#f0fdf4',
+                          border: '1px solid #bbf7d0',
+                          borderRadius: '6px',
+                          padding: '10px 14px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          marginBottom: '16px'
+                        }}>
+                          <div style={{ background: '#22c55e', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" />
+                              <circle cx="16.5" cy="7.5" r="1.5" fill="#22c55e" />
+                            </svg>
+                          </div>
+                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#166534' }}>
+                            You saved {totalSavedPercentage}% with this booking!
+                          </div>
+                        </div>
                       )}
-                    </div>
-                    <span>₹{finalDiscountedPrice.toLocaleString()}</span>
-                  </div>
 
-                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
+                      <ScrollRevealText style={{ fontSize: '13px', color: '#ec4899', marginBottom: '16px', textAlign: 'center', fontWeight: '500' }}>
+                        Pay remaining amount on event day directly to Partner
+                      </ScrollRevealText>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
-                    <span>Advance</span>
-                    <span>₹{advance.toLocaleString()}</span>
-                  </div>
+                      <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
-                    <span>Platform fee</span>
-                    <span>₹11.80</span>
-                  </div>
-
-                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span>Advance pay</span>
-                      <span style={{ fontSize: '12px', color: '#717171', fontWeight: '400', marginTop: '4px' }}>Incl. applicable taxes</span>
-                    </div>
-                    <span>₹{advancePay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </div>
-
-                  {totalSavedPercentage > 0 && (
-                    <div style={{
-                      background: '#f0fdf4',
-                      border: '1px solid #bbf7d0',
-                      borderRadius: '6px',
-                      padding: '10px 14px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      marginBottom: '16px'
-                    }}>
-                      <div style={{ background: '#22c55e', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" />
-                          <circle cx="16.5" cy="7.5" r="1.5" fill="#22c55e" />
-                        </svg>
+                      <div style={{ marginBottom: '24px' }}>
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#636363ff', marginBottom: '6px' }}>Cancellation Policy</div>
+                        <div style={{ fontSize: '13px', color: '#717171', lineHeight: '1.5' }}>Please verify your event details before booking. Once an order is placed, it cannot be refunded.</div>
                       </div>
-                      <div style={{ fontSize: '13px', fontWeight: '700', color: '#166534' }}>
-                        You saved {totalSavedPercentage}% with this booking!
+
+                      <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                      {/* Disclaimer */}
+                      <div style={{ fontSize: '12px', color: '#717171', marginBottom: '12px', textAlign: 'center' }}>
+                        Apply best coupons and proceed to payment in next step
                       </div>
+
+                      {/* Checkout Button */}
+                      <button
+                        onClick={() => {
+                          setCheckoutStep(2);
+                          window.scrollTo(0, 0);
+                        }}
+                        style={{
+                          width: '100%',
+                          background: '#222222',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '14px 24px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <span style={{ fontWeight: '700' }}>Continue to checkout</span>
+                      </button>
+
                     </div>
-                  )}
-
-                  <ScrollRevealText style={{ fontSize: '13px', color: '#ec4899', marginBottom: '16px', textAlign: 'center', fontWeight: '500' }}>
-                    Pay remaining amount on event day directly to Partner
-                  </ScrollRevealText>
-
-                  <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
-
-                  <div style={{ marginBottom: '24px' }}>
-                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#636363ff', marginBottom: '6px' }}>Cancellation Policy</div>
-                    <div style={{ fontSize: '13px', color: '#717171', lineHeight: '1.5' }}>Please verify your event details before booking. Once an order is placed, it cannot be refunded.</div>
-                  </div>
-
-                  <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
-
-                  {/* Disclaimer */}
-                  <div style={{ fontSize: '12px', color: '#717171', marginBottom: '12px', textAlign: 'center' }}>
-                    Apply best coupons and proceed to payment in next step
-                  </div>
-
-                  {/* Checkout Button */}
-                  <button
-                    onClick={() => {
-                      setCheckoutStep(2);
-                      window.scrollTo(0, 0);
-                    }}
-                    style={{
-                      width: '100%',
-                      background: '#222222',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '14px 24px',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    <span style={{ fontWeight: '700' }}>Continue to checkout</span>
-                  </button>
-
-                </div>
                   </>
                 ) : (
                   <>
@@ -2098,7 +2098,7 @@ function App() {
                               {subtotal < 5000 && <div style={{ fontSize: '11px', fontWeight: '500', color: '#ef4444', marginTop: '4px', marginBottom: '2px' }}>Add more ₹{Math.max(0, 5000 - subtotal)} to apply</div>}
                               <div onClick={() => setShowCouponTerms('FLAT200')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
                             </div>
-                            <button disabled={subtotal < 5000} onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')} style={ subtotal < 5000 ? { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '600', cursor: 'not-allowed', background: '#f3f4f6', color: '#9ca3af', border: '1px solid #d1d5db', textTransform: 'uppercase' } : { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' } }>
+                            <button disabled={subtotal < 5000} onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')} style={subtotal < 5000 ? { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '600', cursor: 'not-allowed', background: '#f3f4f6', color: '#9ca3af', border: '1px solid #d1d5db', textTransform: 'uppercase' } : { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
                               {subtotal >= 5000 && appliedCouponCode === 'FLAT200' ? 'Remove' : 'Apply'}
                             </button>
                           </div>
@@ -2161,10 +2161,10 @@ function App() {
                       <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
 
                       <button onClick={() => {
-                          alert('Proceeding to Razorpay with total: ₹' + advancePay);
-                          setShowCheckoutPage(false);
-                          setCheckoutStep(1);
-                          setConfirmedSelection(prev => ({ ...prev, [selectedMenuForModal || '']: { date: modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : '', slot: modalSelectedSlot || '' } }));
+                        alert('Proceeding to Razorpay with total: ₹' + advancePay);
+                        setShowCheckoutPage(false);
+                        setCheckoutStep(1);
+                        setConfirmedSelection(prev => ({ ...prev, [selectedMenuForModal || '']: { date: modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : '', slot: modalSelectedSlot || '' } }));
                       }} style={{ width: '100%', background: '#222222', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 24px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                         <span style={{ fontWeight: '700' }}>Continue with</span>
                         <img src="Razorpay.png" alt="Razorpay" style={{ height: '22px', fontWeight: '400', objectFit: 'contain', verticalAlign: 'middle', filter: 'brightness(0) invert(1)' }} />
@@ -2836,56 +2836,25 @@ function App() {
                 <div style={{ width: '100%', height: '1px', backgroundColor: '#e2e8f0', marginTop: '48px', marginBottom: '48px' }}></div>
 
                 <div className="detail-reviews-section" style={{ paddingBottom: '32px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#222222" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                        </svg>
-                        <span style={{ fontSize: '36px', fontWeight: '800', color: '#222222', lineHeight: '1', letterSpacing: '-1px' }}>4.9</span>
-                      </div>
-                      <div style={{ fontSize: '15px', color: '#717171', fontWeight: '500', marginTop: '8px' }}>112 reviews</div>
-                    </div>
-                    <button style={{ padding: '10px 18px', backgroundColor: '#ffffff', border: '1px solid #222222', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#222222', cursor: 'pointer', transition: 'background-color 0.2s', outline: 'none' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f7f7f7'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                    <h2 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Rating & Reviews</h2>
+                    <button style={{ background: 'none', border: 'none', padding: 0, fontSize: '13px', fontWeight: '600', color: '#222222', cursor: 'pointer', textDecoration: 'underline' }}>
                       Show all
                     </button>
                   </div>
-                  <div style={{ display: 'flex', overflowX: 'auto', gap: '20px', paddingBottom: '16px', margin: '0 -24px', padding: '0 24px 16px 24px', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-                    
-                    {/* Card 1 */}
-                    <div style={{ minWidth: '280px', maxWidth: '280px', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff' }}>
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="#f1f5f9" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '20px', right: '20px' }}>
-                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
-                      </svg>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>B</div>
-                        <div>
-                          <div style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>Bhargav Ambati</div>
-                          <div style={{ fontSize: '14px', color: '#64748b', marginTop: '2px', fontWeight: '500' }}>1 month ago</div>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
-                        {[1,2,3,4,5].map(s => (
-                          <svg key={s} width="16" height="16" viewBox="0 0 24 24" fill={s <= 4 ? "#0f172a" : "#e2e8f0"} xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                          </svg>
-                        ))}
-                      </div>
-                      <div style={{ fontSize: '15px', color: '#334155', lineHeight: '1.6', marginBottom: '32px', flex: 1, fontWeight: '500' }}>
-                        Food was good
-                      </div>
-                      <div>
-                        <span style={{ backgroundColor: '#fdf2f8', color: '#ec4899', fontSize: '12px', fontWeight: '700', padding: '6px 12px', borderRadius: '6px' }}>
-                          Ordered : Breakfast Menu 1
-                        </span>
-                      </div>
+                  <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                    <div style={{ fontSize: '48px', fontWeight: '800', color: '#222222', lineHeight: '1', letterSpacing: '-1px' }}>4.9</div>
+                    <div style={{ fontSize: '15px', color: '#717171', fontWeight: '500', marginTop: '8px' }}>112 reviews</div>
+                    <div style={{ marginTop: '12px', display: 'inline-flex', backgroundColor: '#ffffff', padding: '6px 16px', borderRadius: '16px', boxShadow: '0 0 16px rgba(0,0,0,0.08)' }}>
+                      <ScrollRevealText style={{ fontSize: '13px', fontWeight: '700', color: '#ec4899', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+                        Top-rated
+                      </ScrollRevealText>
                     </div>
+                  </div>
+                  <div style={{ display: 'flex', overflowX: 'auto', gap: '20px', paddingBottom: '24px', margin: '-16px -24px -8px -24px', padding: '16px 24px 24px 24px', msOverflowStyle: 'none', scrollbarWidth: 'none', scrollSnapType: 'x mandatory', scrollPaddingLeft: '24px' }}>
 
-                    {/* Card 2 */}
-                    <div style={{ minWidth: '280px', maxWidth: '280px', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff' }}>
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="#f1f5f9" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '20px', right: '20px' }}>
-                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
-                      </svg>
+                    {/* Card 1 */}
+                    <div style={{ minWidth: '280px', maxWidth: '280px', boxShadow: '0 0 16px rgba(0,0,0,0.08)', border: 'none', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff', scrollSnapAlign: 'start' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
                         <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>P</div>
                         <div>
@@ -2894,7 +2863,7 @@ function App() {
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
-                        {[1,2,3,4,5].map(s => (
+                        {[1, 2, 3, 4, 5].map(s => (
                           <svg key={s} width="16" height="16" viewBox="0 0 24 24" fill="#0f172a" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                           </svg>
@@ -2910,11 +2879,8 @@ function App() {
                       </div>
                     </div>
 
-                    {/* Card 3 */}
-                    <div style={{ minWidth: '280px', maxWidth: '280px', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff' }}>
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="#f1f5f9" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '20px', right: '20px' }}>
-                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
-                      </svg>
+                    {/* Card 2 */}
+                    <div style={{ minWidth: '280px', maxWidth: '280px', boxShadow: '0 0 16px rgba(0,0,0,0.08)', border: 'none', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff', scrollSnapAlign: 'start' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
                         <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>S</div>
                         <div>
@@ -2923,7 +2889,7 @@ function App() {
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
-                        {[1,2,3,4,5].map(s => (
+                        {[1, 2, 3, 4, 5].map(s => (
                           <svg key={s} width="16" height="16" viewBox="0 0 24 24" fill="#0f172a" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                           </svg>
@@ -2935,6 +2901,32 @@ function App() {
                       <div>
                         <span style={{ backgroundColor: '#fdf2f8', color: '#ec4899', fontSize: '12px', fontWeight: '700', padding: '6px 12px', borderRadius: '6px' }}>
                           Ordered : Veg Breakfast
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Card 3 */}
+                    <div style={{ minWidth: '280px', maxWidth: '280px', boxShadow: '0 0 16px rgba(0,0,0,0.08)', border: 'none', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff', scrollSnapAlign: 'start' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>B</div>
+                        <div>
+                          <div style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>Bhargav Ambati</div>
+                          <div style={{ fontSize: '14px', color: '#64748b', marginTop: '2px', fontWeight: '500' }}>1 month ago</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+                        {[1, 2, 3, 4, 5].map(s => (
+                          <svg key={s} width="16" height="16" viewBox="0 0 24 24" fill={s <= 4 ? "#0f172a" : "#e2e8f0"} xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <div style={{ fontSize: '15px', color: '#334155', lineHeight: '1.6', marginBottom: '32px', flex: 1, fontWeight: '500' }}>
+                        Food was good
+                      </div>
+                      <div>
+                        <span style={{ backgroundColor: '#fdf2f8', color: '#ec4899', fontSize: '12px', fontWeight: '700', padding: '6px 12px', borderRadius: '6px' }}>
+                          Ordered : Breakfast Menu 1
                         </span>
                       </div>
                     </div>
@@ -2991,7 +2983,7 @@ function App() {
                           <div className="card-details-row" style={{ marginTop: '8px' }}>
                             <span className="card-original-price">{home.originalPrice}</span>
                             <span className="card-active-price">{home.price}</span>
-                            
+
                           </div>
                         </div>
                       </div>
@@ -3190,7 +3182,7 @@ function App() {
                         </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
-                          
+
                         </div>
                       </div>
                     </div>
@@ -3238,7 +3230,7 @@ function App() {
                         </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
-                          
+
                         </div>
                       </div>
                     </div>
@@ -3318,7 +3310,7 @@ function App() {
                         </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
-                          
+
                         </div>
                       </div>
                     </div>
@@ -4194,173 +4186,173 @@ function App() {
 
       {/* Full Screen Login Flow */}
       {showFullScreenLogin && (
-        <div 
-          className="login-modal-overlay" 
+        <div
+          className="login-modal-overlay"
           onClick={() => {
             setShowFullScreenLogin(false);
             setLoginStep(0);
           }}
         >
           <div className="login-modal-container" onClick={(e) => e.stopPropagation()}>
-          <button
-            onClick={() => {
-              if (loginStep === 2) {
-                setLoginStep(1);
-              } else {
-                setShowFullScreenLogin(false);
-                setLoginStep(0);
-              }
-            }}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '28px',
-              cursor: 'pointer',
-              marginBottom: '32px',
-              textAlign: 'left',
-              width: 'fit-content',
-              color: '#222222',
-              padding: 0
-            }}
-          >
-            ←
-          </button>
+            <button
+              onClick={() => {
+                if (loginStep === 2) {
+                  setLoginStep(1);
+                } else {
+                  setShowFullScreenLogin(false);
+                  setLoginStep(0);
+                }
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '28px',
+                cursor: 'pointer',
+                marginBottom: '32px',
+                textAlign: 'left',
+                width: 'fit-content',
+                color: '#222222',
+                padding: 0
+              }}
+            >
+              ←
+            </button>
 
 
-          {loginStep === 1 && (
-            <>
-              <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                Welcome
-              </h2>
-              <div style={{ textAlign: 'left', marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                  Enter your mobile number
-                </label>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: '100%',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  padding: '12px 16px',
-                  boxSizing: 'border-box',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-                }}>
-                  <span style={{ color: '#717171', fontSize: '16px', marginRight: '8px' }}>+91</span>
+            {loginStep === 1 && (
+              <>
+                <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  Welcome
+                </h2>
+                <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                    Enter your mobile number
+                  </label>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    boxSizing: 'border-box',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                  }}>
+                    <span style={{ color: '#717171', fontSize: '16px', marginRight: '8px' }}>+91</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={loginMobile}
+                      onChange={(e) => setLoginMobile(e.target.value.replace(/\D/g, ''))}
+                      placeholder=""
+                      style={{
+                        flex: 1,
+                        border: 'none',
+                        outline: 'none',
+                        fontSize: '16px',
+                        padding: 0,
+                        background: 'transparent',
+                        color: '#222222',
+                        fontFamily: 'inherit'
+                      }}
+                    />
+                  </div>
+                </div>
+                <button
+                  disabled={loginMobile.length !== 10}
+                  onClick={() => {
+                    if (loginMobile.length === 10) {
+                      setLoginStep(2);
+                      setOtpTimer(59);
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    background: '#222222',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '14px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: loginMobile.length === 10 ? 'pointer' : 'not-allowed',
+                    opacity: loginMobile.length === 10 ? 1 : 0.5,
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                  }}
+                >
+                  Continue
+                </button>
+              </>
+            )}
+
+            {loginStep === 2 && (
+              <>
+                <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  Enter OTP
+                </h2>
+                <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                    Code sent to {loginMobile}
+                  </label>
                   <input
                     type="text"
                     inputMode="numeric"
-                    maxLength={10}
-                    value={loginMobile}
-                    onChange={(e) => setLoginMobile(e.target.value.replace(/\D/g, ''))}
-                    placeholder=""
+                    maxLength={6}
+                    value={loginOTP}
+                    onChange={(e) => setLoginOTP(e.target.value.replace(/\D/g, ''))}
+                    placeholder="0 0 0 0 0 0"
                     style={{
-                      flex: 1,
-                      border: 'none',
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '20px',
+                      letterSpacing: '8px',
+                      textAlign: 'center',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
                       outline: 'none',
-                      fontSize: '16px',
-                      padding: 0,
-                      background: 'transparent',
-                      color: '#222222',
-                      fontFamily: 'inherit'
+                      boxSizing: 'border-box',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
                     }}
                   />
                 </div>
-              </div>
-              <button
-                disabled={loginMobile.length !== 10}
-                onClick={() => {
-                  if (loginMobile.length === 10) {
-                    setLoginStep(2);
-                    setOtpTimer(59);
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  background: '#222222',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '14px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  cursor: loginMobile.length === 10 ? 'pointer' : 'not-allowed',
-                  opacity: loginMobile.length === 10 ? 1 : 0.5,
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-                }}
-              >
-                Continue
-              </button>
-            </>
-          )}
-
-          {loginStep === 2 && (
-            <>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#222222', marginTop: 0, marginBottom: '24px', textAlign: 'left', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                Enter OTP
-              </h2>
-              <div style={{ textAlign: 'left', marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#717171', marginBottom: '8px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                  Code sent to {loginMobile}
-                </label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={loginOTP}
-                  onChange={(e) => setLoginOTP(e.target.value.replace(/\D/g, ''))}
-                  placeholder="0 0 0 0 0 0"
+                <button
+                  disabled={loginOTP.length !== 6}
+                  onClick={() => {
+                    if (loginOTP.length === 6) {
+                      setIsLoggedIn(true);
+                      setShowFullScreenLogin(false);
+                      setLoginStep(0);
+                      setShowMobileAddressModal(true);
+                    }
+                  }}
                   style={{
                     width: '100%',
-                    padding: '12px 16px',
-                    fontSize: '20px',
-                    letterSpacing: '8px',
-                    textAlign: 'center',
-                    border: '1px solid #d1d5db',
+                    background: '#222222',
+                    color: '#ffffff',
+                    border: 'none',
                     borderRadius: '8px',
-                    outline: 'none',
-                    boxSizing: 'border-box',
+                    padding: '14px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: loginOTP.length === 6 ? 'pointer' : 'not-allowed',
+                    opacity: loginOTP.length === 6 ? 1 : 0.5,
                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
                   }}
-                />
-              </div>
-              <button
-                disabled={loginOTP.length !== 6}
-                onClick={() => {
-                  if (loginOTP.length === 6) {
-                    setIsLoggedIn(true);
-                    setShowFullScreenLogin(false);
-                    setLoginStep(0);
-                    setShowMobileAddressModal(true);
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  background: '#222222',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '14px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  cursor: loginOTP.length === 6 ? 'pointer' : 'not-allowed',
-                  opacity: loginOTP.length === 6 ? 1 : 0.5,
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-                }}
-              >
-                Verify & Continue
-              </button>
-              <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#717171', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                {otpTimer > 0 ? (
-                  `Didn't receive? 0:${String(otpTimer).padStart(2, '0')}`
-                ) : (
-                  <>
-                    Didn't receive? <span onClick={() => setOtpTimer(59)} style={{ color: '#222222', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}>Send again</span>
-                  </>
-                )}
-              </div>
-            </>
-          )}
+                >
+                  Verify & Continue
+                </button>
+                <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '14px', color: '#717171', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                  {otpTimer > 0 ? (
+                    `Didn't receive? 0:${String(otpTimer).padStart(2, '0')}`
+                  ) : (
+                    <>
+                      Didn't receive? <span onClick={() => setOtpTimer(59)} style={{ color: '#222222', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}>Send again</span>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

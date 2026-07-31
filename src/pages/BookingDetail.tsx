@@ -14,10 +14,10 @@ const RoundedStar = ({ active, size = 16 }: { active: boolean; size?: number }) 
   </svg>
 );
 
-const BookingDetail = () => {
+const BookingDetail = ({ bookingData, isDesktop }: { bookingData?: any, isDesktop?: boolean }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const booking = location.state?.booking;
+  const booking = bookingData || location.state?.booking;
 
   // Menu & Pricing Data
   const guests = 120;
@@ -58,7 +58,7 @@ const BookingDetail = () => {
     if (booking?.status !== 'Upcoming') return;
     const timer = setInterval(() => setTimeLeft(getTimeLeft(booking.eventDateRaw)), 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [booking]);
 
   // Star rating
   const [rating, setRating] = useState(0);
@@ -93,31 +93,37 @@ const BookingDetail = () => {
   }
 
   return (
-    <div style={{
+    <div style={isDesktop ? {
+      backgroundColor: '#ffffff', overflowY: 'auto', width: '100%', minHeight: '100%',
+      borderRadius: '24px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+    } : {
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
       backgroundColor: '#f8fafc', overflowY: 'auto', zIndex: 100000,
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
     }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '52px 16px 20px' }}>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', gap: '6px',
-            color: '#222222', fontSize: '16px', fontWeight: '600', padding: 0
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          Back
-        </button>
-      </div>
+      {!isDesktop && (
+        <div style={{ display: 'flex', alignItems: 'center', padding: '52px 16px 20px' }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '6px',
+              color: '#222222', fontSize: '16px', fontWeight: '600', padding: 0
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back
+          </button>
+        </div>
+      )}
 
       {/* Booking Detail Card */}
-      <div style={{ padding: '0 16px 64px' }}>
+      <div style={{ padding: isDesktop ? '24px' : '0 16px 64px' }}>
         <div style={{
           display: 'flex', flexDirection: 'column',
           border: '1px solid #e2e8f0', borderRadius: '24px',
@@ -413,8 +419,8 @@ const BookingDetail = () => {
 
       {/* Review Popup */}
       {showReviewPopup && (
-        <div onClick={() => setShowReviewPopup(false)} style={{ position: 'fixed', inset: 0, zIndex: 200000, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', backdropFilter: 'blur(2px)' }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '480px', backgroundColor: '#ffffff', borderRadius: '28px 28px 0 0', padding: '24px 24px 40px', display: 'flex', flexDirection: 'column', gap: '20px', boxShadow: '0 -4px 40px rgba(0,0,0,0.12)' }}>
+        <div onClick={() => setShowReviewPopup(false)} className="review-popup-overlay">
+          <div onClick={(e) => e.stopPropagation()} className="review-popup-panel">
             <div style={{ width: '40px', height: '4px', borderRadius: '2px', backgroundColor: '#e5e7eb', margin: '0 auto' }}></div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '18px', fontWeight: '600', color: '#222222' }}>Rate your experience</div>

@@ -3483,3 +3483,85 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
     animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
 }
+
+/* Bookings Page Master-Detail Layout */
+.bookings-page-container {
+  padding: 40px 16px;
+}
+.bookings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.bookings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bookings-list-pane {
+  display: flex;
+  flex-direction: column;
+}
+.bookings-detail-pane {
+  display: none; /* hidden on mobile */
+}
+
+@media (min-width: 768px) {
+  .bookings-page-container {
+    padding: 60px 15vw !important; /* Huge margins matching Profile */
+  }
+  .bookings-content {
+    flex-direction: row !important;
+    gap: 40px !important;
+    align-items: flex-start;
+  }
+  .bookings-list-pane {
+    flex: 0 0 350px !important; /* Fixed width for list */
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  .bookings-detail-pane {
+    display: block !important;
+    flex: 1; /* Take up remaining space */
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+}
+
+/* Review Popup Modal Responsive Layout */
+.review-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200000;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.review-popup-panel {
+  width: 100%;
+  max-width: 480px;
+  background-color: #ffffff;
+  border-radius: 28px 28px 0 0;
+  padding: 24px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 -4px 40px rgba(0,0,0,0.12);
+}
+
+@media (min-width: 768px) {
+  .review-popup-overlay {
+    align-items: center !important;
+  }
+  .review-popup-panel {
+    border-radius: 28px !important;
+    animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+}

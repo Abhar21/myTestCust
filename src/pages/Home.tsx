@@ -2228,7 +2228,33 @@ function App() {
 
               {/* Center Section (flexible col, centered) */}
               <div className="header-center-col">
-                {isSearchView ? (
+                {selectedVendorDetail ? (
+                  <>
+                    {/* Location badge on desktop for vendor detail */}
+                    <div
+                      className="mobile-location-badge desktop-location-badge"
+                      onClick={() => setShowMobileAddressModal(true)}
+                    >
+                      {selectedAddress ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                      )}
+                      <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
+                      <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
+                      <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                    <div className="header-filters-wrapper vendor-detail-filters">
+                      {renderFilters()}
+                    </div>
+                  </>
+                ) : isSearchView ? (
                   <>
                     {/* Mobile Location Badge (Image 2 style) */}
                     <div
@@ -2254,10 +2280,10 @@ function App() {
                       {renderFilters()}
                     </div>
                   </>
-                ) : selectedVendorDetail ? null : (
+                ) : (
                   <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
                     <div
-                      className="mobile-location-badge"
+                      className="mobile-location-badge desktop-location-badge"
                       onClick={() => setShowMobileAddressModal(true)}
                     >
                       {selectedAddress ? (
@@ -2824,6 +2850,116 @@ function App() {
                     Max upto 1 year calender released
                   </div>
                 </div>
+
+                <div style={{ width: '100%', height: '1px', backgroundColor: '#e2e8f0', marginTop: '48px', marginBottom: '48px' }}></div>
+
+                <div className="detail-reviews-section" style={{ paddingBottom: '32px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#222222" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                        <span style={{ fontSize: '36px', fontWeight: '800', color: '#222222', lineHeight: '1', letterSpacing: '-1px' }}>4.9</span>
+                      </div>
+                      <div style={{ fontSize: '15px', color: '#717171', fontWeight: '500', marginTop: '8px' }}>112 reviews</div>
+                    </div>
+                    <button style={{ padding: '10px 18px', backgroundColor: '#ffffff', border: '1px solid #222222', borderRadius: '8px', fontSize: '14px', fontWeight: '600', color: '#222222', cursor: 'pointer', transition: 'background-color 0.2s', outline: 'none' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f7f7f7'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}>
+                      Show all
+                    </button>
+                  </div>
+                  <div style={{ display: 'flex', overflowX: 'auto', gap: '20px', paddingBottom: '16px', margin: '0 -24px', padding: '0 24px 16px 24px', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+                    
+                    {/* Card 1 */}
+                    <div style={{ minWidth: '280px', maxWidth: '280px', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff' }}>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="#f1f5f9" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '20px', right: '20px' }}>
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                      </svg>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>B</div>
+                        <div>
+                          <div style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>Bhargav Ambati</div>
+                          <div style={{ fontSize: '14px', color: '#64748b', marginTop: '2px', fontWeight: '500' }}>1 month ago</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+                        {[1,2,3,4,5].map(s => (
+                          <svg key={s} width="16" height="16" viewBox="0 0 24 24" fill={s <= 4 ? "#0f172a" : "#e2e8f0"} xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <div style={{ fontSize: '15px', color: '#334155', lineHeight: '1.6', marginBottom: '32px', flex: 1, fontWeight: '500' }}>
+                        Food was good
+                      </div>
+                      <div>
+                        <span style={{ backgroundColor: '#fdf2f8', color: '#ec4899', fontSize: '12px', fontWeight: '700', padding: '6px 12px', borderRadius: '6px' }}>
+                          Ordered : Breakfast Menu 1
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Card 2 */}
+                    <div style={{ minWidth: '280px', maxWidth: '280px', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff' }}>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="#f1f5f9" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '20px', right: '20px' }}>
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                      </svg>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>P</div>
+                        <div>
+                          <div style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>Pooja Gupta</div>
+                          <div style={{ fontSize: '14px', color: '#64748b', marginTop: '2px', fontWeight: '500' }}>3 months ago</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+                        {[1,2,3,4,5].map(s => (
+                          <svg key={s} width="16" height="16" viewBox="0 0 24 24" fill="#0f172a" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <div style={{ fontSize: '15px', color: '#334155', lineHeight: '1.6', marginBottom: '32px', flex: 1, fontWeight: '500' }}>
+                        Very hygienic packaging and prompt delivery. Highly recommended for family events!
+                      </div>
+                      <div>
+                        <span style={{ backgroundColor: '#fdf2f8', color: '#ec4899', fontSize: '12px', fontWeight: '700', padding: '6px 12px', borderRadius: '6px' }}>
+                          Ordered : Breakfast Menu 1
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Card 3 */}
+                    <div style={{ minWidth: '280px', maxWidth: '280px', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#ffffff' }}>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="#f1f5f9" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: '20px', right: '20px' }}>
+                        <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                      </svg>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>S</div>
+                        <div>
+                          <div style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>Sneha Reddy</div>
+                          <div style={{ fontSize: '14px', color: '#64748b', marginTop: '2px', fontWeight: '500' }}>2 weeks ago</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+                        {[1,2,3,4,5].map(s => (
+                          <svg key={s} width="16" height="16" viewBox="0 0 24 24" fill="#0f172a" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <div style={{ fontSize: '15px', color: '#334155', lineHeight: '1.6', marginBottom: '32px', flex: 1, fontWeight: '500' }}>
+                        On-time setup and clean presentation. The filter coffee was a huge hit among all our guests.
+                      </div>
+                      <div>
+                        <span style={{ backgroundColor: '#fdf2f8', color: '#ec4899', fontSize: '12px', fontWeight: '700', padding: '6px 12px', borderRadius: '6px' }}>
+                          Ordered : Veg Breakfast
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
               </div>
             </main>
           ) : isSearchView ? (
@@ -2873,14 +3009,7 @@ function App() {
                           <div className="card-details-row" style={{ marginTop: '8px' }}>
                             <span className="card-original-price">{home.originalPrice}</span>
                             <span className="card-active-price">{home.price}</span>
-                            <span className="card-dot">·</span>
-                            <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
-                                <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
-                                <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
-                              </svg>
-                              <span style={{ color: '#3b82f6', fontWeight: '500', fontSize: '13px' }}>Verified</span>
-                            </span>
+                            
                           </div>
                         </div>
                       </div>
@@ -3079,14 +3208,7 @@ function App() {
                         </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
-                          <span className="card-dot">·</span>
-                          <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
-                              <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
-                              <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
-                            </svg>
-                            <span style={{ color: '#3b82f6', fontWeight: '500', fontSize: '13px' }}>Verified</span>
-                          </span>
+                          
                         </div>
                       </div>
                     </div>
@@ -3134,14 +3256,7 @@ function App() {
                         </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
-                          <span className="card-dot">·</span>
-                          <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
-                              <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
-                              <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
-                            </svg>
-                            <span style={{ color: '#3b82f6', fontWeight: '500', fontSize: '13px' }}>Verified</span>
-                          </span>
+                          
                         </div>
                       </div>
                     </div>
@@ -3221,14 +3336,7 @@ function App() {
                         </div>
                         <div className="card-details-row">
                           <span className="card-active-price">{home.price}</span>
-                          <span className="card-dot">·</span>
-                          <span className="card-rating-inline" style={{ display: 'flex', alignItems: 'center' }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
-                              <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
-                              <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
-                            </svg>
-                            <span style={{ color: '#3b82f6', fontWeight: '500', fontSize: '13px' }}>Verified</span>
-                          </span>
+                          
                         </div>
                       </div>
                     </div>
@@ -4104,21 +4212,14 @@ function App() {
 
       {/* Full Screen Login Flow */}
       {showFullScreenLogin && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: '#ffffff',
-            zIndex: 100000,
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '40px 24px',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+        <div 
+          className="login-modal-overlay" 
+          onClick={() => {
+            setShowFullScreenLogin(false);
+            setLoginStep(0);
           }}
         >
+          <div className="login-modal-container" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => {
               if (loginStep === 2) {
@@ -4278,6 +4379,7 @@ function App() {
               </div>
             </>
           )}
+          </div>
         </div>
       )}
 

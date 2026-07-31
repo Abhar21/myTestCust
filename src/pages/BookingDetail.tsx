@@ -23,15 +23,15 @@ const BookingDetail = () => {
   const guests = 120;
   const serviceType = 'Sit-down';
   const servicePricePerPerson = 10;
-  
+
   const basePrice = 3461;
   const totalServiceCost = serviceType === 'Sit-down' ? guests * servicePricePerPerson : 0;
   const subtotal = basePrice + totalServiceCost; // e.g. 4661
-  
+
   const discount = 1500;
   const couponDiscount = 0;
   const totalSavings = discount + couponDiscount;
-  
+
   const total = subtotal - totalSavings;
   const advance = Math.round(total * 0.4); // 40% advance
   const platformFee = 11.80;
@@ -339,7 +339,7 @@ const BookingDetail = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <div style={{ fontSize: '14px', fontWeight: '700', color: '#222222' }}>Cancellation Policy</div>
                   <div style={{ fontSize: '12px', color: '#717171', lineHeight: '1.6' }}>
-                    Once an order is placed, vendors immediately begin reserving time and resources for your event. Therefore, cancellations, modifications, or refunds are not permitted after order confirmation.
+                    Once order is placed, Partners immediately begin reserving time and resources for your event. Therefore, cancellations, modifications, or refunds are not permitted after order placed.
                   </div>
                 </div>
               </>
@@ -372,7 +372,7 @@ const BookingDetail = () => {
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', padding: '20px 16px', gap: '16px' }}>
             <div style={{ fontSize: '16px', fontWeight: '700', color: '#222222' }}>Documents</div>
-            
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -386,7 +386,7 @@ const BookingDetail = () => {
               </div>
               <button style={{ background: 'none', border: 'none', color: '#059669', fontSize: '14px', fontWeight: '600', cursor: 'pointer', padding: 0 }}>View</button>
             </div>
-            
+
             {booking.status !== 'Upcoming' && (
               <>
                 <div style={{ height: '1px', backgroundColor: '#e2e8f0' }}></div>

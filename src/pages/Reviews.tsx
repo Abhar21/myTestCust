@@ -1,16 +1,35 @@
-
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Reviews = () => {
+interface ReviewsProps {
+  isModal?: boolean;
+  onClose?: () => void;
+}
+
+const Reviews: React.FC<ReviewsProps> = ({ isModal = false, onClose }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isModal) {
+      window.scrollTo(0, 0);
+    }
+  }, [isModal]);
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
     <div style={{
-      background: '#ffffff', minHeight: '100vh', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+      background: '#ffffff', minHeight: isModal ? 'auto' : '100vh', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 20px 16px 20px', position: 'sticky', top: 0, background: '#f8f6f0', zIndex: 10 }}>
         <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '700', color: '#222222' }}>Rating & Reviews</h2>
-        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', padding: '8px', marginRight: '-8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
+        <button onClick={handleClose} style={{ background: 'none', border: 'none', padding: '8px', marginRight: '-8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import "../App.css"
 import "../responsive.css"
+import Reviews from './Reviews';
 
 type TabType = 'caters' | 'mehendi' | 'makeup' | 'theatres' | 'photography' | 'decors' | 'venues'
 
@@ -427,11 +428,22 @@ function App() {
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const [showCouponTerms, setShowCouponTerms] = useState<string | null>(null);
   const [showAllOffers, setShowAllOffers] = useState(false);
+  const [showReviewsModalDesktop, setShowReviewsModalDesktop] = useState(false);
 
+  // Restore scroll position when returning from Reviews page on mobile
+  useEffect(() => {
+    const savedScrollPosition = sessionStorage.getItem('homeScrollPosition');
+    if (savedScrollPosition) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollPosition, 10));
+      }, 0);
+      sessionStorage.removeItem('homeScrollPosition');
+    }
+  }, []);
   const [manualCouponCode, setManualCouponCode] = useState('');
   // Lock body scroll when popup or drawer is open
   useEffect(() => {
-    if (showSelectItemsModal || showSelectItemsDrawer || showCouponTerms !== null || showAllOffers) {
+    if (showSelectItemsModal || showSelectItemsDrawer || showCouponTerms !== null || showAllOffers || showReviewsModalDesktop) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -439,7 +451,7 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showSelectItemsModal, showSelectItemsDrawer, showCouponTerms, showAllOffers]);
+  }, [showSelectItemsModal, showSelectItemsDrawer, showCouponTerms, showAllOffers, showReviewsModalDesktop]);
 
 
 
@@ -2974,7 +2986,14 @@ function App() {
               <div className="detail-reviews-section" style={{ paddingBottom: '32px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                   <h2 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Rating & Reviews</h2>
-                  <button onClick={() => navigate('/reviews')} style={{ background: 'none', border: 'none', padding: 0, fontSize: '13px', fontWeight: '600', color: '#222222', cursor: 'pointer', textDecoration: 'underline' }}>
+                  <button onClick={() => {
+                    if (window.innerWidth <= 768) {
+                      sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
+                      navigate('/reviews');
+                    } else {
+                      setShowReviewsModalDesktop(true);
+                    }
+                  }} style={{ background: 'none', border: 'none', padding: 0, fontSize: '13px', fontWeight: '600', color: '#222222', cursor: 'pointer', textDecoration: 'underline' }}>
                     Show all
                   </button>
                 </div>
@@ -5633,6 +5652,16 @@ function App() {
         </div>
       )}
 
+      {/* Desktop Reviews Modal */}
+      {showReviewsModalDesktop && (
+        <div className="desktop-reviews-modal-overlay" style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000000, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{ width: '800px', maxWidth: '90%', maxHeight: '90vh', background: '#ffffff', borderRadius: '12px', overflowY: 'auto' }}>
+            <Reviews isModal={true} onClose={() => setShowReviewsModalDesktop(false)} />
+          </div>
+        </div>
+      )}
 
     </div>
   )

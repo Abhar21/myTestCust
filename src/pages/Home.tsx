@@ -520,6 +520,10 @@ function App() {
   const [modalYear, setModalYear] = useState(2026)
   const [modalMonth, setModalMonth] = useState(6)
 
+  // Desktop detail calendar states (August 2026 default)
+  const [detailMonth, setDetailMonth] = useState(7)
+  const [detailYear, setDetailYear] = useState(2026)
+
   // Address Manager selected address state (initialized to null for Screen 2)
   const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(() => {
     if (typeof window !== 'undefined') {
@@ -622,6 +626,24 @@ function App() {
       setModalYear((prev) => prev + 1)
     } else {
       setModalMonth((prev) => prev + 1)
+    }
+  }
+
+  const handleDetailPrevMonth = () => {
+    if (detailMonth === 0) {
+      setDetailMonth(11)
+      setDetailYear((prev) => prev - 1)
+    } else {
+      setDetailMonth((prev) => prev - 1)
+    }
+  }
+
+  const handleDetailNextMonth = () => {
+    if (detailMonth === 11) {
+      setDetailMonth(0)
+      setDetailYear((prev) => prev + 1)
+    } else {
+      setDetailMonth((prev) => prev + 1)
     }
   }
 
@@ -875,6 +897,11 @@ function App() {
 
   const calendarDays = getCalendarDays(currentYear, currentMonth);
   const modalCalendarDays = getCalendarDays(modalYear, modalMonth);
+  
+  const detailCalendarDays1 = getCalendarDays(detailYear, detailMonth);
+  const detailNextMonth = detailMonth === 11 ? 0 : detailMonth + 1;
+  const detailNextYear = detailMonth === 11 ? detailYear + 1 : detailYear;
+  const detailCalendarDays2 = getCalendarDays(detailNextYear, detailNextMonth);
 
   // Combine and deduplicate listings for search view
   const allCaters = [...homeListings, ...checkoutListings, ...bestRatingListings]
@@ -1059,7 +1086,7 @@ function App() {
                 </button>
               </div>
 
-              <div className="calendar-days-grid-header">
+              <div className="calendar-weekdays">
                 {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
                   <div key={day} className="calendar-day-header">
                     {day}
@@ -1067,7 +1094,7 @@ function App() {
                 ))}
               </div>
 
-              <div className="calendar-days-grid">
+              <div className="calendar-grid">
                 {calendarDays.map((cell, idx) => {
                   const isSelected = cell.day !== null &&
                     whenInput === `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`
@@ -2062,7 +2089,7 @@ function App() {
                               </svg>
                             </div>
                             <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>₹100 off on this booking</div>
+                              <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>Flat ₹100 off on orders above ₹699</div>
                               <div onClick={() => setShowCouponTerms('SAVE10')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
                             </div>
                             <button onClick={() => setAppliedCouponCode(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'SAVE10' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'SAVE10' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'SAVE10' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
@@ -2077,7 +2104,7 @@ function App() {
                               </svg>
                             </div>
                             <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>10% off on this booking</div>
+                              <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>Upto 10% off on orders above ₹599</div>
                               <div onClick={() => setShowCouponTerms('FLAT500')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
                             </div>
                             <button onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT500' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT500' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT500' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
@@ -2468,6 +2495,97 @@ function App() {
                           )}
                         </div>
                       </div>
+
+                      {/* Desktop Calendar (2 Months side-by-side) */}
+                      <div className="desktop-only-calendar-wrapper">
+                        <div className="detail-left-divider"></div>
+                        <h2 className="detail-left-meta-label" style={{ marginBottom: '24px' }}>CALENDAR VIEW</h2>
+                        <div style={{ display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
+                          {/* Month 1 */}
+                          <div style={{ flex: 1, minWidth: '240px' }}>
+                            <div className="calendar-header" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '32px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <button
+                                type="button"
+                                className="calendar-nav-btn"
+                                onClick={handleDetailPrevMonth}
+                                disabled={detailYear < actualYear || (detailYear === actualYear && detailMonth <= actualMonth)}
+                                style={{ position: 'absolute', left: 0, color: (detailYear < actualYear || (detailYear === actualYear && detailMonth <= actualMonth)) ? '#d1d5db' : '#222222', padding: '4px' }}
+                              >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M15 18l-6-6 6-6" />
+                                </svg>
+                              </button>
+                              <div className="calendar-month-year" style={{ fontSize: '16px', fontWeight: '500', color: '#222222' }}>
+                                {monthNames[detailMonth]} {detailYear}
+                              </div>
+                            </div>
+                            
+                            <div className="calendar-weekdays" style={{ borderBottom: 'none' }}>
+                              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                                <div key={idx} className="calendar-day-header" style={{ color: '#717171', fontWeight: '500' }}>
+                                  {day}
+                                </div>
+                              ))}
+                            </div>
+                            
+                            <div className="calendar-grid" style={{ gap: '4px' }}>
+                              {detailCalendarDays1.map((cell, idx) => (
+                                <div
+                                  key={idx}
+                                  className={`calendar-day-cell ${cell.day === null ? 'empty' : ''} ${cell.isPast ? 'past' : 'active'}`}
+                                  style={{ width: '36px', height: '36px', pointerEvents: cell.isPast ? 'none' : 'auto' }}
+                                >
+                                  {cell.day}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Month 2 */}
+                          <div style={{ flex: 1, minWidth: '240px' }}>
+                            <div className="calendar-header" style={{ borderBottom: 'none', paddingBottom: '0', marginBottom: '32px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <div className="calendar-month-year" style={{ fontSize: '16px', fontWeight: '500', color: '#222222' }}>
+                                {monthNames[detailNextMonth]} {detailNextYear}
+                              </div>
+                              <button
+                                type="button"
+                                className="calendar-nav-btn"
+                                onClick={handleDetailNextMonth}
+                                disabled={detailYear > maxYear || (detailYear === maxYear && detailMonth >= actualMonth)}
+                                style={{ position: 'absolute', right: 0, color: (detailYear > maxYear || (detailYear === maxYear && detailMonth >= actualMonth)) ? '#d1d5db' : '#222222', padding: '4px' }}
+                              >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M9 18l6-6-6-6" />
+                                </svg>
+                              </button>
+                            </div>
+                            
+                            <div className="calendar-weekdays" style={{ borderBottom: 'none' }}>
+                              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                                <div key={idx} className="calendar-day-header" style={{ color: '#717171', fontWeight: '500' }}>
+                                  {day}
+                                </div>
+                              ))}
+                            </div>
+                            
+                            <div className="calendar-grid" style={{ gap: '4px' }}>
+                              {detailCalendarDays2.map((cell, idx) => (
+                                <div
+                                  key={idx}
+                                  className={`calendar-day-cell ${cell.day === null ? 'empty' : ''} ${cell.isPast ? 'past' : 'active'}`}
+                                  style={{ width: '36px', height: '36px', pointerEvents: cell.isPast ? 'none' : 'auto' }}
+                                >
+                                  {cell.day}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center', marginTop: '32px', color: '#717171', fontSize: '14px' }}>
+                          Max upto 1 year calender released
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -2695,7 +2813,7 @@ function App() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
-                        ₹100 off on this booking
+                        Flat ₹100 off on orders above ₹699
                       </div>
                       <a
                         href="#terms"
@@ -2745,7 +2863,7 @@ function App() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
-                        10% off on this booking
+                        Upto 10% off on orders above ₹599
                       </div>
                       <a
                         href="#terms"
@@ -5070,7 +5188,7 @@ function App() {
       {/* Coupon Terms Bottom Sheet */}
       {showCouponTerms && (
         <div
-          className="modal-backdrop-animate bottom-sheet-on-mobile"
+          className="modal-backdrop-animate bottom-sheet-on-mobile coupon-terms-modal-overlay"
           style={{
             position: 'fixed',
             top: 0,
@@ -5081,19 +5199,16 @@ function App() {
             zIndex: 2000000,
             backdropFilter: 'blur(2px)',
             display: 'flex',
-            alignItems: 'flex-end',
             justifyContent: 'center'
           }}
           onClick={() => setShowCouponTerms(null)}
         >
           <div
-            className="drawer-panel-animate"
+            className="drawer-panel-animate coupon-terms-modal-content"
             style={{
               background: '#ffffff',
               width: '100%',
               maxWidth: '600px',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
               padding: '24px 16px',
               boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
               position: 'relative',
@@ -5146,7 +5261,7 @@ function App() {
                 marginBottom: '20px'
               }}>
                 <div style={{ fontSize: '15px', fontWeight: '800', color: '#222222', lineHeight: '1.4', flex: 1, paddingRight: '12px' }}>
-                  {showCouponTerms === 'SAVE10' ? '₹100 off on this booking' : showCouponTerms === 'FLAT500' ? '10% off on this booking' : 'Flat ₹200 off on this booking'}
+                  {showCouponTerms === 'SAVE10' ? 'Flat ₹100 off on orders above ₹699' : showCouponTerms === 'FLAT500' ? 'Upto 10% off on orders above ₹599' : 'Flat ₹200 off on this booking'}
                 </div>
                 <div
                   style={{
@@ -5187,7 +5302,7 @@ function App() {
                     <circle cx="12" cy="12" r="3" fill="#4b5563" />
                   </svg>
                   <span style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.5' }}>
-                    Valid on minimum transaction value of {showCouponTerms === 'FLAT200' ? '₹5,000' : '₹0'}
+                    Valid on minimum transaction value of {showCouponTerms === 'FLAT200' ? '₹5,000' : showCouponTerms === 'SAVE10' ? '₹699' : showCouponTerms === 'FLAT500' ? '₹599' : '₹0'}
                   </span>
                 </div>
 
@@ -5363,7 +5478,7 @@ function App() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222', lineHeight: '1.4' }}>
-                      ₹100 off on this booking
+                      Flat ₹100 off on orders above ₹699
                     </div>
                     <div
                       onClick={() => setShowCouponTerms('SAVE10')}
@@ -5412,7 +5527,7 @@ function App() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '15px', fontWeight: '600', color: '#222222', lineHeight: '1.4' }}>
-                      10% off on this booking
+                      Upto 10% off on orders above ₹599
                     </div>
                     <div
                       onClick={() => setShowCouponTerms('FLAT500')}

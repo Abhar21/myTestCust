@@ -392,6 +392,9 @@ function App() {
   const [showCheckoutPage, setShowCheckoutPage] = useState(false);
   const [checkoutFrom, setCheckoutFrom] = useState<'modal' | 'drawer'>('modal');
   const [checkoutContactName, setCheckoutContactName] = useState('John Doe');
+  const [checkoutDiningStyle, setCheckoutDiningStyle] = useState<'buffet' | 'sit-down'>('buffet');
+  const [checkoutStep, setCheckoutStep] = useState<1 | 2>(1);
+  const [showPriceBreakdown, setShowPriceBreakdown] = useState(false);
   const [checkoutContactPhone, setCheckoutContactPhone] = useState('+91 98765 43210');
   const [isEditingContact, setIsEditingContact] = useState(false);
   const [selectedMenuForModal, setSelectedMenuForModal] = useState<string | null>(null);
@@ -1713,7 +1716,9 @@ function App() {
 
             return (
               <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '100px' }}>
-                {/* Header */}
+                {checkoutStep === 1 ? (
+                  <>
+                    {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 16px 32px 16px' }}>
                   <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Confirm and pay</h1>
                   <button onClick={() => {
@@ -1822,6 +1827,52 @@ function App() {
                       </div>
                     </div>
 
+                    {/* Dining Style */}
+                    <div style={{ marginTop: '24px' }}>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button
+                          onClick={() => setCheckoutDiningStyle('buffet')}
+                          style={{
+                            flex: 1,
+                            padding: '12px',
+                            borderRadius: '12px',
+                            border: checkoutDiningStyle === 'buffet' ? '2px solid #222222' : '1px solid #dddddd',
+                            backgroundColor: checkoutDiningStyle === 'buffet' ? '#f9fafb' : '#ffffff',
+                            color: '#222222',
+                            fontSize: '14px',
+                            fontWeight: checkoutDiningStyle === 'buffet' ? '600' : '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                        >
+                          Buffet
+                        </button>
+                        <button
+                          onClick={() => setCheckoutDiningStyle('sit-down')}
+                          style={{
+                            flex: 1,
+                            padding: '12px',
+                            borderRadius: '12px',
+                            border: checkoutDiningStyle === 'sit-down' ? '2px solid #222222' : '1px solid #dddddd',
+                            backgroundColor: checkoutDiningStyle === 'sit-down' ? '#f9fafb' : '#ffffff',
+                            color: '#222222',
+                            fontSize: '14px',
+                            fontWeight: checkoutDiningStyle === 'sit-down' ? '600' : '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <span>Sit-Down</span>
+                          <span style={{ fontSize: '11px', color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#717171', fontWeight: '400' }}>+₹10/person</span>
+                        </button>
+                      </div>
+                    </div>
+
                     <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
 
                     {/* Location */}
@@ -1854,200 +1905,6 @@ function App() {
                     </div>
 
                   </div>
-
-                  {/* Coupons Section */}
-                  <div style={{ marginBottom: '32px' }}>
-                    <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginTop: '32px', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      ACTIVE OFFERS
-                    </h3>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      {/* Coupon 1: SAVE10 */}
-                      <div style={{
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '12px',
-                        padding: '10px 14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
-                            <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
-                          </svg>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
-                            ₹100 off on this booking
-                          </div>
-                          <div
-                            onClick={() => setShowCouponTerms('SAVE10')}
-                            style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}
-                          >
-                            Terms apply
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setAppliedCouponCode(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')}
-                          style={{
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '11px',
-                            fontWeight: '700',
-                            letterSpacing: '1px',
-                            cursor: 'pointer',
-                            background: appliedCouponCode === 'SAVE10' ? '#fee2e2' : '#000000',
-                            color: appliedCouponCode === 'SAVE10' ? '#ef4444' : '#ffffff',
-                            border: appliedCouponCode === 'SAVE10' ? '1px dashed #ef4444' : '1px solid #000000',
-                            userSelect: 'none',
-                            minWidth: '70px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          {appliedCouponCode === 'SAVE10' ? 'Remove' : 'Apply'}
-                        </button>
-                      </div>
-
-                      {/* Coupon 2: FLAT500 */}
-                      <div style={{
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '12px',
-                        padding: '10px 14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
-                            <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
-                          </svg>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
-                            10% off on this booking
-                          </div>
-                          <div
-                            onClick={() => setShowCouponTerms('FLAT500')}
-                            style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}
-                          >
-                            Terms apply
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')}
-                          style={{
-                            padding: '6px 12px',
-                            borderRadius: '6px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            letterSpacing: '1px',
-                            cursor: 'pointer',
-                            background: appliedCouponCode === 'FLAT500' ? '#fee2e2' : '#000000',
-                            color: appliedCouponCode === 'FLAT500' ? '#ef4444' : '#ffffff',
-                            border: appliedCouponCode === 'FLAT500' ? '1px dashed #ef4444' : '1px solid #000000',
-                            userSelect: 'none',
-                            minWidth: '70px',
-                            textTransform: 'uppercase'
-                          }}
-                        >
-                          {appliedCouponCode === 'FLAT500' ? 'Remove' : 'Apply'}
-                        </button>
-                      </div>
-
-                      {/* Coupon 3: Disabled */}
-                      <div style={{
-                        background: '#ffffff',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '12px',
-                        padding: '10px 14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
-                            <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
-                          </svg>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222', lineHeight: '1.4' }}>
-                            ₹200 off on this booking
-                          </div>
-                          {subtotal < 5000 && (
-                            <div style={{ fontSize: '11px', fontWeight: '500', color: '#ef4444', marginTop: '4px', marginBottom: '2px' }}>
-                              Add more ₹{Math.max(0, 5000 - subtotal)} to apply
-                            </div>
-                          )}
-                          <div
-                            onClick={() => setShowCouponTerms('FLAT200')}
-                            style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}
-                          >
-                            Terms apply
-                          </div>
-                        </div>
-                        <button
-                          disabled={subtotal < 5000}
-                          onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')}
-                          style={
-                            subtotal < 5000 ? {
-                              padding: '6px 12px',
-                              borderRadius: '6px',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              letterSpacing: '1px',
-                              cursor: 'not-allowed',
-                              background: '#f3f4f6',
-                              color: '#9ca3af',
-                              border: '1px solid #d1d5db',
-                              userSelect: 'none',
-                              minWidth: '70px',
-                              textTransform: 'uppercase'
-                            } : {
-                              padding: '6px 12px',
-                              borderRadius: '6px',
-                              fontSize: '11px',
-                              fontWeight: '700',
-                              letterSpacing: '1px',
-                              cursor: 'pointer',
-                              background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000',
-                              color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff',
-                              border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000',
-                              userSelect: 'none',
-                              minWidth: '70px',
-                              textTransform: 'uppercase'
-                            }
-                          }
-                        >
-                          {subtotal >= 5000 && appliedCouponCode === 'FLAT200' ? 'Remove' : 'Apply'}
-                        </button>
-                      </div>
-
-                      <div
-                        onClick={() => setShowAllOffers(true)}
-                        style={{
-                          textAlign: 'center',
-                          marginTop: '8px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          color: '#222222',
-                          textDecoration: 'underline',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        View more offers
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
 
                   {/* Price Details */}
                   <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', marginBottom: '16px' }}>Price details</h2>
@@ -2149,21 +2006,14 @@ function App() {
 
                   {/* Disclaimer */}
                   <div style={{ fontSize: '12px', color: '#717171', marginBottom: '12px', textAlign: 'center' }}>
-                    You'll be directed to Razorpay to complete payment securely.
+                    Apply best coupons and proceed to payment in next step
                   </div>
 
                   {/* Checkout Button */}
                   <button
                     onClick={() => {
-                      alert('Proceeding to Razorpay with total: ₹' + advancePay);
-                      setShowCheckoutPage(false);
-                      setConfirmedSelection(prev => ({
-                        ...prev,
-                        [selectedMenuForModal || '']: {
-                          date: modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : '',
-                          slot: modalSelectedSlot || ''
-                        }
-                      }));
+                      setCheckoutStep(2);
+                      window.scrollTo(0, 0);
                     }}
                     style={{
                       width: '100%',
@@ -2182,15 +2032,147 @@ function App() {
                       gap: '8px'
                     }}
                   >
-                    <span style={{ fontWeight: '700' }}>Continue with</span>
-                    <img
-                      src="Razorpay.png"
-                      alt="Razorpay"
-                      style={{ height: '22px', fontWeight: '400', objectFit: 'contain', verticalAlign: 'middle', filter: 'brightness(0) invert(1)' }}
-                    />
+                    <span style={{ fontWeight: '700' }}>Continue to checkout</span>
                   </button>
 
                 </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Header for Step 2 */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '24px 16px 32px 16px' }}>
+                      <button onClick={() => setCheckoutStep(1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#222222' }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                      </button>
+                      <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#222222', margin: '0', letterSpacing: '-0.02em' }}>Payment</h1>
+                    </div>
+
+                    <div style={{ padding: '0 16px' }}>
+                      {/* Active Offers Block */}
+                      <div style={{ marginBottom: '32px' }}>
+                        <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          ACTIVE OFFERS
+                        </h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.03)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                                <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                              </svg>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>₹100 off on this booking</div>
+                              <div onClick={() => setShowCouponTerms('SAVE10')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
+                            </div>
+                            <button onClick={() => setAppliedCouponCode(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'SAVE10' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'SAVE10' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'SAVE10' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
+                              {appliedCouponCode === 'SAVE10' ? 'Remove' : 'Apply'}
+                            </button>
+                          </div>
+                          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.03)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                                <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                              </svg>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>10% off on this booking</div>
+                              <div onClick={() => setShowCouponTerms('FLAT500')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
+                            </div>
+                            <button onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT500' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT500' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT500' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
+                              {appliedCouponCode === 'FLAT500' ? 'Remove' : 'Apply'}
+                            </button>
+                          </div>
+                          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.03)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" fill="#4caf50" />
+                                <circle cx="16.5" cy="7.5" r="1.5" fill="white" />
+                              </svg>
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>₹200 off on this booking</div>
+                              {subtotal < 5000 && <div style={{ fontSize: '11px', fontWeight: '500', color: '#ef4444', marginTop: '4px', marginBottom: '2px' }}>Add more ₹{Math.max(0, 5000 - subtotal)} to apply</div>}
+                              <div onClick={() => setShowCouponTerms('FLAT200')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
+                            </div>
+                            <button disabled={subtotal < 5000} onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')} style={ subtotal < 5000 ? { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '600', cursor: 'not-allowed', background: '#f3f4f6', color: '#9ca3af', border: '1px solid #d1d5db', textTransform: 'uppercase' } : { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' } }>
+                              {subtotal >= 5000 && appliedCouponCode === 'FLAT200' ? 'Remove' : 'Apply'}
+                            </button>
+                          </div>
+                          <div onClick={() => setShowAllOffers(true)} style={{ textAlign: 'center', marginTop: '8px', fontSize: '14px', fontWeight: '600', color: '#222222', textDecoration: 'underline', cursor: 'pointer' }}>View more offers</div>
+                        </div>
+                      </div>
+
+                      <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
+
+                      {/* Expandable Price Summary */}
+                      <div style={{ marginBottom: '24px' }}>
+                        <div onClick={() => setShowPriceBreakdown(!showPriceBreakdown)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', padding: '12px', background: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                          <span style={{ fontSize: '16px', fontWeight: '700', color: '#222222' }}>Total amount</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '16px', fontWeight: '700', color: '#222222' }}>₹{advancePay.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: showPriceBreakdown ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </div>
+                        </div>
+
+                        {showPriceBreakdown && (
+                          <div style={{ padding: '16px 12px 8px 12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#4b5563' }}>
+                              <span>Total price</span>
+                              <span>₹{finalDiscountedPrice.toLocaleString()}</span>
+                            </div>
+                            {couponDiscount > 0 && (
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#059669', fontWeight: '500' }}>
+                                <span>Coupon discount</span>
+                                <span>-₹{couponDiscount.toLocaleString()}</span>
+                              </div>
+                            )}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#4b5563' }}>
+                              <span>Advance</span>
+                              <span>₹{advance.toLocaleString()}</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#4b5563' }}>
+                              <span>Platform fee</span>
+                              <span>₹11.80</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Duplicate the Savings & Remaining Info */}
+                      {totalSavedPercentage > 0 && (
+                        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+                          <div style={{ background: '#22c55e', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M12.75 3.25L3.25 12.75C2.45 13.55 2.45 14.85 3.25 15.65L8.35 20.75C9.15 21.55 10.45 21.55 11.25 20.75L20.75 11.25C21.25 10.75 21.5 10.05 21.5 9.35V4.25C21.5 3.15 20.6 2.25 19.5 2.25H14.4C13.7 2.25 13 2.5 12.75 3.25Z" /><circle cx="16.5" cy="7.5" r="1.5" fill="#22c55e" /></svg>
+                          </div>
+                          <div style={{ fontSize: '13px', fontWeight: '700', color: '#166534' }}>You saved {totalSavedPercentage}% with this booking!</div>
+                        </div>
+                      )}
+
+                      <ScrollRevealText style={{ fontSize: '13px', color: '#ec4899', marginBottom: '16px', textAlign: 'center', fontWeight: '500' }}>
+                        Pay remaining amount on event day directly to Partner
+                      </ScrollRevealText>
+
+                      <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                      <button onClick={() => {
+                          alert('Proceeding to Razorpay with total: ₹' + advancePay);
+                          setShowCheckoutPage(false);
+                          setCheckoutStep(1);
+                          setConfirmedSelection(prev => ({ ...prev, [selectedMenuForModal || '']: { date: modalSelectedDate ? (modalSelectedDate.split('-')[0] + ' ' + modalSelectedDate.split('-')[1] + ', 2026') : '', slot: modalSelectedSlot || '' } }));
+                      }} style={{ width: '100%', background: '#222222', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 24px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        <span style={{ fontWeight: '700' }}>Continue with</span>
+                        <img src="Razorpay.png" alt="Razorpay" style={{ height: '22px', fontWeight: '400', objectFit: 'contain', verticalAlign: 'middle', filter: 'brightness(0) invert(1)' }} />
+                      </button>
+
+                    </div>
+                  </>
+                )}
               </div>
             );
           })()}
@@ -5213,7 +5195,7 @@ function App() {
       {/* All Offers Bottom Sheet */}
       {showAllOffers && (
         <div
-          className="modal-backdrop-animate bottom-sheet-on-mobile"
+          className="modal-backdrop-animate all-offers-wrapper"
           style={{
             position: 'fixed',
             top: 0,
@@ -5223,26 +5205,20 @@ function App() {
             background: 'rgba(0,0,0,0.4)',
             zIndex: 1000000,
             backdropFilter: 'blur(2px)',
-            display: 'flex',
-            alignItems: 'flex-end',
             justifyContent: 'center'
           }}
           onClick={() => setShowAllOffers(false)}
         >
           <div
-            className="drawer-panel-animate"
+            className="all-offers-panel"
             style={{
               background: '#f9fafb',
               width: '100%',
               maxWidth: '600px',
-              height: '90vh',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
               display: 'flex',
               flexDirection: 'column',
               boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
               position: 'relative',
-              animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
               fontFamily: "'Inter', sans-serif"
             }}
             onClick={(e) => e.stopPropagation()}

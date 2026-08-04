@@ -429,6 +429,19 @@ function App() {
   const [showCouponTerms, setShowCouponTerms] = useState<string | null>(null);
   const [showAllOffers, setShowAllOffers] = useState(false);
   const [showReviewsModalDesktop, setShowReviewsModalDesktop] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled((prev) => {
+        if (!prev && window.scrollY > 50) return true;
+        if (prev && window.scrollY <= 10) return false;
+        return prev;
+      });
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Restore scroll position when returning from Reviews page on mobile
   useEffect(() => {
@@ -680,17 +693,6 @@ function App() {
     window.location.href = `?page=search&where=${encodeURIComponent(targetWhere)}&when=${encodeURIComponent(whenInput)}`
   }
 
-  const handleScroll = (containerId: string, direction: 'left' | 'right') => {
-    const container = document.getElementById(containerId)
-    if (container) {
-      const scrollAmount = 300
-      if (direction === 'left') {
-        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
-      } else {
-        container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
-      }
-    }
-  }
 
   // Airbnb style destination suggestions list
   const suggestions: Suggestion[] = [
@@ -2236,7 +2238,7 @@ function App() {
           )}
 
           {/* Premium Airbnb-Style Header */}
-          <header className={`airbnb-header-container ${isSearchView ? 'airbnb-header-container--search' : ''} ${selectedVendorDetail ? 'airbnb-header-container--detail' : ''}`}>
+          <header className={`airbnb-header-container ${isSearchView ? 'airbnb-header-container--search' : ''} ${selectedVendorDetail ? 'airbnb-header-container--detail' : ''} ${isScrolled && !selectedVendorDetail && !isSearchView ? 'header-scrolled' : ''}`}>
             {/* Row 1: Logo, Navigation Tabs, User Menu */}
             <div className="airbnb-header-row">
               <div className="header-left-col">
@@ -2270,138 +2272,102 @@ function App() {
                   <>
                     {/* Location badge on desktop for vendor detail */}
                     <div
-                      className="mobile-location-badge desktop-location-badge"
+                      className="search-pill"
                       onClick={() => setShowMobileAddressModal(true)}
                     >
-                      {selectedAddress ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                        </svg>
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
-                      )}
-                      <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
-                      <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
-                      <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
+                      <div className="search-pill-field">
+                        {selectedAddress?.name === 'Home' ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                          </svg>
+                        ) : selectedAddress?.name === 'Work' ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                          </svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                          </svg>
+                        )}
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', minWidth: 0, overflow: 'hidden', flex: 1 }}>
+                          <div className="search-pill-label" style={{ paddingBottom: 0, marginRight: '8px', flexShrink: 0 }}>
+                            {selectedAddress?.name ? selectedAddress.name.toUpperCase() : 'Location'}
+                          </div>
+                          <div className="search-pill-value">
+                            {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="header-filters-wrapper vendor-detail-filters">
-                      {renderFilters()}
-                    </div>
+                    {!showMobileAddressModal && (
+                      <div className="header-filters-wrapper vendor-detail-filters">
+                        {renderFilters()}
+                      </div>
+                    )}
                   </>
                 ) : isSearchView ? (
                   <>
                     {/* Mobile Location Badge (Image 2 style) */}
                     <div
-                      className="mobile-location-badge"
+                      className="search-pill"
                       onClick={() => setShowMobileAddressModal(true)}
                     >
-                      {selectedAddress ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                        </svg>
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
-                      )}
-                      <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
-                      <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
-                      <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
+                      <div className="search-pill-field">
+                        {selectedAddress?.name === 'Home' ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                          </svg>
+                        ) : selectedAddress?.name === 'Work' ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                          </svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                          </svg>
+                        )}
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', minWidth: 0, overflow: 'hidden', flex: 1 }}>
+                          <div className="search-pill-label" style={{ paddingBottom: 0, marginRight: '8px', flexShrink: 0 }}>
+                            {selectedAddress?.name ? selectedAddress.name.toUpperCase() : 'Location'}
+                          </div>
+                          <div className="search-pill-value">
+                            {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="header-filters-wrapper">
-                      {renderFilters()}
-                    </div>
+                    {!showMobileAddressModal && (
+                      <div className="header-filters-wrapper">
+                        {renderFilters()}
+                      </div>
+                    )}
                   </>
                 ) : (
-                  <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <div
-                      className="mobile-location-badge desktop-location-badge"
-                      onClick={() => setShowMobileAddressModal(true)}
-                    >
-                      {selectedAddress ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <div
+                    className="search-pill"
+                    onClick={() => setShowMobileAddressModal(true)}
+                  >
+                    <div className="search-pill-field">
+                      {selectedAddress?.name === 'Home' ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
                           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                         </svg>
+                      ) : selectedAddress?.name === 'Work' ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
+                          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
                       ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
                           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                         </svg>
                       )}
-                      <span className="badge-name">{selectedAddress ? selectedAddress.name.toUpperCase() : 'LOCATION'}</span>
-                      <span className="badge-full">{selectedAddress ? selectedAddress.full : 'Choose a location...'}</span>
-                      <svg className="badge-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </div>
-
-                    <div className="center-tabs">
-
-                      <div
-                        className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('caters')}
-                      >
-                        <span className="tab-icon">🍽</span>
-                        <span>Caters</span>
-                      </div>
-
-                      <div
-                        className={`tab-item ${activeTab === 'mehendi' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('mehendi')}
-                      >
-                        <span className="tab-badge">Soon</span>
-                        <span className="tab-icon">🎨</span>
-                        <span>Mehendi</span>
-                      </div>
-
-                      <div
-                        className={`tab-item ${activeTab === 'makeup' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('makeup')}
-                      >
-                        <span className="tab-badge">Soon</span>
-                        <span className="tab-icon">💄</span>
-                        <span>Makeup</span>
-                      </div>
-
-                      <div
-                        className={`tab-item ${activeTab === 'theatres' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('theatres')}
-                      >
-                        <span className="tab-badge">Soon</span>
-                        <span className="tab-icon">🎬</span>
-                        <span>Private Theatres</span>
-                      </div>
-
-                      <div
-                        className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('photography')}
-                      >
-                        <span className="tab-badge">Soon</span>
-                        <span className="tab-icon">📸</span>
-                        <span>Photography</span>
-                      </div>
-
-                      <div
-                        className={`tab-item ${activeTab === 'decors' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('decors')}
-                      >
-                        <span className="tab-badge">Soon</span>
-                        <span className="tab-icon">🎭</span>
-                        <span>Decors</span>
-                      </div>
-
-                      <div
-                        className={`tab-item ${activeTab === 'venues' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('venues')}
-                      >
-                        <span className="tab-badge">Soon</span>
-                        <span className="tab-icon">🏛</span>
-                        <span>Venues</span>
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', minWidth: 0, overflow: 'hidden', flex: 1 }}>
+                        <div className="search-pill-label" style={{ paddingBottom: 0, marginRight: '8px', flexShrink: 0 }}>
+                          {selectedAddress?.name ? selectedAddress.name.toUpperCase() : 'Location'}
+                        </div>
+                        <div className="search-pill-value">
+                          {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2436,7 +2402,74 @@ function App() {
               </div>
             </div>
 
-            {/* Row 2: Large Floating Search Bar or Filters */}
+            {/* Row 2: Center Tabs (Categories) */}
+            {!selectedVendorDetail && !isSearchView && (
+              <div className={`center-tabs ${isScrolled || showMobileAddressModal ? 'center-tabs-hidden' : ''}`}>
+                <div
+                  className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('caters')}
+                >
+                  <span className="tab-icon">🍽</span>
+                  <span>Caters</span>
+                </div>
+
+                <div
+                  className={`tab-item ${activeTab === 'mehendi' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('mehendi')}
+                >
+                  <span className="tab-badge">Soon</span>
+                  <span className="tab-icon">🎨</span>
+                  <span>Mehendi</span>
+                </div>
+
+                <div
+                  className={`tab-item ${activeTab === 'makeup' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('makeup')}
+                >
+                  <span className="tab-badge">Soon</span>
+                  <span className="tab-icon">💄</span>
+                  <span>Makeup</span>
+                </div>
+
+                <div
+                  className={`tab-item ${activeTab === 'theatres' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('theatres')}
+                >
+                  <span className="tab-badge">Soon</span>
+                  <span className="tab-icon">🎬</span>
+                  <span>Private Theatres</span>
+                </div>
+
+                <div
+                  className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('photography')}
+                >
+                  <span className="tab-badge">Soon</span>
+                  <span className="tab-icon">📸</span>
+                  <span>Photography</span>
+                </div>
+
+                <div
+                  className={`tab-item ${activeTab === 'decors' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('decors')}
+                >
+                  <span className="tab-badge">Soon</span>
+                  <span className="tab-icon">🎭</span>
+                  <span>Decors</span>
+                </div>
+
+                <div
+                  className={`tab-item ${activeTab === 'venues' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('venues')}
+                >
+                  <span className="tab-badge">Soon</span>
+                  <span className="tab-icon">🏛</span>
+                  <span>Venues</span>
+                </div>
+              </div>
+            )}
+
+            {/* Row 3: Large Floating Search Bar or Filters */}
             {selectedVendorDetail ? null : isSearchView ? (
               <div className="filters-bar-row mobile-filters-row">
                 {renderFilters()}
@@ -3308,18 +3341,6 @@ function App() {
                       </svg>
                     </span>
                   </div>
-                  <div className="listings-nav-arrows">
-                    <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container', 'left')}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                      </svg>
-                    </button>
-                    <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container', 'right')}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
-                  </div>
                 </div>
 
                 <div className="listings-scroll-row" id="listings-scroll-container">
@@ -3355,18 +3376,6 @@ function App() {
                         <polyline points="9 18 15 12 9 6"></polyline>
                       </svg>
                     </span>
-                  </div>
-                  <div className="listings-nav-arrows">
-                    <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-checkout', 'left')}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                      </svg>
-                    </button>
-                    <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container-checkout', 'right')}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
                   </div>
                 </div>
 
@@ -3435,18 +3444,6 @@ function App() {
                         <polyline points="9 18 15 12 9 6"></polyline>
                       </svg>
                     </span>
-                  </div>
-                  <div className="listings-nav-arrows">
-                    <button className="nav-arrow-btn" aria-label="Scroll left" onClick={() => handleScroll('listings-scroll-container-best', 'left')}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                      </svg>
-                    </button>
-                    <button className="nav-arrow-btn" aria-label="Scroll right" onClick={() => handleScroll('listings-scroll-container-best', 'right')}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
                   </div>
                 </div>
 

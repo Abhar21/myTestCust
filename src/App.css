@@ -2221,7 +2221,7 @@
 .add-address-btn {
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: #ff385c;
   /* Pink color */
@@ -3266,7 +3266,7 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 }
 
 .mobile-address-modal-header h3 {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   color: #222222;
   margin: 0;
@@ -3855,7 +3855,7 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 
 .map-modal-content {
   background: white;
-  width: 100%;
+  width: calc(100% - 32px);
   max-width: 560px;
   border-radius: 24px;
   display: flex;

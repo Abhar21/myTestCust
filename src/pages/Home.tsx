@@ -388,6 +388,12 @@ function App() {
   const [loginMobile, setLoginMobile] = useState('')
   const [loginOTP, setLoginOTP] = useState('')
 
+  // Address Modal State
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [mapModalStep, setMapModalStep] = useState(1);
+  const [addressLabelType, setAddressLabelType] = useState('Home');
+
   // Select Items Modal state
   const [showSelectItemsModal, setShowSelectItemsModal] = useState(false);
   const [showCheckoutPage, setShowCheckoutPage] = useState(false);
@@ -2297,6 +2303,9 @@ function App() {
                             {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
                           </div>
                         </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px', color: '#717171', flexShrink: 0 }}>
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
                       </div>
                     </div>
                     {!showMobileAddressModal && (
@@ -2334,6 +2343,9 @@ function App() {
                             {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
                           </div>
                         </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px', color: '#717171', flexShrink: 0 }}>
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
                       </div>
                     </div>
                     {!showMobileAddressModal && (
@@ -2369,6 +2381,9 @@ function App() {
                           {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
                         </div>
                       </div>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px', color: '#717171', flexShrink: 0 }}>
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
                     </div>
                   </div>
                 )}
@@ -3199,50 +3214,11 @@ function App() {
               {/* Right Pane: Address Manager (40% width) */}
               <div className="search-right-pane">
                 <div className="address-manager-card">
-                  {/* Search Box Input Bar */}
-                  <div className="address-search-bar">
-                    <input
-                      type="text"
-                      placeholder="Enter your address..."
-                      className="address-search-input"
-                      defaultValue=""
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          const val = (e.target as HTMLInputElement).value.trim();
-                          if (val) {
-                            setSelectedAddress({
-                              name: 'Custom Location',
-                              full: val
-                            });
-                          }
-                        }
-                      }}
-                    />
-                    <div
-                      className="address-search-btn"
-                      onClick={() => {
-                        const inputEl = document.querySelector('.address-search-input') as HTMLInputElement;
-                        if (inputEl && inputEl.value.trim()) {
-                          setSelectedAddress({
-                            name: 'Custom Location',
-                            full: inputEl.value.trim()
-                          });
-                        }
-                      }}
-                    >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                      </svg>
-                    </div>
-                  </div>
-
-
-                  {/* Saved Addresses Section */}
-                  <div className="saved-addresses-section">
+                  {/* Address Manager Content */}
+                  <div className="saved-addresses-section" style={{ marginTop: '0' }}>
                     <div className="saved-addresses-header">
                       <div className="saved-addresses-title">Saved Addresses</div>
-                      <button className="add-address-btn">
+                      <button className="add-address-btn" onClick={() => setShowMapModal(true)}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
                           <line x1="12" y1="5" x2="12" y2="19"></line>
                           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -3252,70 +3228,37 @@ function App() {
                     </div>
 
                     <div className="saved-addresses-list">
-                      {/* Item 1: Home */}
-                      <div
-                        className={`saved-address-item ${selectedAddress?.name === 'Home' ? 'selected' : ''}`}
-                        onClick={() => {
-                          setSelectedAddress({
-                            name: 'Home',
-                            full: 'Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032'
-                          })
-                        }}
-                      >
-                        <div className="address-icon-circle">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                      {savedAddresses.length === 0 ? (
+                        <div className="empty-saved-addresses">
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dddddd" strokeWidth="1.5">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
                           </svg>
+                          <div className="empty-saved-addresses-text">No saved addresses yet</div>
                         </div>
-                        <div className="address-item-details">
-                          <div className="address-item-name">Home</div>
-                          <div className="address-item-text">Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032</div>
-                        </div>
-                      </div>
-
-                      {/* Item 2: Work */}
-                      <div
-                        className={`saved-address-item ${selectedAddress?.name === 'Work' ? 'selected' : ''}`}
-                        onClick={() => {
-                          setSelectedAddress({
-                            name: 'Work',
-                            full: 'Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081'
-                          })
-                        }}
-                      >
-                        <div className="address-icon-circle">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                          </svg>
-                        </div>
-                        <div className="address-item-details">
-                          <div className="address-item-name">Work</div>
-                          <div className="address-item-text">Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081</div>
-                        </div>
-                      </div>
-
-                      {/* Item 3: Parents' House */}
-                      <div
-                        className={`saved-address-item ${selectedAddress?.name === "Parents' House" ? 'selected' : ''}`}
-                        onClick={() => {
-                          setSelectedAddress({
-                            name: "Parents' House",
-                            full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034'
-                          })
-                        }}
-                      >
-                        <div className="address-icon-circle">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                          </svg>
-                        </div>
-                        <div className="address-item-details">
-                          <div className="address-item-name">Parents' House</div>
-                          <div className="address-item-text">Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034</div>
-                        </div>
-                      </div>
+                      ) : (
+                        savedAddresses.map((addr, idx) => (
+                          <div
+                            key={idx}
+                            className={`saved-address-item ${selectedAddress?.name === addr.name ? 'selected' : ''}`}
+                            onClick={() => {
+                              setSelectedAddress(addr);
+                              setShowMobileAddressModal(false);
+                            }}
+                          >
+                            <div className="address-icon-circle">
+                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                               </svg>
+                            </div>
+                            <div className="address-item-details">
+                              <div className="address-item-name">{addr.name}</div>
+                              <div className="address-item-text">{addr.full}</div>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
 
@@ -5040,140 +4983,61 @@ function App() {
       {showMobileAddressModal && (
         <div className="mobile-address-modal-overlay" onClick={() => setShowMobileAddressModal(false)}>
           <div className="mobile-address-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="mobile-address-modal-header">
+            <div className="mobile-address-modal-header" style={{ borderBottom: 'none', paddingBottom: '0' }}>
               <h3>Add / Select Address</h3>
-              <button className="mobile-address-modal-close" onClick={() => setShowMobileAddressModal(false)}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <button className="add-address-btn" style={{ marginRight: '16px' }} onClick={() => setShowMapModal(true)}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Add Address
+                </button>
+                <button className="mobile-address-modal-close" onClick={() => setShowMobileAddressModal(false)}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
             </div>
             <div className="mobile-address-modal-body">
-              {/* Address Search Bar inside modal */}
-              <div className="address-search-bar modal-search-bar" style={{ display: 'flex' }}>
-                <input
-                  type="text"
-                  placeholder="Enter your address..."
-                  className="address-search-input modal-search-input"
-                  defaultValue=""
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const val = (e.target as HTMLInputElement).value.trim();
-                      if (val) {
-                        setSelectedAddress({
-                          name: 'Custom Location',
-                          full: val
-                        });
-                        setShowMobileAddressModal(false);
-                      }
-                    }
-                  }}
-                />
-                <div
-                  className="address-search-btn"
-                  onClick={() => {
-                    const inputEl = document.querySelector('.modal-search-input') as HTMLInputElement;
-                    if (inputEl && inputEl.value.trim()) {
-                      setSelectedAddress({
-                        name: 'Custom Location',
-                        full: inputEl.value.trim()
-                      });
-                      setShowMobileAddressModal(false);
-                    }
-                  }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </div>
-              </div>
-
-
               {/* Saved Addresses Section inside modal */}
-              <div className="saved-addresses-section modal-saved-addresses" style={{ display: 'block', marginTop: '20px' }}>
-                <div className="saved-addresses-header">
+              <div className="saved-addresses-section modal-saved-addresses" style={{ display: 'block', marginTop: '10px' }}>
+                <div className="saved-addresses-header" style={{ marginBottom: '16px' }}>
                   <div className="saved-addresses-title">Saved Addresses</div>
-                  <button className="add-address-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Add Address
-                  </button>
                 </div>
                 <div className="saved-addresses-list">
-                  {/* Home */}
-                  <div
-                    className={`saved-address-item ${selectedAddress?.name === 'Home' ? 'selected' : ''}`}
-                    onClick={() => {
-                      setSelectedAddress({
-                        name: 'Home',
-                        full: 'Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032'
-                      });
-                      setShowMobileAddressModal(false);
-                    }}
-                  >
-                    <div className="address-icon-circle">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  {savedAddresses.length === 0 ? (
+                    <div className="empty-saved-addresses">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dddddd" strokeWidth="1.5">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
                       </svg>
+                      <div className="empty-saved-addresses-text">No saved addresses yet</div>
                     </div>
-                    <div className="address-item-details">
-                      <div className="address-item-name">Home</div>
-                      <div className="address-item-text">Road No. 21, Building 3B, Flat 406, Gachibowli, Hyderabad, Telangana, 500032</div>
-                    </div>
-                  </div>
-
-                  {isLoggedIn && (
-                    <>
-                      {/* Work */}
+                  ) : (
+                    savedAddresses.map((addr, idx) => (
                       <div
-                        className={`saved-address-item ${selectedAddress?.name === 'Work' ? 'selected' : ''}`}
+                        key={idx}
+                        className={`saved-address-item ${selectedAddress?.name === addr.name ? 'selected' : ''}`}
                         onClick={() => {
-                          setSelectedAddress({
-                            name: 'Work',
-                            full: 'Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081'
-                          });
+                          setSelectedAddress(addr);
                           setShowMobileAddressModal(false);
                         }}
                       >
                         <div className="address-icon-circle">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                          </svg>
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                           </svg>
                         </div>
                         <div className="address-item-details">
-                          <div className="address-item-name">Work</div>
-                          <div className="address-item-text">Building 1A, DLF Cyber City, Madhapur, Hyderabad, 500081</div>
+                          <div className="address-item-name">{addr.name}</div>
+                          <div className="address-item-text">{addr.full}</div>
                         </div>
                       </div>
-
-                      {/* Parents' House */}
-                      <div
-                        className={`saved-address-item ${selectedAddress?.name === "Parents' House" ? 'selected' : ''}`}
-                        onClick={() => {
-                          setSelectedAddress({
-                            name: "Parents' House",
-                            full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034'
-                          });
-                          setShowMobileAddressModal(false);
-                        }}
-                      >
-                        <div className="address-icon-circle">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
-                          </svg>
-                        </div>
-                        <div className="address-item-details">
-                          <div className="address-item-name">Parents' House</div>
-                          <div className="address-item-text">Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034</div>
-                        </div>
-                      </div>
-                    </>
+                    ))
                   )}
                 </div>
               </div>
@@ -5656,6 +5520,140 @@ function App() {
         }}>
           <div style={{ width: '800px', maxWidth: '90%', maxHeight: '90vh', background: '#ffffff', borderRadius: '12px', overflowY: 'auto' }}>
             <Reviews isModal={true} onClose={() => setShowReviewsModalDesktop(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Map Modal */}
+      {showMapModal && (
+        <div className="map-modal-overlay">
+          <div className="map-modal-content">
+            {mapModalStep === 1 ? (
+              <div className="map-modal-header">
+                <h3>Select Location</h3>
+                <div className="map-modal-close" onClick={() => { setShowMapModal(false); setMapModalStep(1); }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+              </div>
+            ) : (
+              <div className="map-modal-header" style={{ justifyContent: 'flex-start', gap: '16px' }}>
+                <div 
+                  className="map-modal-close" 
+                  onClick={() => setMapModalStep(1)}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <h3>Select Location</h3>
+              </div>
+            )}
+            
+            {mapModalStep === 1 ? (
+              <>
+                <div className="map-modal-body">
+                  <div className="map-placeholder">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#dddddd" strokeWidth="1">
+                      <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                      <line x1="8" y1="2" x2="8" y2="18"></line>
+                      <line x1="16" y1="6" x2="16" y2="22"></line>
+                    </svg>
+                    <div style={{ marginTop: '16px', color: '#717171', fontSize: '14px' }}>Map preview</div>
+                  </div>
+                </div>
+                <div className="map-modal-footer">
+                  <button 
+                    className="save-address-btn"
+                    onClick={() => setMapModalStep(2)}
+                  >
+                    Save & Continue
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="map-modal-body" style={{ padding: '24px' }}>
+                  <div className="address-label-group">
+                    <div 
+                      className={`address-label-option ${addressLabelType === 'Home' ? 'active' : ''}`}
+                      onClick={() => setAddressLabelType('Home')}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22" stroke="white" strokeWidth="2"></polyline>
+                      </svg>
+                      Home
+                    </div>
+                    <div 
+                      className={`address-label-option ${addressLabelType === 'Work' ? 'active' : ''}`}
+                      onClick={() => setAddressLabelType('Work')}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" fill="none" strokeWidth="2"></path>
+                      </svg>
+                      Work
+                    </div>
+                    <div 
+                      className={`address-label-option ${addressLabelType === 'Other' ? 'active' : ''}`}
+                      onClick={() => setAddressLabelType('Other')}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3" fill="white" stroke="white"></circle>
+                      </svg>
+                      Other
+                    </div>
+                  </div>
+                  
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>HOUSE NO / FLOOR</div>
+                    <input type="text" placeholder="e.g. Flat 101, 1st Floor" className="map-address-input" id="houseNoInput" />
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>AREA / STREET</div>
+                    <input type="text" placeholder="e.g. Phase 2, Kavuri Hills" className="map-address-input" id="areaInput" />
+                  </div>
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>PIN-CODE</div>
+                      <input type="text" className="map-address-input" defaultValue="543210" readOnly style={{ backgroundColor: '#f7f7f7', color: '#717171' }} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>CITY</div>
+                      <input type="text" className="map-address-input" defaultValue="Hyderabad" readOnly style={{ backgroundColor: '#f7f7f7', color: '#717171' }} />
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>STATE</div>
+                    <input type="text" className="map-address-input" defaultValue="Telangana" readOnly style={{ backgroundColor: '#f7f7f7', color: '#717171' }} />
+                  </div>
+                </div>
+                <div className="map-modal-footer">
+                  <button 
+                    className="save-address-btn"
+                    onClick={() => {
+                      const area = (document.getElementById('areaInput') as HTMLInputElement)?.value || 'Gachibowli';
+                      const houseNo = (document.getElementById('houseNoInput') as HTMLInputElement)?.value || '';
+                      const newAddr = {
+                        name: addressLabelType,
+                        full: `${houseNo ? houseNo + ', ' : ''}${area}, Hyderabad, Telangana, 543210`
+                      };
+                      setSavedAddresses([...savedAddresses, newAddr]);
+                      setSelectedAddress(newAddr);
+                      setShowMapModal(false);
+                      setMapModalStep(1);
+                      setShowMobileAddressModal(false);
+                    }}
+                  >
+                    Save Address
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

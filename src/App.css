@@ -108,6 +108,26 @@
   background-color: #d90b36;
 }
 
+@media (max-width: 768px) {
+  .search-pill {
+    height: 38px;
+    max-width: 100%;
+  }
+
+  .search-pill-field {
+    padding: 0 12px;
+  }
+
+  .search-pill-label,
+  .search-pill-value {
+    font-size: 13px;
+  }
+
+  .center-tabs {
+    justify-content: flex-start;
+  }
+}
+
 /* Center Tabs */
 .center-tabs {
   display: flex;
@@ -2176,10 +2196,26 @@
 }
 
 .saved-addresses-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: #717171;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.empty-saved-addresses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #717171;
+}
+
+.empty-saved-addresses-text {
+  margin-top: 12px;
   font-size: 16px;
-  font-weight: 700;
-  color: #222222;
-  margin-bottom: 0;
+  font-weight: 500;
 }
 
 .add-address-btn {
@@ -3182,35 +3218,42 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-end;
-  /* slides up from bottom like a premium iOS modal drawer */
+  align-items: flex-start;
   justify-content: center;
-  z-index: 2000;
+  z-index: 900;
   animation: fadeIn 0.2s ease-out;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   overscroll-behavior: contain !important;
+  padding-top: 130px;
 }
 
 .mobile-address-modal-content {
   background: #ffffff;
-  width: 100% !important;
-  /* Full width touching edges */
+  width: calc(100% - 32px) !important;
   max-width: 500px;
-  border-radius: 24px 24px 0 0 !important;
-  /* Rounded top corners, flush bottom */
-  margin: 0 !important;
-  /* No gap at the bottom */
+  border-radius: 24px !important;
+  margin: 0 auto !important;
   padding: 24px 24px 0 24px;
-  /* bottom padding handled in scroll body */
   box-sizing: border-box;
-  max-height: 80% !important;
-  /* Constrain to exactly 80% of fixed viewport */
+  max-height: 75% !important;
   overflow: hidden;
-  /* prevent nested scroll conflict */
   display: flex;
   flex-direction: column;
   gap: 16px;
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideDownFadeMobile 0.2s ease-out forwards;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+@keyframes slideDownFadeMobile {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .mobile-address-modal-header {
@@ -3235,7 +3278,7 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   cursor: pointer;
   color: #717171;
   padding: 4px;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
@@ -3422,12 +3465,13 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   .mobile-address-modal-overlay {
     align-items: flex-start;
     background: rgba(0, 0, 0, 0.4);
-    z-index: 900;
+    z-index: 1100;
+    top: 85px;
   }
 
   .mobile-address-modal-content {
     position: absolute;
-    top: 80px;
+    top: -5px;
     left: 50%;
     transform: translateX(-50%);
     width: 600px !important;
@@ -3762,4 +3806,178 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
     border-radius: 24px !important;
     animation: modalScaleIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
   }
+}
+
+/* Address Search Suggestions */
+.search-suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  padding: 8px 0;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ebebeb;
+}
+
+.search-suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #222222;
+  transition: background-color 0.2s ease;
+}
+
+.search-suggestion-item:hover {
+  background-color: #f7f7f7;
+}
+
+/* Map Modal Styles */
+.map-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 560px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: modalScaleIn 0.2s ease-out forwards;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.map-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.map-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.map-modal-close {
+  cursor: pointer;
+  color: #717171;
+  border-radius: 50%;
+  padding: 4px;
+  transition: background-color 0.2s;
+  display: flex;
+}
+
+.map-modal-close:hover {
+  background-color: #f7f7f7;
+}
+
+.map-modal-body {
+  padding: 0;
+}
+
+.map-placeholder {
+  width: 100%;
+  height: 300px;
+  background-color: #f7f7f7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-modal-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #ebebeb;
+}
+
+.map-address-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.map-address-input:focus {
+  border-color: #222222;
+}
+
+.address-label-group {
+  display: flex;
+  background-color: #f7f7f7;
+  border-radius: 100px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.address-label-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #717171;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 8px;
+}
+
+.address-label-option svg {
+  color: #717171;
+}
+
+.address-label-option.active {
+  background-color: white;
+  color: #4a80ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.address-label-option.active svg {
+  color: #4a80ff;
+}
+
+.save-address-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #222222;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.save-address-btn:hover {
+  opacity: 0.9;
 }

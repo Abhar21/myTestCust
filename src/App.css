@@ -1652,6 +1652,20 @@
   position: sticky;
   top: 80px;
   z-index: 50;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+  max-height: 100px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.filters-bar-row.center-tabs-hidden {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
@@ -1659,6 +1673,9 @@
     padding: 4px 16px 10px;
     top: 110px;
     overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+    max-height: 80px;
+    opacity: 1;
   }
 
   .filters-container {
@@ -3298,7 +3315,7 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -3306,7 +3323,18 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   animation: fadeIn 0.2s ease-out;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   overscroll-behavior: contain !important;
-  padding-top: 130px;
+  padding-top: 100px;
+}
+
+/* Mobile: card drops down right below the header, dim background */
+@media (max-width: 768px) {
+  .mobile-address-modal-overlay {
+    background: rgba(0, 0, 0, 0.4);
+    padding-top: 0;
+    top: 80px;
+    align-items: flex-start;
+    z-index: 999;
+  }
 }
 
 .mobile-address-modal-content {
@@ -3326,15 +3354,32 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
+/* Mobile: card sits flush below the header */
+@media (max-width: 768px) {
+  .mobile-address-modal-content {
+    position: absolute;
+    top: 50px;
+    left: 16px;
+    right: 16px;
+    width: auto !important;
+    max-width: none !important;
+    max-height: 70vh !important;
+    border-radius: 20px !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: slideDownFadeMobile 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
 @keyframes slideDownFadeMobile {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-16px) scale(0.98);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 

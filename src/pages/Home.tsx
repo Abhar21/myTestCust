@@ -2487,7 +2487,7 @@ function App() {
 
             {/* Row 2/3: Filters bar - shown in search view on both desktop and mobile */}
             {selectedVendorDetail ? null : isSearchView ? (
-              <div className="filters-bar-row search-view-filters-row">
+              <div className={`filters-bar-row search-view-filters-row${showMobileAddressModal ? ' center-tabs-hidden' : ''}`}>
                 {renderFilters()}
               </div>
             ) : null}

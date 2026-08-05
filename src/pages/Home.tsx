@@ -2348,8 +2348,9 @@ function App() {
                         </svg>
                       </div>
                     </div>
+                    {/* Filters shown on mobile inline, on desktop moved to row 2 */}
                     {!showMobileAddressModal && (
-                      <div className="header-filters-wrapper">
+                      <div className="header-filters-wrapper desktop-hide-in-search">
                         {renderFilters()}
                       </div>
                     )}
@@ -2417,9 +2418,9 @@ function App() {
               </div>
             </div>
 
-            {/* Row 2: Center Tabs (Categories) */}
+            {/* Row 2: Center Tabs (Categories) - only in home view, not in search view on desktop */}
             {!selectedVendorDetail && !isSearchView && (
-              <div className={`center-tabs ${isScrolled || showMobileAddressModal ? 'center-tabs-hidden' : ''}`}>
+              <div className={`center-tabs ${(!isSearchView && (isScrolled || showMobileAddressModal)) ? 'center-tabs-hidden' : ''} ${isSearchView ? 'center-tabs-search-view' : ''}`}>
                 <div
                   className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
                   onClick={() => setActiveTab('caters')}
@@ -2484,9 +2485,9 @@ function App() {
               </div>
             )}
 
-            {/* Row 3: Large Floating Search Bar or Filters */}
+            {/* Row 2/3: Filters bar - shown in search view on both desktop and mobile */}
             {selectedVendorDetail ? null : isSearchView ? (
-              <div className="filters-bar-row mobile-filters-row">
+              <div className="filters-bar-row search-view-filters-row">
                 {renderFilters()}
               </div>
             ) : null}
@@ -3428,50 +3429,52 @@ function App() {
               </div>
 
               {/* Booking.com Style Genius Card */}
-              <div className="genius-segment">
-                <h2 className="genius-section-title">Celebrate more with less effort</h2>
-                <div className="genius-card">
-                  <div className="genius-card__left">
-                    <h3 className="genius-card__title">Sign in to avail all offers</h3>
-                    <p className="genius-card__subtitle">Save 15% or more only in myMooment</p>
-                    <div className="genius-card__actions">
-                      <button className="genius-card__btn-primary" type="button" onClick={() => alert('Signing in...')}>Sign in</button>
-                      <button className="genius-card__btn-link" type="button" onClick={() => alert('Registering...')}>Register</button>
+              {!isLoggedIn && (
+                <div className="genius-segment">
+                  <h2 className="genius-section-title">Celebrate more with less effort</h2>
+                  <div className="genius-card">
+                    <div className="genius-card__left">
+                      <h3 className="genius-card__title">Sign in to avail all offers</h3>
+                      <p className="genius-card__subtitle">Save 15% or more only in myMooment</p>
+                      <div className="genius-card__actions">
+                        <button className="genius-card__btn-primary" type="button" onClick={() => alert('Signing in...')}>Sign in</button>
+                        <button className="genius-card__btn-link" type="button" onClick={() => alert('Registering...')}>Register</button>
+                      </div>
+                    </div>
+                    <div className="genius-card__right">
+                      {/* Cute SVG Illustration of Gift Box with Ribbon & Confetti */}
+                      <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="genius-gift-svg">
+                        {/* Confetti / Sparks */}
+                        <circle cx="15" cy="50" r="2.5" fill="#f59e0b" />
+                        <circle cx="25" cy="25" r="2" fill="#3b82f6" />
+                        <circle cx="105" cy="35" r="3" fill="#f59e0b" />
+                        <circle cx="95" cy="70" r="2" fill="#ef4444" />
+                        <path d="M 15 80 Q 20 75 25 85" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+                        <path d="M 98 20 Q 103 25 100 30" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+
+                        {/* Gift Box Main Body (Blue) */}
+                        <rect x="35" y="55" width="50" height="40" rx="8" fill="#006ce4" />
+
+                        {/* Gift Box Lid (Blue, slightly larger) */}
+                        <rect x="31" y="47" width="58" height="10" rx="4" fill="#0056b3" />
+
+                        {/* Ribbon Vertical (Yellow) */}
+                        <rect x="56" y="47" width="8" height="48" fill="#f59e0b" />
+
+                        {/* Ribbon Horizontal (Yellow) */}
+                        <rect x="35" y="68" width="50" height="8" fill="#f59e0b" />
+
+                        {/* Bow Ribbons on Top */}
+                        <path d="M 60 47 C 50 32 38 42 56 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
+                        <path d="M 60 47 C 70 32 82 42 64 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
+
+                        {/* Gift Label text: Genius/Mooment */}
+                        <text x="60" y="80" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">Mooment</text>
+                      </svg>
                     </div>
                   </div>
-                  <div className="genius-card__right">
-                    {/* Cute SVG Illustration of Gift Box with Ribbon & Confetti */}
-                    <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="genius-gift-svg">
-                      {/* Confetti / Sparks */}
-                      <circle cx="15" cy="50" r="2.5" fill="#f59e0b" />
-                      <circle cx="25" cy="25" r="2" fill="#3b82f6" />
-                      <circle cx="105" cy="35" r="3" fill="#f59e0b" />
-                      <circle cx="95" cy="70" r="2" fill="#ef4444" />
-                      <path d="M 15 80 Q 20 75 25 85" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-                      <path d="M 98 20 Q 103 25 100 30" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-
-                      {/* Gift Box Main Body (Blue) */}
-                      <rect x="35" y="55" width="50" height="40" rx="8" fill="#006ce4" />
-
-                      {/* Gift Box Lid (Blue, slightly larger) */}
-                      <rect x="31" y="47" width="58" height="10" rx="4" fill="#0056b3" />
-
-                      {/* Ribbon Vertical (Yellow) */}
-                      <rect x="56" y="47" width="8" height="48" fill="#f59e0b" />
-
-                      {/* Ribbon Horizontal (Yellow) */}
-                      <rect x="35" y="68" width="50" height="8" fill="#f59e0b" />
-
-                      {/* Bow Ribbons on Top */}
-                      <path d="M 60 47 C 50 32 38 42 56 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
-                      <path d="M 60 47 C 70 32 82 42 64 47 Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1" />
-
-                      {/* Gift Label text: Genius/Mooment */}
-                      <text x="60" y="80" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">Mooment</text>
-                    </svg>
-                  </div>
                 </div>
-              </div>
+              )}
             </main>
           )}
 
@@ -4981,7 +4984,14 @@ function App() {
 
       {/* Mobile Address Selector Modal Overlay */}
       {showMobileAddressModal && (
-        <div className="mobile-address-modal-overlay" onClick={() => setShowMobileAddressModal(false)}>
+        <div
+          className="mobile-address-modal-overlay"
+          onClick={() => {
+            // Mandatory: don't allow closing if logged in with no address selected
+            if (isLoggedIn && !selectedAddress) return;
+            setShowMobileAddressModal(false);
+          }}
+        >
           <div className="mobile-address-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="mobile-address-modal-header" style={{ borderBottom: 'none', paddingBottom: '0' }}>
               <h3>Add / Select Address</h3>
@@ -4993,15 +5003,40 @@ function App() {
                   </svg>
                   Add Address
                 </button>
-                <button className="mobile-address-modal-close" onClick={() => setShowMobileAddressModal(false)}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
+                {/* Hide close button if address is mandatory (logged in, no address yet) */}
+                {!(isLoggedIn && !selectedAddress) && (
+                  <button className="mobile-address-modal-close" onClick={() => setShowMobileAddressModal(false)}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
             <div className="mobile-address-modal-body">
+              {/* Mandatory hint after login */}
+              {isLoggedIn && !selectedAddress && (
+                <div style={{
+                  background: '#fff8e1',
+                  border: '1px solid #ffe082',
+                  borderRadius: '8px',
+                  padding: '10px 14px',
+                  fontSize: '13px',
+                  color: '#795548',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  Please select or add an address to continue
+                </div>
+              )}
               {/* Saved Addresses Section inside modal */}
               <div className="saved-addresses-section modal-saved-addresses" style={{ display: 'block', marginTop: '10px' }}>
                 <div className="saved-addresses-header" style={{ marginBottom: '16px' }}>

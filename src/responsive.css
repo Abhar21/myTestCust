@@ -27,17 +27,17 @@
   /* Mobile Search Pill */
   .search-pill {
     width: 100% !important;
-    height: 50px !important;
-    margin: 2px 0 12px 0 !important;
+    height: 36px !important;
+    margin: 2px 0 14px 0 !important;
   }
   
   .search-pill-field {
-    padding: 6px 16px !important;
+    padding: 0 10px !important;
   }
   
   .search-pill-button {
-    width: 36px !important;
-    height: 36px !important;
+    width: 28px !important;
+    height: 28px !important;
   }
 
   .home-mobile-location-badge {

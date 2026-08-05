@@ -110,12 +110,18 @@
 
 @media (max-width: 768px) {
   .search-pill {
-    height: 38px;
+    height: 30px;
     max-width: 100%;
   }
 
   .search-pill-field {
-    padding: 0 12px;
+    padding: 0 10px;
+  }
+
+  .search-pill-field svg {
+    width: 16px !important;
+    height: 16px !important;
+    margin-right: 8px !important;
   }
 
   .search-pill-label,
@@ -150,6 +156,13 @@
   margin: 0 !important;
   overflow: hidden;
   pointer-events: none;
+}
+
+/* On mobile, hide the center-tabs when in search view (mobile has its own filter row) */
+@media (max-width: 768px) {
+  .center-tabs.center-tabs-search-view {
+    display: none;
+  }
 }
 
 .center-tabs::-webkit-scrollbar {
@@ -1634,11 +1647,54 @@
 
 /* ─── Filters Bar ─── */
 .filters-bar-row {
-  padding: 4px 40px 12px;
+  padding: 20px 40px 12px;
   background: #ffffff;
   position: sticky;
   top: 80px;
   z-index: 50;
+}
+
+@media (max-width: 768px) {
+  .filters-bar-row {
+    padding: 4px 16px 10px;
+    top: 110px;
+    overflow: hidden;
+  }
+
+  .filters-container {
+    justify-content: space-between;
+    gap: 8px;
+    overflow: hidden;
+    flex-wrap: nowrap;
+  }
+
+  .filters-desktop-group {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .filters-desktop-group .filter-pill {
+    flex: 1;
+    justify-content: center;
+    padding: 7px 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Hide scrollbar indicator */
+  .filters-bar-row::-webkit-scrollbar,
+  .filters-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filters-bar-row {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 }
 
 .filters-container {
@@ -1659,6 +1715,16 @@
 }
 
 .mobile-filters-row {
+  display: none;
+}
+
+/* Filters bar visible in search view on ALL screen sizes (desktop + mobile) */
+.search-view-filters-row {
+  display: block;
+}
+
+/* Hide the inline filters in search view on ALL screens (filters now shown in the bar row below) */
+.desktop-hide-in-search {
   display: none;
 }
 
@@ -2417,10 +2483,26 @@
   margin-top: 2px;
 }
 
-/* Force grid columns to strictly display 3 per row on the left side pane layout on desktop */
-.search-left-pane .search-results-grid {
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 40px 20px !important;
+/* Desktop: full-width grid, 4 columns, no right pane */
+@media (min-width: 769px) {
+  .search-right-pane {
+    display: none;
+  }
+
+  .search-left-pane {
+    width: 100%;
+    padding: 32px 80px;
+  }
+
+  .search-split-layout {
+    height: auto;
+    overflow: visible;
+  }
+
+  .search-left-pane .search-results-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 32px 20px !important;
+  }
 }
 
 @media (max-width: 1200px) {

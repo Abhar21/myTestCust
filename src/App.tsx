@@ -5,6 +5,7 @@ import Profile from './pages/Profile';
 import Bookings from './pages/Bookings';
 import BookingDetail from './pages/BookingDetail';
 import Reviews from './pages/Reviews';
+import PartnerDetails from './pages/PartnerDetails';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/bookings" element={<Bookings />} />
         <Route path="/booking-detail" element={<BookingDetail />} />
         <Route path="/reviews" element={<Reviews />} />
+        <Route path="/partner-details" element={<PartnerDetails />} />
       </Routes>
     </BrowserRouter>
   );

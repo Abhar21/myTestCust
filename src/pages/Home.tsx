@@ -13,7 +13,7 @@ interface Suggestion {
   icon: React.ReactNode
 }
 
-interface HomeListing {
+export interface HomeListing {
   title: string;
   image: string;
   price: string;
@@ -25,7 +25,7 @@ interface HomeListing {
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-const homeListings: HomeListing[] = [
+export const homeListings: HomeListing[] = [
   {
     title: 'Sri Venkata Carters',
     image: '/homes/apartment_somajiguda.png',
@@ -91,7 +91,7 @@ const homeListings: HomeListing[] = [
   }
 ];
 
-const bestRatingListings: HomeListing[] = [
+export const bestRatingListings: HomeListing[] = [
   {
     title: 'Gourmet Foods',
     image: '/homes/flat_kondapur.png',
@@ -157,7 +157,7 @@ const bestRatingListings: HomeListing[] = [
   }
 ];
 
-const checkoutListings: HomeListing[] = [
+export const checkoutListings: HomeListing[] = [
   {
     title: 'Capital Caters',
     image: '/homes/flat_kondapur.png',
@@ -3068,18 +3068,37 @@ function App() {
                   </div>
 
                   <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: '32px 0 12px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Delivery Details
+                    Delivery & Partner Details
                   </h3>
 
                   {/* Delivery Details Widget */}
-                  <div className="delivery-details-widget">
+                  <div className="delivery-details-widget" style={{
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    border: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 0,
+                    backgroundColor: '#ffffff'
+                  }}>
                     {/* Row 1: Home Address */}
                     <div
                       className="delivery-details-row delivery-details-row__address"
                       onClick={() => setShowMobileAddressModal(true)}
+                      style={{ background: '#f0f7ff', border: 'none', borderRadius: 0 }}
                     >
-                      <span className="delivery-details-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#0066cc' }}>
+                      <span className="delivery-details-icon" style={{
+                        backgroundColor: '#e1f0ff',
+                        color: '#0066cc',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
                         </svg>
                       </span>
@@ -3098,12 +3117,23 @@ function App() {
                       </span>
                     </div>
 
+                    {/* Divider Line / White Gap */}
+                    <div style={{ height: '4px', backgroundColor: '#ffffff' }} />
+
                     {/* Row 3: Fulfilled by Vendor */}
-                    <div className="delivery-details-row delivery-details-row__fulfilled">
-                      <span className="delivery-details-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#333333' }}>
-                          <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"></path>
-                          <path d="M3 9V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path>
+                    <div className="delivery-details-row delivery-details-row__fulfilled" style={{ background: '#ffffff', border: 'none', borderRadius: 0 }}>
+                      <span className="delivery-details-icon" style={{
+                        backgroundColor: '#fdf2f8',
+                        color: '#db2777',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                       </span>
                       <div className="delivery-details-content">
@@ -3115,7 +3145,7 @@ function App() {
                           onClick={() => {
                             if (window.innerWidth <= 768) {
                               sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
-                              navigate('/reviews');
+                              navigate(`/partner-details?vendor=${encodeURIComponent(selectedVendorDetail.title)}`);
                             } else {
                               setShowReviewsModalDesktop(true);
                             }

@@ -276,6 +276,14 @@
     border-radius: 28px;
   }
 
+  .promo-card:hover {
+    transform: none !important;
+  }
+
+  .promo-card:hover .promo-card__image {
+    transform: none !important;
+  }
+
   .promo-scroll-row {
     justify-content: center !important;
     overflow-x: hidden !important;

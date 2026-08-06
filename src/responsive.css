@@ -29,6 +29,13 @@
     width: 100% !important;
     height: 46px !important;
     margin: 2px 0 12px 0 !important;
+    border: none !important;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.10) !important;
+  }
+
+  .location-search-wrapper {
+    border: none !important;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.10) !important;
   }
 
   .search-pill-field {
@@ -554,13 +561,27 @@
     display: none !important;
   }
 
-  /* Reduce padding below location badge on Screen 3 */
+  /* Vendor profile header: compact sticky bar, nothing moves on scroll */
   .airbnb-header-container--detail {
-    padding-bottom: 6px !important;
+    position: sticky !important;
+    top: 0 !important;
+    padding: 6px 16px !important;
+    transition: none !important;
+    gap: 0 !important;
+    min-height: auto !important;
+    height: auto !important;
   }
 
-  .airbnb-header-container--detail .mobile-location-badge {
-    margin-bottom: 6px !important;
+  .airbnb-header-container--detail .airbnb-header-row {
+    min-height: auto !important;
+    transition: none !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide filters inside header on mobile for vendor detail — they're in the page body */
+  .airbnb-header-container--detail .vendor-detail-filters {
+    display: none !important;
   }
 
   /* Reduce font weight for vendor titles on mobile */
@@ -597,5 +618,19 @@
     border-radius: 24px 24px 0 0 !important;
     margin: 0 !important;
     animation: slideUpBottomSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+
+  .desktop-only-location-pill {
+    display: none !important;
+  }
+
+  .desktop-only-body-search {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only-header-search {
+    display: none !important;
   }
 }

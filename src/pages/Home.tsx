@@ -439,6 +439,10 @@ function App() {
 
 
   useEffect(() => {
+    // Disable browser scroll restoration so vendor detail always starts at top
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
     const handleScroll = () => {
       setIsScrolled((prev) => {
         if (!prev && window.scrollY > 50) return true;
@@ -458,6 +462,14 @@ function App() {
         window.scrollTo(0, parseInt(savedScrollPosition, 10));
       }, 0);
       sessionStorage.removeItem('homeScrollPosition');
+    }
+  }, []);
+
+  // Always scroll to top instantly when vendor detail page loads
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('page') === 'detail') {
+      window.scrollTo(0, 0);
     }
   }, []);
   const [manualCouponCode, setManualCouponCode] = useState('');
@@ -2318,9 +2330,9 @@ function App() {
                   </>
                 ) : isSearchView ? (
                   <>
-                    {/* Mobile Location Badge (Image 2 style) */}
+                    {/* Location Badge for desktop only */}
                     <div
-                      className="search-pill"
+                      className="search-pill desktop-only-location-pill"
                       onClick={() => setShowMobileAddressModal(true)}
                     >
                       <div className="search-pill-field">
@@ -2348,6 +2360,31 @@ function App() {
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px', color: '#717171', flexShrink: 0 }}>
                           <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
+                      </div>
+                    </div>
+
+                    {/* Partner Search Input for mobile only in header */}
+                    <div className="search-pill mobile-only-header-search" style={{ cursor: 'text' }}>
+                      <div className="search-pill-field" style={{ width: '100%' }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2.5" style={{ marginRight: '12px', flexShrink: 0 }}>
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input
+                          type="text"
+                          placeholder="Search partner name..."
+                          style={{
+                            border: 'none',
+                            outline: 'none',
+                            width: '100%',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            color: '#222222',
+                            background: 'transparent'
+                          }}
+                          value={partnerSearchQuery}
+                          onChange={(e) => setPartnerSearchQuery(e.target.value)}
+                        />
                       </div>
                     </div>
                     {/* Filters shown on mobile inline, on desktop moved to row 2 */}
@@ -3211,7 +3248,7 @@ function App() {
                     <h1> Caters Hyderabad, India</h1>
                     <p className="search-results-subtitle">Showing top-rated caters</p>
                   </div>
-                  <div className="location-search-wrapper">
+                  <div className="location-search-wrapper desktop-only-body-search">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
                       <circle cx="11" cy="11" r="8"></circle>
                       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>

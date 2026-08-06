@@ -437,6 +437,7 @@ function App() {
   const [showReviewsModalDesktop, setShowReviewsModalDesktop] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled((prev) => {
@@ -2309,38 +2310,6 @@ function App() {
               <div className="header-center-col">
                 {selectedVendorDetail ? (
                   <>
-                    {/* Location badge on desktop for vendor detail */}
-                    <div
-                      className="search-pill"
-                      onClick={() => setShowMobileAddressModal(true)}
-                    >
-                      <div className="search-pill-field">
-                        {selectedAddress?.name === 'Home' ? (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
-                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-                          </svg>
-                        ) : selectedAddress?.name === 'Work' ? (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                          </svg>
-                        ) : (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '12px', color: '#222222', flexShrink: 0 }}>
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                          </svg>
-                        )}
-                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', minWidth: 0, overflow: 'hidden', flex: 1 }}>
-                          <div className="search-pill-label" style={{ paddingBottom: 0, marginRight: '8px', flexShrink: 0 }}>
-                            {selectedAddress?.name ? selectedAddress.name.toUpperCase() : 'Location'}
-                          </div>
-                          <div className="search-pill-value">
-                            {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
-                          </div>
-                        </div>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px', color: '#717171', flexShrink: 0 }}>
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                      </div>
-                    </div>
                     {!showMobileAddressModal && (
                       <div className="header-filters-wrapper vendor-detail-filters">
                         {renderFilters()}
@@ -3060,6 +3029,66 @@ function App() {
                   <div style={{ marginTop: '24px', fontSize: '11px', color: '#717171', textAlign: 'center', fontWeight: '500' }}>
                     Max upto 1 year calender released
                   </div>
+
+                  <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: '32px 0 12px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Delivery Details
+                  </h3>
+
+                  {/* Delivery Details Widget */}
+                  <div className="delivery-details-widget">
+                    {/* Row 1: Home Address */}
+                    <div
+                      className="delivery-details-row delivery-details-row__address"
+                      onClick={() => setShowMobileAddressModal(true)}
+                    >
+                      <span className="delivery-details-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#0066cc' }}>
+                          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
+                      </span>
+                      <div className="delivery-details-content">
+                        <div className="delivery-details-title" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <span style={{ fontWeight: '800', color: '#222222' }}>{selectedAddress?.name ? selectedAddress.name.toUpperCase() : 'HOME'}</span>
+                          <span style={{ fontWeight: '400', fontSize: '13px', color: '#555555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }}>
+                            {selectedAddress ? selectedAddress.full : 'Select your location for better experience'}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="delivery-details-arrow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </span>
+                    </div>
+
+                    {/* Row 3: Fulfilled by Vendor */}
+                    <div className="delivery-details-row delivery-details-row__fulfilled">
+                      <span className="delivery-details-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#333333' }}>
+                          <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"></path>
+                          <path d="M3 9V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path>
+                        </svg>
+                      </span>
+                      <div className="delivery-details-content">
+                        <div className="delivery-details-title" style={{ color: '#222222' }}>
+                          {selectedVendorDetail.title}
+                        </div>
+                        <div
+                          className="delivery-details-link"
+                          onClick={() => {
+                            if (window.innerWidth <= 768) {
+                              sessionStorage.setItem('homeScrollPosition', window.scrollY.toString());
+                              navigate('/reviews');
+                            } else {
+                              setShowReviewsModalDesktop(true);
+                            }
+                          }}
+                        >
+                          See more details
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -3281,10 +3310,10 @@ function App() {
                             }}
                           >
                             <div className="address-icon-circle">
-                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                               </svg>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                              </svg>
                             </div>
                             <div className="address-item-details">
                               <div className="address-item-name">{addr.name}</div>
@@ -5095,10 +5124,10 @@ function App() {
                         }}
                       >
                         <div className="address-icon-circle">
-                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
-                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                           </svg>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2.5">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                          </svg>
                         </div>
                         <div className="address-item-details">
                           <div className="address-item-name">{addr.name}</div>
@@ -5608,18 +5637,18 @@ function App() {
               </div>
             ) : (
               <div className="map-modal-header" style={{ justifyContent: 'flex-start', gap: '16px' }}>
-                <div 
-                  className="map-modal-close" 
+                <div
+                  className="map-modal-close"
                   onClick={() => setMapModalStep(1)}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
                 <h3>Select Location</h3>
               </div>
             )}
-            
+
             {mapModalStep === 1 ? (
               <>
                 <div className="map-modal-body">
@@ -5633,7 +5662,7 @@ function App() {
                   </div>
                 </div>
                 <div className="map-modal-footer">
-                  <button 
+                  <button
                     className="save-address-btn"
                     onClick={() => setMapModalStep(2)}
                   >
@@ -5645,7 +5674,7 @@ function App() {
               <>
                 <div className="map-modal-body" style={{ padding: '24px' }}>
                   <div className="address-label-group">
-                    <div 
+                    <div
                       className={`address-label-option ${addressLabelType === 'Home' ? 'active' : ''}`}
                       onClick={() => setAddressLabelType('Home')}
                     >
@@ -5655,7 +5684,7 @@ function App() {
                       </svg>
                       Home
                     </div>
-                    <div 
+                    <div
                       className={`address-label-option ${addressLabelType === 'Work' ? 'active' : ''}`}
                       onClick={() => setAddressLabelType('Work')}
                     >
@@ -5665,7 +5694,7 @@ function App() {
                       </svg>
                       Work
                     </div>
-                    <div 
+                    <div
                       className={`address-label-option ${addressLabelType === 'Other' ? 'active' : ''}`}
                       onClick={() => setAddressLabelType('Other')}
                     >
@@ -5676,7 +5705,7 @@ function App() {
                       Other
                     </div>
                   </div>
-                  
+
                   <div style={{ marginBottom: '16px' }}>
                     <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>HOUSE NO / FLOOR</div>
                     <input type="text" placeholder="e.g. Flat 101, 1st Floor" className="map-address-input" id="houseNoInput" />
@@ -5701,7 +5730,7 @@ function App() {
                   </div>
                 </div>
                 <div className="map-modal-footer">
-                  <button 
+                  <button
                     className="save-address-btn"
                     onClick={() => {
                       const area = (document.getElementById('areaInput') as HTMLInputElement)?.value || 'Gachibowli';

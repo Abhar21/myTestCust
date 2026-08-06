@@ -1089,15 +1089,15 @@
 }
 
 /* ─── Promo Scroll Row ─── */
-.promo-scroll-row {
+.listings-scroll-row.promo-scroll-row {
   gap: 12px;
-  padding-top: 8px;
-  /* room for the upward translateY lift */
-  padding-bottom: 16px;
+  padding-top: 16px !important;
+  /* room for the upward translateY lift and top shadow */
+  padding-bottom: 32px !important;
   /* room for the shadow below */
-  margin-top: -8px;
+  margin-top: -16px !important;
   /* compensate so overall spacing stays the same */
-  margin-bottom: -16px;
+  margin-bottom: -32px !important;
   /* compensate so overall spacing stays the same */
 }
 
@@ -1144,7 +1144,7 @@
 
 .promo-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark variant — charcoal/near-black */
@@ -1152,10 +1152,11 @@
   background: #1d1d1f;
 }
 
-/* Light variant — light gray */
+/* Light variant — white background with premium soft shadow */
 .promo-card--light {
-  background: #f5f5f7;
-  border: 1px solid #e5e5e7;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 /* ─── Label pill ─── */
@@ -1652,8 +1653,8 @@
   position: sticky;
   top: 80px;
   z-index: 50;
-  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
-  max-height: 100px;
+  transition: max-height 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease-out, padding 0.35s cubic-bezier(0.25, 1, 0.5, 1), margin 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  max-height: 72px;
   opacity: 1;
   overflow: hidden;
 }
@@ -1673,8 +1674,8 @@
     padding: 4px 16px 10px;
     top: 110px;
     overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
-    max-height: 80px;
+    transition: max-height 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease-out, padding 0.35s cubic-bezier(0.25, 1, 0.5, 1), margin 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    max-height: 48px;
     opacity: 1;
   }
 

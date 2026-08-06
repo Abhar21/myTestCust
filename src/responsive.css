@@ -30,11 +30,11 @@
     height: 36px !important;
     margin: 2px 0 14px 0 !important;
   }
-  
+
   .search-pill-field {
     padding: 0 10px !important;
   }
-  
+
   .search-pill-button {
     width: 28px !important;
     height: 28px !important;
@@ -92,6 +92,24 @@
     width: auto !important;
     box-sizing: border-box !important;
     -webkit-overflow-scrolling: touch !important;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease !important;
+    max-height: 100px !important;
+    opacity: 1 !important;
+    overflow-y: hidden !important;
+  }
+
+  .center-tabs.center-tabs-hidden {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    pointer-events: none !important;
   }
 
   .tab-item {
@@ -152,6 +170,12 @@
   }
 
   /* Banner frame mobile padding override */
+  .banner-frame {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.03) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  }
+
   .banner-frame__inner {
     padding: 24px 20px !important;
     gap: 20px !important;
@@ -163,16 +187,49 @@
   }
 
   /* Footer Mobile Styles */
+  .mooment-footer {
+    background: #ffffff !important;
+    padding: 32px 16px 40px 16px !important;
+    border-top: none !important;
+    margin-top: 40px !important;
+  }
+
+  .footer-inner {
+    padding: 0 !important;
+  }
+
   .footer-top-split {
+    display: block !important;
+    padding-bottom: 0 !important;
+  }
+
+  .footer-brand-col {
+    width: 100% !important;
+    text-align: left !important;
+    display: flex !important;
     flex-direction: column !important;
     align-items: flex-start !important;
-    gap: 32px !important;
-    padding-bottom: 32px !important;
+    gap: 0px !important;
+  }
+
+  .mooment-footer .footer-logo-row {
+    margin-bottom: 4px !important;
+  }
+
+  .mooment-footer .logo-text {
+    font-size: 28px !important;
+    color: #8c8c8c !important;
+    display: inline-block !important;
+    font-weight: 700 !important;
   }
 
   .footer-tagline {
-    font-size: 28px !important;
-    margin-bottom: 16px !important;
+    font-size: 14px !important;
+    color: #8c8c8c !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+    text-align: left !important;
     max-width: 100% !important;
   }
 
@@ -180,22 +237,11 @@
     display: none !important;
   }
 
-  .footer-links-stack {
-    align-items: flex-start !important;
-    gap: 16px !important;
-    width: 100% !important;
-  }
-
+  .footer-social-circle,
+  .footer-links-stack,
+  .footer-divider-line,
   .footer-bottom-row {
-    flex-direction: column-reverse !important;
-    align-items: flex-start !important;
-    gap: 16px !important;
-  }
-
-  .footer-bottom-right-links {
-    width: 100% !important;
-    flex-wrap: wrap !important;
-    gap: 16px 24px !important;
+    display: none !important;
   }
 
   /* Make horizontal scroll rows match the exact search bar margins */
@@ -212,8 +258,20 @@
   }
 
   .promo-card {
-    flex: 0 0 80% !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
     min-width: 0 !important;
+    border-radius: 28px;
+  }
+
+  .promo-scroll-row {
+    justify-content: center !important;
+    overflow-x: hidden !important;
+  }
+
+  .promo-scroll-row .promo-card:not(:first-child) {
+    display: none !important;
   }
 
   /* Hide rounded navigation arrows on mobile */
@@ -517,6 +575,7 @@
   from {
     transform: translateY(100%);
   }
+
   to {
     transform: translateY(0);
   }
@@ -527,6 +586,7 @@
     align-items: flex-end !important;
     padding: 0 !important;
   }
+
   .bottom-sheet-on-mobile .modal-content-animate {
     width: 100% !important;
     max-width: 100% !important;

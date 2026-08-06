@@ -606,6 +606,28 @@ function App() {
   }, [selectedVendorDetail]);
 
   useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const page = params.get('page');
+      const vendorName = params.get('vendor');
+      if (page === 'detail' && vendorName) {
+        const found = [...homeListings, ...checkoutListings, ...bestRatingListings].find(item => item.title === vendorName) || null;
+        setSelectedVendorDetail(found);
+        setIsSearchView(true);
+      } else {
+        setSelectedVendorDetail(null);
+        if (page === 'search') {
+          setIsSearchView(true);
+        } else {
+          setIsSearchView(false);
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
     if (showMobileAddressModal || showSelectItemsModal || showSelectItemsDrawer) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -2251,9 +2273,20 @@ function App() {
                 <div className="logo-section" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => {
                   if (window.innerWidth <= 768 && (isSearchView || selectedVendorDetail)) {
                     if (selectedVendorDetail) {
+                      const params = new URLSearchParams(window.location.search);
+                      const hasSearch = params.has('where') || params.get('page') === 'search';
                       setSelectedVendorDetail(null);
+                      if (hasSearch) {
+                        params.set('page', 'search');
+                        params.delete('vendor');
+                        window.history.pushState({}, '', '?' + params.toString());
+                      } else {
+                        setIsSearchView(false);
+                        window.history.pushState({}, '', window.location.pathname);
+                      }
                     } else {
                       setIsSearchView(false);
+                      window.history.pushState({}, '', window.location.pathname);
                     }
                   } else {
                     window.location.href = window.location.origin + window.location.pathname;

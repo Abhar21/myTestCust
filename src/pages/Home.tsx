@@ -718,7 +718,11 @@ function App() {
   }
 
   const handleCardClick = (caterTitle: string) => {
-    window.location.href = `?page=detail&vendor=${encodeURIComponent(caterTitle)}&when=${encodeURIComponent(whenInput)}`;
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', 'detail');
+    params.set('vendor', caterTitle);
+    params.set('when', whenInput);
+    window.location.href = '?' + params.toString();
   }
 
   const actualToday = new Date();
@@ -2287,7 +2291,7 @@ function App() {
             <div className="airbnb-header-row">
               <div className="header-left-col">
                 <div className="logo-section" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => {
-                  if (window.innerWidth <= 768 && (isSearchView || selectedVendorDetail)) {
+                  if (isSearchView || selectedVendorDetail) {
                     if (selectedVendorDetail) {
                       const params = new URLSearchParams(window.location.search);
                       const hasSearch = params.has('where') || params.get('page') === 'search';
@@ -2296,6 +2300,7 @@ function App() {
                         params.set('page', 'search');
                         params.delete('vendor');
                         window.history.pushState({}, '', '?' + params.toString());
+                        setIsSearchView(true);
                       } else {
                         setIsSearchView(false);
                         window.history.pushState({}, '', window.location.pathname);
@@ -2560,7 +2565,11 @@ function App() {
                     <div className="detail-left-meta-section">
                       <div className="detail-left-meta-item">
                         <div className="detail-left-meta-label">CATEGORIES</div>
-                        <div className="detail-left-meta-value">Breakfast · Lunch · Snacks · Dinner</div>
+                        <div className="detail-left-meta-value">
+                          {['Breakfast', 'Lunch', 'Snacks', 'Dinner']
+                            .filter(cat => cat !== 'Breakfast' || (hasBreakfastMenu && acceptsBreakfastOrders))
+                            .join(' · ')}
+                        </div>
                       </div>
 
                       <div className="detail-left-meta-item">
@@ -2786,7 +2795,7 @@ function App() {
                                 lineHeight: '1.4',
                                 fontFamily: 'inherit'
                               }}>
-                                This partner is not accepting orders at the moment
+                                Currently not accepting orders at this moment
                               </div>
                             </div>
                             <svg width="78" height="64" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
@@ -2847,7 +2856,7 @@ function App() {
                                 lineHeight: '1.4',
                                 fontFamily: 'inherit'
                               }}>
-                                Currently not accepting orders
+                                Currently not accepting orders at this moment
                               </div>
                             </div>
                             <svg width="78" height="64" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
@@ -3448,7 +3457,14 @@ function App() {
                             <span className="card-title">{home.title}</span>
                           </div>
                           <div className="card-categories-row" style={{ marginTop: '8px' }}>
-                            {home.categories.join(' · ')}
+                            {home.categories.filter(cat => {
+                              if (cat === 'Breakfast') {
+                                const hasBreakfast = !home.title.toLowerCase().includes('figma');
+                                const acceptsBreakfast = !home.title.toLowerCase().includes('venkata');
+                                return hasBreakfast && acceptsBreakfast;
+                              }
+                              return true;
+                            }).join(' · ')}
                           </div>
                           <div className="card-food-type-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '400' }}>
                             {getFoodType(home.title)}

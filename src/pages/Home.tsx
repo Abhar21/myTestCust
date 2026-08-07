@@ -2571,12 +2571,26 @@ function App() {
                   <div className="detail-under-image-info">
                     <div className="detail-profile-header">
                       <h1 className="detail-left-title">{selectedVendorDetail.title}</h1>
-                      <div className="detail-left-rating-row">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: '2px' }}>
-                          <path d="M12 2C12.42 2 12.83 2.12 13.18 2.34L14.73 3.32C15.08 3.54 15.49 3.66 15.91 3.66L17.75 3.66C18.85 3.66 19.75 4.56 19.75 5.66L19.75 7.5C19.75 7.92 19.87 8.33 20.09 8.68L21.07 10.23C21.6 11.08 21.6 12.16 21.07 13.01L20.09 14.56C19.87 14.91 19.75 15.32 19.75 15.74L19.75 17.58C19.75 18.68 18.85 19.58 17.75 19.58L15.91 19.58C15.49 19.58 15.08 19.7 14.73 19.92L13.18 20.9C12.46 21.36 11.54 21.36 10.82 20.9L9.27 19.92C8.92 19.7 8.51 19.58 8.09 19.58L6.25 19.58C5.15 19.58 4.25 18.68 4.25 17.58L4.25 15.74C4.25 15.32 4.13 14.91 3.91 14.56L2.93 13.01C2.4 12.16 2.4 11.08 2.93 10.23L3.91 8.68C4.13 8.33 4.25 7.92 4.25 7.5L4.25 5.66C4.25 4.56 5.15 3.66 6.25 3.66L8.09 3.66C8.51 3.66 8.92 3.54 9.27 3.32L10.82 2.34C11.17 2.12 11.58 2 12 2Z" fill="#3b82f6" />
-                          <path d="M10.75 15.25C10.55 15.25 10.36 15.17 10.22 15.03L7.72 12.53C7.43 12.24 7.43 11.76 7.72 11.47C8.01 11.18 8.49 11.18 8.78 11.47L10.75 13.44L15.22 8.97C15.51 8.68 15.99 8.68 16.28 8.97C16.57 9.26 16.57 9.74 16.28 10.03L11.28 15.03C11.14 15.17 10.95 15.25 10.75 15.25Z" fill="white" />
-                        </svg>
-                        <span style={{ color: '#3b82f6', fontWeight: '400', fontSize: '12px' }}>Verified</span>
+                      <div className="detail-left-rating-row" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#666', fontSize: '12px', fontWeight: '500' }}>
+                        {animateTravelInfo ? (
+                          <span style={{ display: 'inline-block', perspective: '400px', transformStyle: 'preserve-3d' }}>
+                            {[...getCaterTravelInfo(selectedVendorDetail.title)].map((char, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  display: 'inline-block',
+                                  animationDelay: `${index * 0.04}s`,
+                                  whiteSpace: char === ' ' ? 'pre' : 'normal'
+                                }}
+                                className="wave-char-pink"
+                              >
+                                {char}
+                              </span>
+                            ))}
+                          </span>
+                        ) : (
+                          getCaterTravelInfo(selectedVendorDetail.title)
+                        )}
                       </div>
                     </div>
 

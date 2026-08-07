@@ -432,6 +432,15 @@ function App() {
   const [drawerSelectedItems, setDrawerSelectedItems] = useState<string[]>([]);
   const [previewGuestCount, setPreviewGuestCount] = useState<number>(50);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
+  const [showCouponSuccess, setShowCouponSuccess] = useState(false);
+  const applyCoupon = (code: string | null) => {
+    if (code === null) {
+      setAppliedCouponCode(null);
+    } else {
+      setAppliedCouponCode(code);
+      setShowCouponSuccess(true);
+    }
+  };
   const [showCouponTerms, setShowCouponTerms] = useState<string | null>(null);
   const [showAllOffers, setShowAllOffers] = useState(false);
   const [showReviewsModalDesktop, setShowReviewsModalDesktop] = useState(false);
@@ -559,15 +568,19 @@ function App() {
     }
   }, [loginStep, otpTimer])
 
-  // Year and Month navigation states (Locks initial to July 2026)
-  const [currentYear, setCurrentYear] = useState(2026)
-  const [currentMonth, setCurrentMonth] = useState(6) // 6 = July (0-indexed)
-  const [modalYear, setModalYear] = useState(2026)
-  const [modalMonth, setModalMonth] = useState(6)
+   const actualToday = new Date()
+   const actualMonth = actualToday.getMonth()
+   const actualYear = actualToday.getFullYear()
 
-  // Desktop detail calendar states (August 2026 default)
-  const [detailMonth, setDetailMonth] = useState(7)
-  const [detailYear, setDetailYear] = useState(2026)
+   // Year and Month navigation states (Dynamic initialization to current date)
+   const [currentYear, setCurrentYear] = useState(actualYear)
+   const [currentMonth, setCurrentMonth] = useState(actualMonth)
+   const [modalYear, setModalYear] = useState(actualYear)
+   const [modalMonth, setModalMonth] = useState(actualMonth)
+
+   // Desktop detail calendar states (Dynamic initialization to current date)
+   const [detailMonth, setDetailMonth] = useState(actualMonth)
+   const [detailYear, setDetailYear] = useState(actualYear)
 
   // Address Manager selected address state (initialized to null for Screen 2)
   const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(() => {
@@ -603,6 +616,13 @@ function App() {
 
   const [showSidebar, setShowSidebar] = useState(false)
   const [activeMenuCategory, setActiveMenuCategory] = useState("All")
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
   const [selectedVendorDetail, setSelectedVendorDetail] = useState<HomeListing | null>(() => {
     if (typeof window === 'undefined') return null;
     const params = new URLSearchParams(window.location.search);
@@ -727,10 +747,6 @@ function App() {
     params.set('when', whenInput);
     window.location.href = '?' + params.toString();
   }
-
-  const actualToday = new Date();
-  const actualMonth = actualToday.getMonth();
-  const actualYear = actualToday.getFullYear();
   const isPrevDisabled = currentYear < actualYear || (currentYear === actualYear && currentMonth <= actualMonth);
   const maxYear = actualYear + 1;
   const isNextDisabled = currentYear > maxYear || (currentYear === maxYear && currentMonth >= actualMonth);
@@ -948,7 +964,7 @@ function App() {
       const minSelectableDate = new Date(today);
       minSelectableDate.setDate(minSelectableDate.getDate() + 3);
       const maxSelectableDate = new Date(today);
-      maxSelectableDate.setFullYear(today.getFullYear() + 1);
+      maxSelectableDate.setDate(today.getDate() + 90);
       let isBooked = false;
       if (year === 2026 && month === 7) {
         isBooked = d === 10 || d === 11 || d === 12 || d === 24 || d === 25;
@@ -1134,7 +1150,7 @@ function App() {
                   type="button"
                   className="calendar-nav-btn"
                   onClick={handlePrevMonth}
-                  disabled={currentMonth === 6 && currentYear === 2026}
+                  disabled={isPrevDisabled}
                 >
                   &lt;
                 </button>
@@ -2158,7 +2174,7 @@ function App() {
                               <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>Flat ₹100 off on orders above ₹699</div>
                               <div onClick={() => setShowCouponTerms('SAVE10')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
                             </div>
-                            <button onClick={() => setAppliedCouponCode(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'SAVE10' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'SAVE10' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'SAVE10' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
+                            <button onClick={() => applyCoupon(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'SAVE10' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'SAVE10' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'SAVE10' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
                               {appliedCouponCode === 'SAVE10' ? 'Remove' : 'Apply'}
                             </button>
                           </div>
@@ -2173,7 +2189,7 @@ function App() {
                               <div style={{ fontSize: '13px', fontWeight: '700', color: '#222222' }}>Upto 10% off on orders above ₹599</div>
                               <div onClick={() => setShowCouponTerms('FLAT500')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
                             </div>
-                            <button onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT500' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT500' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT500' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
+                            <button onClick={() => applyCoupon(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT500' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT500' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT500' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
                               {appliedCouponCode === 'FLAT500' ? 'Remove' : 'Apply'}
                             </button>
                           </div>
@@ -2189,7 +2205,7 @@ function App() {
                               {subtotal < 5000 && <div style={{ fontSize: '11px', fontWeight: '500', color: '#ef4444', marginTop: '4px', marginBottom: '2px' }}>Add more ₹{Math.max(0, 5000 - subtotal)} to apply</div>}
                               <div onClick={() => setShowCouponTerms('FLAT200')} style={{ fontSize: '12px', fontWeight: '600', color: '#222222', marginTop: '2px', textDecoration: 'underline', cursor: 'pointer' }}>Terms apply</div>
                             </div>
-                            <button disabled={subtotal < 5000} onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')} style={subtotal < 5000 ? { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '600', cursor: 'not-allowed', background: '#f3f4f6', color: '#9ca3af', border: '1px solid #d1d5db', textTransform: 'uppercase' } : { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
+                            <button disabled={subtotal < 5000} onClick={() => applyCoupon(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')} style={subtotal < 5000 ? { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '600', cursor: 'not-allowed', background: '#f3f4f6', color: '#9ca3af', border: '1px solid #d1d5db', textTransform: 'uppercase' } : { padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer', background: appliedCouponCode === 'FLAT200' ? '#fee2e2' : '#000000', color: appliedCouponCode === 'FLAT200' ? '#ef4444' : '#ffffff', border: appliedCouponCode === 'FLAT200' ? '1px dashed #ef4444' : '1px solid #000000', textTransform: 'uppercase' }}>
                               {subtotal >= 5000 && appliedCouponCode === 'FLAT200' ? 'Remove' : 'Apply'}
                             </button>
                           </div>
@@ -2585,31 +2601,6 @@ function App() {
                           <span className="detail-type-text">
                             {getFoodType(selectedVendorDetail.title)}
                           </span>
-                        </div>
-                      </div>
-
-                      <div className="detail-left-meta-item">
-                        <div className="detail-left-meta-label">TRAVEL INFO</div>
-                        <div className="detail-left-meta-value" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          {animateTravelInfo ? (
-                            <span style={{ display: 'inline-block', perspective: '400px', transformStyle: 'preserve-3d' }}>
-                              {[...getCaterTravelInfo(selectedVendorDetail.title)].map((char, index) => (
-                                <span
-                                  key={index}
-                                  style={{
-                                    display: 'inline-block',
-                                    animationDelay: `${index * 0.04}s`,
-                                    whiteSpace: char === ' ' ? 'pre' : 'normal'
-                                  }}
-                                  className="wave-char-pink"
-                                >
-                                  {char}
-                                </span>
-                              ))}
-                            </span>
-                          ) : (
-                            getCaterTravelInfo(selectedVendorDetail.title)
-                          )}
                         </div>
                       </div>
 
@@ -3094,7 +3085,7 @@ function App() {
                         userSelect: 'none'
                       }}
                       title="Click to copy code"
-                      onClick={() => { navigator.clipboard.writeText('SAVE10'); alert('Code "SAVE10" copied to clipboard!'); }}
+                      onClick={() => { navigator.clipboard.writeText('SAVE10'); setToastMessage('Succesfully copied'); }}
                     >
                       SAVE10
                     </div>
@@ -3144,7 +3135,7 @@ function App() {
                         userSelect: 'none'
                       }}
                       title="Click to copy code"
-                      onClick={() => { navigator.clipboard.writeText('FLAT500'); alert('Code "FLAT500" copied to clipboard!'); }}
+                      onClick={() => { navigator.clipboard.writeText('FLAT500'); setToastMessage('Succesfully copied'); }}
                     >
                       FLAT500
                     </div>
@@ -3274,7 +3265,57 @@ function App() {
                     </div>
 
                     {/* Divider Line / White Gap */}
-                    <div style={{ height: '4px', backgroundColor: '#ffffffff' }} />
+                    <div style={{ height: '4px', backgroundColor: '#ffffff' }} />
+
+                    {/* Row 2: Travel Info */}
+                    <div className="delivery-details-row delivery-details-row__travel" style={{ background: '#ffffff', border: 'none', borderRadius: 0 }}>
+                      <span className="delivery-details-icon" style={{
+                        backgroundColor: '#fffbeb',
+                        color: '#d97706',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="1" y="3" width="15" height="13"></rect>
+                          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                      </span>
+                      <div className="delivery-details-content">
+                        <div className="delivery-details-title" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <span style={{ fontWeight: '800', color: '#222222' }}>TRAVEL INFO</span>
+                          <span style={{ fontWeight: '400', fontSize: '13px', color: '#555555' }}>
+                            {animateTravelInfo ? (
+                              <span style={{ display: 'inline-block', perspective: '400px', transformStyle: 'preserve-3d' }}>
+                                {[...getCaterTravelInfo(selectedVendorDetail.title).replace('🚚 ', '')].map((char, index) => (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      display: 'inline-block',
+                                      animationDelay: `${index * 0.04}s`,
+                                      whiteSpace: char === ' ' ? 'pre' : 'normal'
+                                    }}
+                                    className="wave-char-pink"
+                                  >
+                                    {char}
+                                  </span>
+                                ))}
+                              </span>
+                            ) : (
+                              getCaterTravelInfo(selectedVendorDetail.title).replace('🚚 ', '')
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Divider Line / White Gap */}
+                    <div style={{ height: '4px', backgroundColor: '#ffffff' }} />
 
                     {/* Row 3: Fulfilled by Vendor */}
                     <div className="delivery-details-row delivery-details-row__fulfilled" style={{ background: '#ffffff', border: 'none', borderRadius: 0 }}>
@@ -5483,7 +5524,7 @@ function App() {
                     cursor: 'pointer',
                     flexShrink: 0
                   }}
-                  onClick={() => { navigator.clipboard.writeText(showCouponTerms || ''); alert('Code copied!'); }}
+                  onClick={() => { navigator.clipboard.writeText(showCouponTerms || ''); setToastMessage('Succesfully copied'); }}
                 >
                   <span style={{ fontSize: '14px', fontWeight: '800', color: '#222222', letterSpacing: '0.5px' }}>
                     {showCouponTerms}
@@ -5635,7 +5676,7 @@ function App() {
                   onClick={() => {
                     const inlineSubtotal = previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49);
                     if (manualCouponCode.trim() === 'SAVE10' || manualCouponCode.trim() === 'FLAT500' || (manualCouponCode.trim() === 'FLAT200' && inlineSubtotal >= 5000)) {
-                      setAppliedCouponCode(manualCouponCode.trim());
+                      applyCoupon(manualCouponCode.trim());
                       setShowAllOffers(false);
                       setManualCouponCode('');
                     } else if (manualCouponCode.trim() === 'FLAT200') {
@@ -5696,7 +5737,7 @@ function App() {
                     </div>
                   </div>
                   <button
-                    onClick={() => setAppliedCouponCode(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')}
+                    onClick={() => applyCoupon(appliedCouponCode === 'SAVE10' ? null : 'SAVE10')}
                     style={{
                       padding: '8px 16px',
                       borderRadius: '8px',
@@ -5715,7 +5756,6 @@ function App() {
                     {appliedCouponCode === 'SAVE10' ? 'Remove' : 'Apply'}
                   </button>
                 </div>
-
                 {/* Coupon 2: FLAT500 */}
                 <div style={{
                   background: '#ffffff',
@@ -5745,7 +5785,7 @@ function App() {
                     </div>
                   </div>
                   <button
-                    onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')}
+                    onClick={() => applyCoupon(appliedCouponCode === 'FLAT500' ? null : 'FLAT500')}
                     style={{
                       padding: '8px 16px',
                       borderRadius: '8px',
@@ -5800,7 +5840,7 @@ function App() {
                   </div>
                   <button
                     disabled={(previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49)) < 5000}
-                    onClick={() => setAppliedCouponCode(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')}
+                    onClick={() => applyCoupon(appliedCouponCode === 'FLAT200' ? null : 'FLAT200')}
                     style={
                       (previewGuestCount * (selectedMenuData?.price ? parseInt(selectedMenuData.price.match(/\d+/)![0], 10) : 49)) < 5000 ? {
                         padding: '8px 16px',
@@ -5982,6 +6022,151 @@ function App() {
               </>
             )}
           </div>
+        </div>
+      )}
+
+      {showCouponSuccess && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 5000000,
+          backdropFilter: 'blur(4px)',
+          animation: 'fadeIn 0.2s ease-out'
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            width: '320px',
+            padding: '32px 24px',
+            borderRadius: '28px',
+            textAlign: 'center',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+            animation: 'modalScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+            fontFamily: "'Outfit', 'Inter', sans-serif",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}>
+            {/* Celebration Animating Icon */}
+            <div style={{
+              position: 'relative',
+              width: '80px',
+              height: '80px',
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {/* Confetti pieces animating around */}
+              <div style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                animation: 'rotateConfetti 4s linear infinite'
+              }}>
+                {[...Array(6)].map((_, i) => (
+                  <span key={i} style={{
+                    position: 'absolute',
+                    width: i % 2 === 0 ? '6px' : '10px',
+                    height: i % 2 === 0 ? '12px' : '10px',
+                    backgroundColor: ['#FF35E0', '#4CAF50', '#FFC107', '#00BCD4', '#FF5722'][i % 5],
+                    borderRadius: i % 2 === 0 ? '2px' : '50%',
+                    top: `${50 + 40 * Math.sin((i * 2 * Math.PI) / 6)}%`,
+                    left: `${50 + 40 * Math.cos((i * 2 * Math.PI) / 6)}%`,
+                    transform: `rotate(${i * 60}deg)`,
+                    opacity: 0.8
+                  }} />
+                ))}
+              </div>
+              {/* Center Party Popper Icon */}
+              <div style={{
+                fontSize: '52px',
+                animation: 'bouncePopper 1s ease-in-out infinite alternate',
+                display: 'inline-block'
+              }}>
+                🎉
+              </div>
+            </div>
+
+            {/* Text */}
+            <h2 style={{
+              fontSize: '20px',
+              fontWeight: '700',
+              color: '#222222',
+              margin: '0 0 8px 0'
+            }}>
+              Coupon applied successfully
+            </h2>
+            <p style={{
+              fontSize: '14px',
+              color: '#717171',
+              margin: '0 0 24px 0',
+              fontWeight: '500'
+            }}>
+              You saved big on this booking!
+            </p>
+
+            {/* Button */}
+            <button
+              onClick={() => setShowCouponSuccess(false)}
+              style={{
+                width: '100%',
+                padding: '14px 28px',
+                backgroundColor: '#000000',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '14px',
+                fontSize: '15px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                transition: 'transform 0.15s, background-color 0.2s',
+                outline: 'none'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#222222'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#000000'}
+              onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.96)'}
+              onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              Enjoy it
+            </button>
+          </div>
+        </div>
+      )}
+      {toastMessage && (
+        <div style={{
+          position: 'fixed',
+          top: '24px',
+          left: '16px',
+          right: '16px',
+          margin: '0 auto',
+          maxWidth: '480px',
+          backgroundColor: '#ffffff',
+          color: '#000000',
+          padding: '14px 20px',
+          borderRadius: '12px',
+          fontSize: '14px',
+          fontWeight: '600',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.08)',
+          zIndex: 9999999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          gap: '10px',
+          animation: 'toastSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, fadeOut 0.3s ease-in 2.7s forwards',
+          fontFamily: "'Outfit', 'Inter', sans-serif"
+        }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span style={{ textAlign: 'left' }}>{toastMessage}</span>
         </div>
       )}
 

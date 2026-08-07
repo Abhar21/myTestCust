@@ -486,13 +486,13 @@
   .detail-left-pane {
     display: flex !important;
     flex-direction: row !important;
-    gap: 16px !important;
+    gap: 12px !important;
     align-items: flex-start !important;
   }
 
   .detail-large-image {
-    flex: 0 0 45% !important;
-    width: 45% !important;
+    flex: 0 0 40% !important;
+    width: 40% !important;
     height: auto !important;
     aspect-ratio: 1 !important;
     /* square or close to it looks better side-by-side, maybe let it follow original 16/10 */
@@ -505,7 +505,7 @@
     margin-top: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important;
+    gap: 18px !important;
   }
 
   .detail-profile-header {
@@ -529,12 +529,12 @@
   }
 
   .detail-left-meta-section {
-    gap: 12px !important;
+    gap: 16px !important;
   }
 
   .detail-left-meta-label {
     font-size: 9px !important;
-    margin-bottom: 2px !important;
+    margin-bottom: 4px !important;
   }
 
   .detail-left-meta-value {

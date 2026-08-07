@@ -470,6 +470,13 @@
     margin: 16px auto 40px auto !important;
   }
 
+  .detail-right-pane {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+  }
+
   .detail-split-layout {
     flex-direction: column !important;
     gap: 24px !important;

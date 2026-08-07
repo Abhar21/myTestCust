@@ -2669,6 +2669,14 @@
   transform: scale(0.98);
 }
 
+.sidebar-menu-item.become-partner-card {
+  background-color: #f8fafc;
+}
+
+.sidebar-menu-item.become-partner-card:hover {
+  background-color: #f1f5f9;
+}
+
 .sidebar-menu-icon {
   display: flex;
   align-items: center;
@@ -3494,6 +3502,33 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   font-weight: inherit;
   transform-style: preserve-3d;
   animation: charWave3DPink 1.5s ease-in-out forwards;
+}
+
+.wave-char-pink-infinite {
+  display: inline-block;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  transform-style: preserve-3d;
+  animation: charWave3DPinkInfinite 6s ease-in-out infinite;
+}
+
+@keyframes charWave3DPinkInfinite {
+  0% {
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1);
+    text-shadow: 0 0 0 rgba(255, 53, 224, 0);
+    color: #222222;
+  }
+  12.5% {
+    transform: translate3d(0, -6px, 12px) rotateX(15deg) rotateY(-10deg) scale(1.12);
+    text-shadow: 0 4px 8px rgba(255, 53, 224, 0.35);
+    color: #FF35E0;
+  }
+  25%, 100% {
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1);
+    text-shadow: 0 0 0 rgba(255, 53, 224, 0);
+    color: #222222;
+  }
 }
 
 

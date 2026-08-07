@@ -2630,14 +2630,41 @@ function App() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 8px 24px rgba(255, 53, 224, 0.4)',
-                  animation: 'vizag-bounce 2s infinite ease-in-out'
+                  boxShadow: '0 8px 24px rgba(255, 53, 224, 0.4)'
                 }}>
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>
                   </svg>
                 </div>
+              </div>
+
+              {/* Live Status indicator with wave animation */}
+              <div style={{
+                fontSize: '15px',
+                fontWeight: '700',
+                marginBottom: '24px',
+                perspective: '400px',
+                transformStyle: 'preserve-3d',
+                color: '#222222',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px'
+              }}>
+                {[..."Live in Hyderabad"].map((char, index) => (
+                  <span
+                    key={index}
+                    style={{
+                      display: 'inline-block',
+                      animationDelay: `${index * 0.09}s`,
+                      whiteSpace: char === ' ' ? 'pre' : 'normal'
+                    }}
+                    className="wave-char-pink-infinite"
+                  >
+                    {char}
+                  </span>
+                ))}
               </div>
 
               <h1 style={{
@@ -2654,15 +2681,15 @@ function App() {
                 maxWidth: '380px',
                 lineHeight: '1.6',
                 margin: '0 auto 80px auto',
-                fontWeight: '600'
+                fontWeight: '500'
               }}>
                 We're working hard, to get the service in your location
               </p>
-              <p style={{
+              {/*<p style={{
                 fontSize: '13px',
                 color: '#888888',
                 margin: '0 auto 8px auto',
-                fontWeight: '600'
+                fontWeight: '500'
               }}>
                 thankyou for your patience
               </p>
@@ -2673,7 +2700,7 @@ function App() {
                 letterSpacing: '-0.5px'
               }}>
                 myMooment
-              </div>
+              </div>*/}
             </main>
           ) : selectedVendorDetail ? (
             <main className="detail-view-container">
@@ -4088,7 +4115,7 @@ function App() {
             </div>
             <div className="sidebar-content">
               {/* Become Partner */}
-              <div className="sidebar-menu-item" onClick={() => { alert('Become Partner clicked'); setShowSidebar(false); }}>
+              <div className="sidebar-menu-item become-partner-card" onClick={() => { alert('Become Partner clicked'); setShowSidebar(false); }}>
                 <div className="sidebar-menu-text-col">
                   <span className="sidebar-menu-label">Become Partner</span>
                   <span className="sidebar-menu-subtitle">List your business in just under 5 mintues for FREE</span>
@@ -4117,9 +4144,10 @@ function App() {
                 </div>
               </div>
 
+              <div className="sidebar-divider"></div>
+
               {isLoggedIn ? (
                 <>
-                  <div className="sidebar-divider"></div>
                   <div className="sidebar-menu-item" onClick={() => {
                     setShowSidebar(false);
                     navigate('/profile');
@@ -4172,7 +4200,6 @@ function App() {
                 </>
               ) : (
                 <>
-                  <div className="sidebar-divider"></div>
                   <div className="sidebar-menu-item" onClick={() => {
                     setShowSidebar(false);
 

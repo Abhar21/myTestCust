@@ -4250,3 +4250,7 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
     opacity: 0;
   }
 }
+
+.recommendations-scroll::-webkit-scrollbar {
+  display: none;
+}

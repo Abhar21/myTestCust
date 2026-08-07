@@ -568,19 +568,19 @@ function App() {
     }
   }, [loginStep, otpTimer])
 
-   const actualToday = new Date()
-   const actualMonth = actualToday.getMonth()
-   const actualYear = actualToday.getFullYear()
+  const actualToday = new Date()
+  const actualMonth = actualToday.getMonth()
+  const actualYear = actualToday.getFullYear()
 
-   // Year and Month navigation states (Dynamic initialization to current date)
-   const [currentYear, setCurrentYear] = useState(actualYear)
-   const [currentMonth, setCurrentMonth] = useState(actualMonth)
-   const [modalYear, setModalYear] = useState(actualYear)
-   const [modalMonth, setModalMonth] = useState(actualMonth)
+  // Year and Month navigation states (Dynamic initialization to current date)
+  const [currentYear, setCurrentYear] = useState(actualYear)
+  const [currentMonth, setCurrentMonth] = useState(actualMonth)
+  const [modalYear, setModalYear] = useState(actualYear)
+  const [modalMonth, setModalMonth] = useState(actualMonth)
 
-   // Desktop detail calendar states (Dynamic initialization to current date)
-   const [detailMonth, setDetailMonth] = useState(actualMonth)
-   const [detailYear, setDetailYear] = useState(actualYear)
+  // Desktop detail calendar states (Dynamic initialization to current date)
+  const [detailMonth, setDetailMonth] = useState(actualMonth)
+  const [detailYear, setDetailYear] = useState(actualYear)
 
   // Address Manager selected address state (initialized to null for Screen 2)
   const [selectedAddress, setSelectedAddress] = useState<{ name: string, full: string } | null>(() => {
@@ -2810,7 +2810,7 @@ function App() {
                             <svg width="78" height="64" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
                               {/* Store Building */}
                               <rect x="20" y="28" width="60" height="42" rx="6" fill="#ffffff" stroke="#1e1e24" strokeWidth="2.5" />
-                              
+
                               {/* Awning */}
                               <path d="M15 28 L22 10 L78 10 L85 28 Z" fill="#ef4444" stroke="#1e1e24" strokeWidth="2.5" strokeLinejoin="round" />
                               {/* White Stripes */}
@@ -2871,7 +2871,7 @@ function App() {
                             <svg width="78" height="64" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
                               {/* Store Building */}
                               <rect x="20" y="28" width="60" height="42" rx="6" fill="#ffffff" stroke="#1e1e24" strokeWidth="2.5" />
-                              
+
                               {/* Awning */}
                               <path d="M15 28 L22 10 L78 10 L85 28 Z" fill="#ef4444" stroke="#1e1e24" strokeWidth="2.5" strokeLinejoin="round" />
                               {/* White Stripes */}
@@ -3372,7 +3372,7 @@ function App() {
 
               <div style={{ width: '100%', height: '1px', backgroundColor: '#e2e8f0', marginTop: '48px', marginBottom: '48px' }}></div>
 
-              <div className="detail-reviews-section" style={{ paddingBottom: '32px' }}>
+              <div className="detail-reviews-section" style={{ paddingBottom: '0px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                   <h2 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Rating & Reviews</h2>
                   <button onClick={() => {
@@ -3477,6 +3477,87 @@ function App() {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div style={{ width: '100%', height: '1px', backgroundColor: '#e2e8f0', marginTop: '16px', marginBottom: '24px' }}></div>
+
+              {/* More Recommendations Section */}
+              <div className="detail-recommendations-section" style={{ paddingBottom: '48px' }}>
+                <h2 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  More Recommendations for you
+                </h2>
+                <div
+                  className="recommendations-scroll"
+                  style={{
+                    display: 'flex',
+                    overflowX: 'auto',
+                    gap: '16px',
+                    margin: '0 -24px',
+                    padding: '0 24px 8px 24px',
+                    msOverflowStyle: 'none',
+                    scrollbarWidth: 'none'
+                  }}
+                >
+                  {uniqueCatersRaw
+                    .filter(c => c.title !== selectedVendorDetail.title)
+                    .slice(0, 5)
+                    .map((item, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => handleCardClick(item.title)}
+                        style={{
+                          flex: '0 0 160px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px'
+                        }}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          style={{
+                            width: '160px',
+                            height: '110px',
+                            borderRadius: '20px',
+                            objectFit: 'cover'
+                          }}
+                        />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            color: '#222222',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {item.title}
+                          </div>
+                          <div style={{
+                            fontSize: '12px',
+                            color: '#666666',
+                            fontWeight: '500',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            {getCaterTravelInfo(item.title)}
+                          </div>
+                          <div style={{
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            color: '#666666',
+                            marginTop: '0px'
+                          }}>
+                            {item.price}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  }
                 </div>
               </div>
             </main>

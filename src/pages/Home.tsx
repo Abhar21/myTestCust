@@ -389,7 +389,33 @@ function App() {
   const [loginOTP, setLoginOTP] = useState('')
 
   // Address Modal State
-  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [savedAddresses, setSavedAddresses] = useState<any[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('myMooment_savedAddresses');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.length > 0) {
+            if (!parsed.some((a: any) => a.full.toLowerCase().includes('vizag'))) {
+              parsed.push({ name: 'Vizag', full: 'Vizag, Andhra Pradesh' });
+            }
+            return parsed;
+          }
+        } catch (e) { }
+      }
+    }
+    return [
+      { name: 'Home', full: 'Gachibowli, Hyderabad, Telangana, 543210' },
+      { name: 'Vizag', full: 'Vizag, Andhra Pradesh' }
+    ];
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('myMooment_savedAddresses', JSON.stringify(savedAddresses));
+    }
+  }, [savedAddresses]);
+
   const [showMapModal, setShowMapModal] = useState(false);
   const [mapModalStep, setMapModalStep] = useState(1);
   const [addressLabelType, setAddressLabelType] = useState('Home');
@@ -594,6 +620,7 @@ function App() {
     }
     return null;
   });
+  const isVizagSelected = selectedAddress?.full.toLowerCase().includes('vizag') || selectedAddress?.name.toLowerCase().includes('vizag');
   const [showMobileAddressModal, setShowMobileAddressModal] = useState(false)
   const [animateTravelInfo, setAnimateTravelInfo] = useState(false)
 
@@ -745,7 +772,10 @@ function App() {
     params.set('page', 'detail');
     params.set('vendor', caterTitle);
     params.set('when', whenInput);
-    window.location.href = '?' + params.toString();
+    window.history.pushState({}, '', '?' + params.toString());
+    const found = [...homeListings, ...checkoutListings, ...bestRatingListings].find(item => item.title === caterTitle) || null;
+    setSelectedVendorDetail(found);
+    window.scrollTo(0, 0);
   }
   const isPrevDisabled = currentYear < actualYear || (currentYear === actualYear && currentMonth <= actualMonth);
   const maxYear = actualYear + 1;
@@ -2312,18 +2342,22 @@ function App() {
                 <div className="logo-section" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => {
                   if (isSearchView || selectedVendorDetail) {
                     if (selectedVendorDetail) {
-                      const params = new URLSearchParams(window.location.search);
-                      const hasSearch = params.has('where') || params.get('page') === 'search' || params.get('from') === 'search';
-                      setSelectedVendorDetail(null);
-                      if (hasSearch) {
-                        params.set('page', 'search');
-                        params.delete('vendor');
-                        params.delete('from');
-                        window.history.pushState({}, '', '?' + params.toString());
-                        setIsSearchView(true);
+                      if (window.history.state || window.history.length > 1) {
+                        window.history.back();
                       } else {
-                        setIsSearchView(false);
-                        window.history.pushState({}, '', window.location.pathname);
+                        const params = new URLSearchParams(window.location.search);
+                        const hasSearch = params.has('where') || params.get('page') === 'search' || params.get('from') === 'search';
+                        setSelectedVendorDetail(null);
+                        if (hasSearch) {
+                          params.set('page', 'search');
+                          params.delete('vendor');
+                          params.delete('from');
+                          window.history.pushState({}, '', '?' + params.toString());
+                          setIsSearchView(true);
+                        } else {
+                          setIsSearchView(false);
+                          window.history.pushState({}, '', window.location.pathname);
+                        }
                       }
                     } else {
                       setIsSearchView(false);
@@ -2561,7 +2595,87 @@ function App() {
           </header>
 
           {/* Page Body: Listing Segments or Search Results Grid */}
-          {selectedVendorDetail ? (
+          {isVizagSelected ? (
+            <main style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60vh',
+              padding: '40px 24px',
+              textAlign: 'center',
+              background: '#ffffff',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+            }}>
+              {/* Radar/Pin Drop Animation */}
+              <div className="vizag-anim-container" style={{
+                position: 'relative',
+                width: '120px',
+                height: '120px',
+                marginBottom: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <div className="vizag-radar-wave wave-1"></div>
+                <div className="vizag-radar-wave wave-2"></div>
+                <div className="vizag-radar-wave wave-3"></div>
+                <div className="vizag-pin-container" style={{
+                  position: 'relative',
+                  zIndex: 2,
+                  width: '64px',
+                  height: '64px',
+                  backgroundColor: '#FF35E0',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 8px 24px rgba(255, 53, 224, 0.4)',
+                  animation: 'vizag-bounce 2s infinite ease-in-out'
+                }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+              </div>
+
+              <h1 style={{
+                fontSize: '20px',
+                fontWeight: '700',
+                color: '#222222',
+                marginBottom: '8px'
+              }}>
+                We are coming to your location
+              </h1>
+              <p style={{
+                fontSize: '13px',
+                color: '#666666',
+                maxWidth: '380px',
+                lineHeight: '1.6',
+                margin: '0 auto 80px auto',
+                fontWeight: '600'
+              }}>
+                We're working hard, to get the service in your location
+              </p>
+              <p style={{
+                fontSize: '13px',
+                color: '#888888',
+                margin: '0 auto 8px auto',
+                fontWeight: '600'
+              }}>
+                thankyou for your patience
+              </p>
+              <div style={{
+                fontSize: '18px',
+                fontWeight: '800',
+                color: '#FF35E0',
+                letterSpacing: '-0.5px'
+              }}>
+                myMooment
+              </div>
+            </main>
+          ) : selectedVendorDetail ? (
             <main className="detail-view-container">
               <div className="detail-split-layout">
                 {/* Left side: Image and details */}

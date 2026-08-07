@@ -4254,3 +4254,51 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
 .recommendations-scroll::-webkit-scrollbar {
   display: none;
 }
+
+/* Vizag Coming Soon Radar Animation */
+.vizag-radar-wave {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 53, 224, 0.15);
+  border: 1px solid rgba(255, 53, 224, 0.3);
+  animation: vizag-radar 3s infinite linear;
+  opacity: 0;
+  z-index: 1;
+}
+
+.wave-1 {
+  animation-delay: 0s;
+}
+
+.wave-2 {
+  animation-delay: 1s;
+}
+
+.wave-3 {
+  animation-delay: 2s;
+}
+
+@keyframes vizag-radar {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes vizag-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

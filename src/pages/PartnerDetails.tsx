@@ -25,7 +25,8 @@ const PartnerDetails: React.FC = () => {
 
   // Format string for GST: e.g. 36 + characters from title + 3AB
   const cleanTitle = displayTitle.replace(/[^a-zA-Z]/g, '').toUpperCase();
-  const gstNum = `36${(cleanTitle + 'XXXXXXXXXXXX').substring(0, 10)}1Z1`;
+  const rawGst = `36${(cleanTitle + 'XXXXXXXXXXXX').substring(0, 10)}1Z1`;
+  const gstNum = rawGst.substring(0, 2) + 'x'.repeat(rawGst.length - 4) + rawGst.substring(rawGst.length - 2);
   const fssaiNo = '12345678909876';
 
   const handleClose = () => {

@@ -613,6 +613,9 @@ function App() {
     return null;
   })
 
+  const hasBreakfastMenu = selectedVendorDetail ? !selectedVendorDetail.title.toLowerCase().includes('figma') : true;
+  const acceptsBreakfastOrders = selectedVendorDetail ? !selectedVendorDetail.title.toLowerCase().includes('venkata') : true;
+
   // Auto-show date modal removed based on request
   useEffect(() => {
     // Intentionally empty: date popup shouldn't show on vendor profile load
@@ -2557,7 +2560,7 @@ function App() {
                     <div className="detail-left-meta-section">
                       <div className="detail-left-meta-item">
                         <div className="detail-left-meta-label">CATEGORIES</div>
-                        <div className="detail-left-meta-value">{selectedVendorDetail.categories.join(' · ')}</div>
+                        <div className="detail-left-meta-value">Breakfast · Lunch · Snacks · Dinner</div>
                       </div>
 
                       <div className="detail-left-meta-item">
@@ -2715,7 +2718,7 @@ function App() {
                       >
                         All
                       </div>
-                      {selectedVendorDetail.categories.map(category => (
+                      {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(category => (
                         <div
                           key={category}
                           style={{
@@ -2746,6 +2749,134 @@ function App() {
                     <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#717171', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Menu's
                     </h3>
+
+                    {/* Banners for Breakfast orders */}
+                    {(activeMenuCategory === 'Breakfast') && (
+                      <>
+                        {/* Scenario A: Has menu but not accepting orders */}
+                        {hasBreakfastMenu && !acceptsBreakfastOrders && (
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '24px',
+                            backgroundColor: '#fff4ed',
+                            borderRadius: '16px',
+                            padding: '20px 24px',
+                            marginBottom: '20px',
+                            border: 'none'
+                          }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
+                              <div style={{
+                                backgroundColor: '#ea580c',
+                                color: '#ffffff',
+                                fontSize: '10px',
+                                fontWeight: '700',
+                                padding: '4px 12px',
+                                borderRadius: '100px',
+                                letterSpacing: '0.5px',
+                                textTransform: 'uppercase'
+                              }}>
+                                Closed Right Now
+                              </div>
+                              <div style={{
+                                color: '#431407',
+                                fontSize: '15px',
+                                fontWeight: '600',
+                                lineHeight: '1.4',
+                                fontFamily: 'inherit'
+                              }}>
+                                This partner is not accepting orders at the moment
+                              </div>
+                            </div>
+                            <svg width="78" height="64" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                              {/* Store Building */}
+                              <rect x="20" y="28" width="60" height="42" rx="6" fill="#ffffff" stroke="#1e1e24" strokeWidth="2.5" />
+                              
+                              {/* Awning */}
+                              <path d="M15 28 L22 10 L78 10 L85 28 Z" fill="#ef4444" stroke="#1e1e24" strokeWidth="2.5" strokeLinejoin="round" />
+                              {/* White Stripes */}
+                              <path d="M25.5 10 L20 28 M41.5 10 L37.5 28 M58.5 10 L55 28 M74.5 10 L72.5 28" stroke="#ffffff" strokeWidth="5.5" strokeLinecap="square" />
+                              {/* Bottom scallop of awning */}
+                              <path d="M15 28 C16.5 30.5 19.5 30.5 21 28 C22.5 30.5 25.5 30.5 27 28 C28.5 30.5 31.5 30.5 33 28 C34.5 30.5 37.5 30.5 39 28 C40.5 30.5 43.5 30.5 45 28 C46.5 30.5 49.5 30.5 51 28 C52.5 30.5 55.5 30.5 57 28 C58.5 30.5 61.5 30.5 63 28 C64.5 30.5 67.5 30.5 69 28 C70.5 30.5 73.5 30.5 75 28 C76.5 30.5 79.5 30.5 81 28 C82.5 30.5 85.5 30.5 87 28" fill="#ef4444" stroke="#1e1e24" strokeWidth="2.5" strokeLinejoin="round" />
+
+                              {/* Doorway */}
+                              <rect x="40" y="46" width="20" height="24" rx="2" fill="#ffffff" stroke="#1e1e24" strokeWidth="2.5" />
+
+                              {/* Hanging Closed Sign */}
+                              {/* Signboard */}
+                              <rect x="33" y="32" width="34" height="12" rx="2" fill="#ea580c" stroke="#1e1e24" strokeWidth="2" />
+                              {/* Hanging strings */}
+                              <path d="M38 32 L38 28 M62 32 L62 28" stroke="#1e1e24" strokeWidth="2" strokeLinecap="round" />
+                              {/* Text: "CLOSED" */}
+                              <text x="50" y="40" fill="#ffffff" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">CLOSED</text>
+                            </svg>
+                          </div>
+                        )}
+
+                        {/* Scenario B: No menu, hide menu and show banner */}
+                        {!hasBreakfastMenu && (
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '24px',
+                            backgroundColor: '#fff4ed',
+                            borderRadius: '16px',
+                            padding: '20px 24px',
+                            marginBottom: '20px',
+                            border: 'none'
+                          }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
+                              <div style={{
+                                backgroundColor: '#ea580c',
+                                color: '#ffffff',
+                                fontSize: '10px',
+                                fontWeight: '700',
+                                padding: '4px 12px',
+                                borderRadius: '100px',
+                                letterSpacing: '0.5px',
+                                textTransform: 'uppercase'
+                              }}>
+                                Closed Right Now
+                              </div>
+                              <div style={{
+                                color: '#431407',
+                                fontSize: '15px',
+                                fontWeight: '600',
+                                lineHeight: '1.4',
+                                fontFamily: 'inherit'
+                              }}>
+                                Currently not accepting orders
+                              </div>
+                            </div>
+                            <svg width="78" height="64" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                              {/* Store Building */}
+                              <rect x="20" y="28" width="60" height="42" rx="6" fill="#ffffff" stroke="#1e1e24" strokeWidth="2.5" />
+                              
+                              {/* Awning */}
+                              <path d="M15 28 L22 10 L78 10 L85 28 Z" fill="#ef4444" stroke="#1e1e24" strokeWidth="2.5" strokeLinejoin="round" />
+                              {/* White Stripes */}
+                              <path d="M25.5 10 L20 28 M41.5 10 L37.5 28 M58.5 10 L55 28 M74.5 10 L72.5 28" stroke="#ffffff" strokeWidth="5.5" strokeLinecap="square" />
+                              {/* Bottom scallop of awning */}
+                              <path d="M15 28 C16.5 30.5 19.5 30.5 21 28 C22.5 30.5 25.5 30.5 27 28 C28.5 30.5 31.5 30.5 33 28 C34.5 30.5 37.5 30.5 39 28 C40.5 30.5 43.5 30.5 45 28 C46.5 30.5 49.5 30.5 51 28 C52.5 30.5 55.5 30.5 57 28 C58.5 30.5 61.5 30.5 63 28 C64.5 30.5 67.5 30.5 69 28 C70.5 30.5 73.5 30.5 75 28 C76.5 30.5 79.5 30.5 81 28 C82.5 30.5 85.5 30.5 87 28" fill="#ef4444" stroke="#1e1e24" strokeWidth="2.5" strokeLinejoin="round" />
+
+                              {/* Doorway */}
+                              <rect x="40" y="46" width="20" height="24" rx="2" fill="#ffffff" stroke="#1e1e24" strokeWidth="2.5" />
+
+                              {/* Hanging Closed Sign */}
+                              {/* Signboard */}
+                              <rect x="33" y="32" width="34" height="12" rx="2" fill="#ea580c" stroke="#1e1e24" strokeWidth="2" />
+                              {/* Hanging strings */}
+                              <path d="M38 32 L38 28 M62 32 L62 28" stroke="#1e1e24" strokeWidth="2" strokeLinecap="round" />
+                              {/* Text: "CLOSED" */}
+                              <text x="50" y="40" fill="#ffffff" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">CLOSED</text>
+                            </svg>
+                          </div>
+                        )}
+                      </>
+                    )}
+
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                       {[
                         {
@@ -2785,105 +2916,117 @@ function App() {
                           image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80"
                         }
                       ]
-                        .filter(menu => activeMenuCategory === 'All' || menu.category === activeMenuCategory)
-                        .map((menu, idx) => (
-                          <div
-                            key={idx}
-                            className="detail-recommended-card"
-                            style={{ cursor: 'default' }}
-                          >
-                            <img src={menu.image} alt={menu.title} className="detail-recommended-img" />
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '6px' }}>
-                              <span className="detail-recommended-title" style={{ margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={menu.title}>
-                                {menu.title}
-                              </span>
-                              <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, gap: '4px' }}>
-                                {(menu.type === 'Veg' || menu.type === 'Veg & Non-Veg') && (
-                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #10b981', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
-                                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
-                                  </div>
-                                )}
-                                {(menu.type === 'Non-Veg' || menu.type === 'Veg & Non-Veg') && (
-                                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #ef4444', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
-                                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' }} />
-                                  </div>
-                                )}
+                        .filter(menu => {
+                          if (menu.category === 'Breakfast' && !hasBreakfastMenu) return false;
+                          return activeMenuCategory === 'All' || menu.category === activeMenuCategory;
+                        })
+                        .map((menu, idx) => {
+                          const isBreakfastDisabled = menu.category === 'Breakfast' && !acceptsBreakfastOrders;
+                          return (
+                            <div
+                              key={idx}
+                              className="detail-recommended-card"
+                              style={{ cursor: 'default', opacity: isBreakfastDisabled ? 0.75 : 1 }}
+                            >
+                              <img src={menu.image} alt={menu.title} className="detail-recommended-img" />
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '6px' }}>
+                                <span className="detail-recommended-title" style={{ margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={menu.title}>
+                                  {menu.title}
+                                </span>
+                                <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0, gap: '4px' }}>
+                                  {(menu.type === 'Veg' || menu.type === 'Veg & Non-Veg') && (
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #10b981', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
+                                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }} />
+                                    </div>
+                                  )}
+                                  {(menu.type === 'Non-Veg' || menu.type === 'Veg & Non-Veg') && (
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', border: '1px solid #ef4444', padding: '1px', boxSizing: 'border-box', background: '#ffffff' }}>
+                                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' }} />
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                            <div className="detail-recommended-categories">{menu.guestCount}</div>
-                            <div className="detail-recommended-price-row">
-                              {menu.originalPrice && (
-                                <span className="detail-recommended-price-old">{menu.originalPrice}</span>
-                              )}
-                              <span className="detail-recommended-price-active">{menu.price}</span>
-                            </div>
-                            <button
-                              style={{
-                                marginTop: '14px',
-                                width: '100%',
-                                background: '#222222',
-                                border: 'none',
-                                borderRadius: '8px',
-                                padding: '10px 16px',
-                                fontSize: '13px',
-                                fontWeight: '500',
-                                color: '#ffffff',
-                                cursor: 'pointer',
-                                textAlign: 'center',
-                                transition: 'background-color 0.2s'
-                              }}
-                              onMouseEnter={(e) => e.currentTarget.style.background = '#000000'}
-                              onMouseLeave={(e) => e.currentTarget.style.background = '#222222'}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedMenuForModal(menu.title);
-                                setModalStep(1);
+                              <div className="detail-recommended-categories">{menu.guestCount}</div>
+                              <div className="detail-recommended-price-row">
+                                {menu.originalPrice && (
+                                  <span className="detail-recommended-price-old">{menu.originalPrice}</span>
+                                )}
+                                <span className="detail-recommended-price-active">{menu.price}</span>
+                              </div>
+                              <button
+                                disabled={isBreakfastDisabled}
+                                style={{
+                                  marginTop: '14px',
+                                  width: '100%',
+                                  background: isBreakfastDisabled ? '#9ca3af' : '#222222',
+                                  border: 'none',
+                                  borderRadius: '8px',
+                                  padding: '10px 16px',
+                                  fontSize: '13px',
+                                  fontWeight: '500',
+                                  color: '#ffffff',
+                                  cursor: isBreakfastDisabled ? 'not-allowed' : 'pointer',
+                                  textAlign: 'center',
+                                  transition: 'background-color 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!isBreakfastDisabled) e.currentTarget.style.background = '#000000';
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!isBreakfastDisabled) e.currentTarget.style.background = '#222222';
+                                }}
+                                onClick={(e) => {
+                                  if (isBreakfastDisabled) return;
+                                  e.stopPropagation();
+                                  setSelectedMenuForModal(menu.title);
+                                  setModalStep(1);
 
-                                // Set default date from previous search screen selection
-                                let defaultDate: string | null = null;
-                                if (whenInput && whenInput !== 'Any week') {
-                                  const parts = whenInput.split('-');
-                                  if (parts.length === 3) {
-                                    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                                    const monthIndex = parseInt(parts[1], 10) - 1;
-                                    const day = parseInt(parts[2], 10);
-                                    if (monthIndex >= 0 && monthIndex < 12 && day > 0) {
-                                      defaultDate = `${monthNames[monthIndex]}-${day}`;
+                                  // Set default date from previous search screen selection
+                                  let defaultDate: string | null = null;
+                                  if (whenInput && whenInput !== 'Any week') {
+                                    const parts = whenInput.split('-');
+                                    if (parts.length === 3) {
+                                      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                      const monthIndex = parseInt(parts[1], 10) - 1;
+                                      const day = parseInt(parts[2], 10);
+                                      if (monthIndex >= 0 && monthIndex < 12 && day > 0) {
+                                        defaultDate = `${monthNames[monthIndex]}-${day}`;
+                                      }
                                     }
                                   }
-                                }
 
-                                setModalSelectedDate(defaultDate);
-                                setModalSelectedSlot(null);
-                                setSelectedMenuData(menu);
-                                const parsedMin = (() => {
-                                  if (!menu || !menu.guestCount) return 50;
-                                  const match = menu.guestCount.match(/Min\s+(\d+)/i);
-                                  return match ? parseInt(match[1], 10) : 50;
-                                })();
-                                setPreviewGuestCount(parsedMin);
-                                if (!isLoggedIn) {
-                                  setShowLoginPopup(true);
-                                } else {
-                                  setShowInitialDateModal(true);
-                                }
-                              }}
-                            >
-                              Select Items
-                            </button>
-                            {confirmedSelection[menu.title] && (
-                              <div style={{
-                                marginTop: '12px',
-                                fontSize: '13px',
-                                color: '#222222',
-                                textAlign: 'center',
-                                fontWeight: '500'
-                              }}>
-                                Selected Date: <span style={{ fontWeight: '700', textDecoration: 'underline' }}>{confirmedSelection[menu.title].date}</span>
-                              </div>
-                            )}
-                          </div>
-                        ))
+                                  setModalSelectedDate(defaultDate);
+                                  setModalSelectedSlot(null);
+                                  setSelectedMenuData(menu);
+                                  const parsedMin = (() => {
+                                    if (!menu || !menu.guestCount) return 50;
+                                    const match = menu.guestCount.match(/Min\s+(\d+)/i);
+                                    return match ? parseInt(match[1], 10) : 50;
+                                  })();
+                                  setPreviewGuestCount(parsedMin);
+                                  if (!isLoggedIn) {
+                                    setShowLoginPopup(true);
+                                  } else {
+                                    setShowInitialDateModal(true);
+                                  }
+                                }}
+                              >
+                                {isBreakfastDisabled ? "Not accepting orders" : "Select Items"}
+                              </button>
+                              {confirmedSelection[menu.title] && (
+                                <div style={{
+                                  marginTop: '12px',
+                                  fontSize: '13px',
+                                  color: '#222222',
+                                  textAlign: 'center',
+                                  fontWeight: '500'
+                                }}>
+                                  Selected Date: <span style={{ fontWeight: '700', textDecoration: 'underline' }}>{confirmedSelection[menu.title].date}</span>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
                       }
                     </div>
                   </div>
@@ -3118,7 +3261,7 @@ function App() {
                     </div>
 
                     {/* Divider Line / White Gap */}
-                    <div style={{ height: '4px', backgroundColor: '#ffffff' }} />
+                    <div style={{ height: '4px', backgroundColor: '#ffffffff' }} />
 
                     {/* Row 3: Fulfilled by Vendor */}
                     <div className="delivery-details-row delivery-details-row__fulfilled" style={{ background: '#ffffff', border: 'none', borderRadius: 0 }}>

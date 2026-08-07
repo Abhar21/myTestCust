@@ -719,6 +719,9 @@ function App() {
 
   const handleCardClick = (caterTitle: string) => {
     const params = new URLSearchParams(window.location.search);
+    if (params.get('page') === 'search') {
+      params.set('from', 'search');
+    }
     params.set('page', 'detail');
     params.set('vendor', caterTitle);
     params.set('when', whenInput);
@@ -2294,11 +2297,12 @@ function App() {
                   if (isSearchView || selectedVendorDetail) {
                     if (selectedVendorDetail) {
                       const params = new URLSearchParams(window.location.search);
-                      const hasSearch = params.has('where') || params.get('page') === 'search';
+                      const hasSearch = params.has('where') || params.get('page') === 'search' || params.get('from') === 'search';
                       setSelectedVendorDetail(null);
                       if (hasSearch) {
                         params.set('page', 'search');
                         params.delete('vendor');
+                        params.delete('from');
                         window.history.pushState({}, '', '?' + params.toString());
                         setIsSearchView(true);
                       } else {

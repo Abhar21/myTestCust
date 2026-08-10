@@ -455,7 +455,7 @@
   .search-results-grid,
   .search-left-pane .search-results-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 24px 12px !important;
+    gap: 24px 20px !important;
   }
 
   /* Make home screen listings scroll edge-to-edge */
@@ -505,8 +505,11 @@
     height: auto !important;
     aspect-ratio: 1 !important;
     /* square or close to it looks better side-by-side, maybe let it follow original 16/10 */
-    border-radius: 20px !important;
+    border-radius: 24px !important;
     object-fit: cover !important;
+    border: 3px solid #ffffff !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) !important;
+    box-sizing: border-box !important;
   }
 
   .detail-under-image-info {

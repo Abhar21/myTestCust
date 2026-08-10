@@ -204,6 +204,14 @@
     gap: 20px !important;
   }
 
+  .banner-frame__eyebrow {
+    display: none !important;
+  }
+
+  .banner-frame__title {
+    font-size: 34px !important;
+  }
+
   /* Genius card mobile padding override */
   .genius-card {
     padding: 16px 20px !important;
@@ -289,10 +297,14 @@
     margin: 0 !important;
     min-width: 0 !important;
     border-radius: 28px;
+    cursor: default !important;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.04) !important;
   }
 
   .promo-card:hover {
     transform: none !important;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08) !important;
   }
 
   .promo-card:hover .promo-card__image {

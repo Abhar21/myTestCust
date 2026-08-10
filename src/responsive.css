@@ -6,7 +6,7 @@
   .airbnb-header-container {
     padding: 10px 20px 4px 20px !important;
     gap: 0 !important;
-    background: #ffffff !important;
+    background: #fcfcfc !important;
   }
 
   .logo-section,
@@ -21,7 +21,12 @@
   }
 
   .filters-bar-row {
-    padding: 0 0 10px 0 !important;
+    padding: 4px 20px 10px 20px !important;
+    margin-left: -20px !important;
+    margin-right: -20px !important;
+    overflow: visible !important;
+    max-height: none !important;
+    width: auto !important;
   }
 
   /* Mobile Search Pill */
@@ -337,9 +342,9 @@
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
-    margin: 0 -16px !important;
-    padding: 2px 16px !important;
-    width: auto !important;
+    margin: 0 !important;
+    padding: 6px 0 !important;
+    width: 100% !important;
     max-width: none !important;
     gap: 8px !important;
   }

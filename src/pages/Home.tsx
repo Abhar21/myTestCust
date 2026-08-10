@@ -3750,7 +3750,7 @@ function App() {
                           <div className="card-food-type-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '400' }}>
                             {getFoodType(home.title)}
                           </div>
-                          <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '8px', fontWeight: '500' }}>
+                          <div className="card-travel-row" style={{ fontSize: '11px', color: '#717171', marginTop: '8px', fontWeight: '500' }}>
                             {getCaterTravelInfo(home.title)}
                           </div>
                           <div className="card-details-row" style={{ marginTop: '8px' }}>
@@ -3866,7 +3866,7 @@ function App() {
                         <div className="card-title-row">
                           <span className="card-title">{home.title}</span>
                         </div>
-                        <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
+                        <div className="card-travel-row" style={{ fontSize: '11px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
                           {getCaterTravelInfo(home.title)}
                         </div>
                         <div className="card-details-row">
@@ -3902,7 +3902,7 @@ function App() {
                         <div className="card-title-row">
                           <span className="card-title">{home.title}</span>
                         </div>
-                        <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
+                        <div className="card-travel-row" style={{ fontSize: '11px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
                           {getCaterTravelInfo(home.title)}
                         </div>
                         <div className="card-details-row">
@@ -3970,7 +3970,7 @@ function App() {
                         <div className="card-title-row">
                           <span className="card-title">{home.title}</span>
                         </div>
-                        <div className="card-travel-row" style={{ fontSize: '13px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
+                        <div className="card-travel-row" style={{ fontSize: '11px', color: '#717171', marginTop: '4px', marginBottom: '4px', fontWeight: '500' }}>
                           {getCaterTravelInfo(home.title)}
                         </div>
                         <div className="card-details-row">

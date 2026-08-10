@@ -4,7 +4,7 @@
 
   /* Header Container */
   .airbnb-header-container {
-    padding: 10px 16px 4px 16px !important;
+    padding: 10px 20px 4px 20px !important;
     gap: 0 !important;
     background: #ffffff !important;
   }
@@ -16,7 +16,7 @@
 
   /* Listings & Filters container */
   .listings-container {
-    padding: 0 16px !important;
+    padding: 0 20px !important;
     margin: 24px 0 60px 0 !important;
   }
 
@@ -163,9 +163,9 @@
 
   .tab-item.active {
     color: #222222 !important;
-    border-color: #222222 !important;
+    border-color: transparent !important;
     background: #ffffff !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.16) !important;
   }
 
   /* Adjust badge positioning inside horizontal pills */
@@ -261,11 +261,14 @@
     display: none !important;
   }
 
-  /* Make horizontal scroll rows match the exact search bar margins */
   .listings-scroll-row {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
+    margin-left: -20px !important;
+    margin-right: -20px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-bottom: 12px !important;
+    width: auto !important;
+    overflow-x: auto !important;
   }
 
   /* Promo card & home card mobile width override to fit exactly 2 cards matching margins */

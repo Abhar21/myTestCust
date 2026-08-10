@@ -784,28 +784,39 @@
 .listings-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  width: 100%;
   cursor: pointer;
 }
 
 .listings-title-row h2 {
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 19px;
+  font-weight: 700;
   color: #222222;
   margin: 0;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.4px;
 }
 
 .title-chevron {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e3e3e3;
   color: #222222;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
+  margin-left: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .listings-title-row:hover .title-chevron {
-  transform: translateX(4px);
+  background: #f7f7f7;
+  border-color: #222222;
+  transform: scale(1.05);
 }
 
 .listings-nav-arrows {
@@ -836,7 +847,7 @@
 
 .listings-scroll-row {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   overflow-x: auto;
   scroll-behavior: smooth;
   padding-bottom: 12px;
@@ -854,8 +865,8 @@
 }
 
 .home-card {
-  flex: 0 0 calc((100% - 60px) / 6);
-  min-width: 160px;
+  flex: 0 0 calc((100% - 48px) / 4);
+  min-width: 200px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -922,7 +933,7 @@
 }
 
 .card-info {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .card-title-row {
@@ -933,8 +944,7 @@
 }
 
 .card-title {
-  font-size: 14px;
-  /* reduced for 180px cards */
+  font-size: 15px;
   font-weight: 600;
   color: #222222;
   white-space: nowrap;
@@ -944,9 +954,8 @@
 }
 
 .card-details-row {
-  margin-top: 6px;
-  font-size: 13px;
-  /* reduced for 180px cards */
+  margin-top: 4px;
+  font-size: 14px;
   color: #717171;
   font-weight: 500;
   display: flex;
@@ -1068,7 +1077,8 @@
 
 .card-active-price {
   color: #222222;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .search-card .card-active-price {
@@ -3605,7 +3615,8 @@ input.always-show-spin[type=number]::-webkit-outer-spin-button {
   }
 
   .tab-item.active {
-    border: 1px solid #222222;
+    border: none !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.16) !important;
     color: #222222 !important;
   }
 

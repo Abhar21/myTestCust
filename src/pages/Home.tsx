@@ -419,6 +419,159 @@ function App() {
   const [showMapModal, setShowMapModal] = useState(false);
   const [mapModalStep, setMapModalStep] = useState(1);
   const [addressLabelType, setAddressLabelType] = useState('Home');
+  const [editingAddress, setEditingAddress] = useState<any | null>(null);
+  const [addressActionMenuTarget, setAddressActionMenuTarget] = useState<any | null>(null);
+  const [addressToDeleteConfirm, setAddressToDeleteConfirm] = useState<any | null>(null);
+  const [desktopArea, setDesktopArea] = useState('');
+  const [desktopHouseNo, setDesktopHouseNo] = useState('');
+
+  // Predefined map locations for mobile responsive map screen
+  const MAP_LOCATIONS = [
+    { id: 1, name: 'Jubilee Hills', full: 'Road No. 36, Jubilee Hills, Hyderabad, Telangana, 500033', x: 120, y: 250, label: 'Home' },
+    { id: 2, name: 'Madhapur', full: 'Phase 2, Kavuri Hills, Madhapur, Hyderabad, Telangana, 500081', x: 280, y: 180, label: 'Work' },
+    { id: 3, name: 'Banjara Hills', full: 'Road No. 12, Banjara Hills, Hyderabad, Telangana, 500034', x: 180, y: 420, label: 'Other' },
+    { id: 4, name: 'HITEC City', full: 'Mindspace IT Park, HITEC City, Hyderabad, Telangana, 500081', x: 320, y: 350, label: 'Other' },
+    { id: 5, name: 'Secunderabad', full: 'Prenderghast Road, Secunderabad, Telangana, 500003', x: 80, y: 550, label: 'Other' }
+  ];
+
+  const [currentPin, setCurrentPin] = useState(MAP_LOCATIONS[0]);
+  const [selectedMapLabel, setSelectedMapLabel] = useState('Home');
+  const [mapSearchQuery, setMapSearchQuery] = useState('');
+  const [mobileMapStep, setMobileMapStep] = useState(1);
+  const [mobileHouseNo, setMobileHouseNo] = useState('');
+  const [mobileContactName, setMobileContactName] = useState('John Doe');
+  const [mobileContactPhone, setMobileContactPhone] = useState('+91 98765 43210');
+
+  const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    let closest = MAP_LOCATIONS[0];
+    let minDistance = Infinity;
+
+    MAP_LOCATIONS.forEach(loc => {
+      const mapX = (clickX / rect.width) * 400;
+      const mapY = (clickY / rect.height) * 700;
+      const distance = Math.pow(mapX - loc.x, 2) + Math.pow(mapY - loc.y, 2);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closest = loc;
+      }
+    });
+
+    setCurrentPin(closest);
+    setSelectedMapLabel(closest.label);
+  };
+
+  const handleConfirmMobileLocation = () => {
+    setMobileMapStep(2);
+  };
+
+  const handleAddNewAddress = () => {
+    setEditingAddress(null);
+    setMobileHouseNo('');
+    setDesktopHouseNo('');
+    setDesktopArea('');
+    setMapModalStep(1);
+    setMobileMapStep(1);
+    setShowMapModal(true);
+    setShowMobileAddressModal(false);
+  };
+
+  const handleEditAddress = (addr: any) => {
+    setEditingAddress(addr);
+    
+    // Find matching preset location in MAP_LOCATIONS
+    const matched = MAP_LOCATIONS.find(loc => addr.full.toLowerCase().includes(loc.full.toLowerCase())) ||
+                    MAP_LOCATIONS.find(loc => addr.full.toLowerCase().includes(loc.name.toLowerCase())) ||
+                    MAP_LOCATIONS[0];
+                    
+    // Extract house/flat prefix
+    let houseNo = '';
+    if (addr.full.toLowerCase().includes(matched.full.toLowerCase())) {
+      const idx = addr.full.toLowerCase().indexOf(matched.full.toLowerCase());
+      houseNo = addr.full.substring(0, idx).trim().replace(/,$/, '').trim();
+    } else if (addr.full.toLowerCase().includes(matched.name.toLowerCase())) {
+      const idx = addr.full.toLowerCase().indexOf(matched.name.toLowerCase());
+      houseNo = addr.full.substring(0, idx).trim().replace(/,$/, '').trim();
+    } else {
+      const firstComma = addr.full.indexOf(',');
+      if (firstComma > -1) {
+        houseNo = addr.full.substring(0, firstComma).trim();
+      }
+    }
+
+    setCurrentPin(matched);
+    setSelectedMapLabel(addr.name);
+    setAddressLabelType(addr.name);
+    
+    if (window.innerWidth <= 768) {
+      setMobileHouseNo(houseNo);
+      setMobileMapStep(1);
+    } else {
+      setDesktopHouseNo(houseNo);
+      setDesktopArea(matched.name);
+      setMapModalStep(1);
+    }
+    
+    setShowMapModal(true);
+    setShowMobileAddressModal(false);
+    setAddressActionMenuTarget(null);
+  };
+
+  const handleSaveMobileAddress = () => {
+    const finalAddress = `${mobileHouseNo ? mobileHouseNo + ', ' : ''}${currentPin.full}`;
+    const newAddr = {
+      name: selectedMapLabel,
+      full: finalAddress
+    };
+    
+    if (editingAddress) {
+      const updated = savedAddresses.map(a => a.full.toLowerCase().trim() === editingAddress.full.toLowerCase().trim() ? newAddr : a);
+      setSavedAddresses(updated);
+      if (selectedAddress?.full.toLowerCase().trim() === editingAddress.full.toLowerCase().trim()) {
+        setSelectedAddress(newAddr);
+      }
+    } else {
+      const isDuplicate = savedAddresses.some(a => a.full.toLowerCase().trim() === finalAddress.toLowerCase().trim());
+      if (!isDuplicate) {
+        setSavedAddresses([...savedAddresses, newAddr]);
+      }
+      setSelectedAddress(newAddr);
+    }
+    
+    setCheckoutContactName(mobileContactName);
+    setCheckoutContactPhone(mobileContactPhone);
+    setShowMapModal(false);
+    setShowMobileAddressModal(false);
+    // Reset states
+    setMobileMapStep(1);
+    setMobileHouseNo('');
+    setMapSearchQuery('');
+    setEditingAddress(null);
+  };
+
+  const handleDeleteAddress = (addr: any) => {
+    const updated = savedAddresses.filter(a => a.full.toLowerCase().trim() !== addr.full.toLowerCase().trim());
+    setSavedAddresses(updated);
+    if (selectedAddress?.full.toLowerCase().trim() === addr.full.toLowerCase().trim()) {
+      setSelectedAddress(updated[0] || null);
+    }
+  };
+
+  useEffect(() => {
+    if (mapSearchQuery) {
+      const matched = MAP_LOCATIONS.find(loc =>
+        loc.name.toLowerCase().includes(mapSearchQuery.toLowerCase()) ||
+        loc.full.toLowerCase().includes(mapSearchQuery.toLowerCase())
+      );
+      if (matched) {
+        setCurrentPin(matched);
+        setSelectedMapLabel(matched.label);
+      }
+    }
+  }, [mapSearchQuery]);
 
   // Select Items Modal state
   const [showSelectItemsModal, setShowSelectItemsModal] = useState(false);
@@ -691,7 +844,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (showMobileAddressModal || showSelectItemsModal || showSelectItemsDrawer) {
+    if (showMobileAddressModal || showSelectItemsModal || showSelectItemsDrawer || showMapModal) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -699,7 +852,7 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showMobileAddressModal, showSelectItemsModal, showSelectItemsDrawer]);
+  }, [showMobileAddressModal, showSelectItemsModal, showSelectItemsDrawer, showMapModal]);
 
   const handleFilterClick = (action: () => void) => {
     action();
@@ -1796,6 +1949,276 @@ function App() {
         </button>
       </div>
     )
+  }
+
+  if (showMapModal && window.innerWidth <= 768) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+        {mobileMapStep === 1 && (
+          <div className="mobile-map-screen">
+            {/* Search & Back Row at the top */}
+            <div className="mobile-map-header">
+              <button
+                type="button"
+                className="mobile-map-back-btn"
+                onClick={() => {
+                  setShowMapModal(false);
+                  setMapSearchQuery('');
+                  setShowMobileAddressModal(true);
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <div className="mobile-map-search-wrapper">
+                <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="3">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search area, street..."
+                  className="mobile-map-search-input"
+                  value={mapSearchQuery}
+                  onChange={(e) => setMapSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Map SVG Area */}
+            <div className="mobile-map-container" onClick={handleMapClick}>
+              <svg className="mobile-map-svg" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice">
+                {/* Land Background */}
+                <rect width="400" height="700" fill="#f4f3f0" />
+
+                {/* Parks */}
+                <path d="M 0,120 Q 120,90 170,200 T 90,320 Z" fill="#d9eed1" />
+                <path d="M 280,380 Q 350,400 380,500 T 250,600 Z" fill="#d9eed1" />
+
+                {/* Lake / Water Body */}
+                <path d="M 260,0 Q 310,130 230,220 T 400,300 L 400,0 Z" fill="#c4e0e5" />
+
+                {/* Main Roads */}
+                <path d="M 0,220 L 400,220" stroke="#ffffff" strokeWidth="12" fill="none" />
+                <path d="M 0,220 L 400,220" stroke="#e4e4e4" strokeWidth="10" fill="none" />
+
+                <path d="M 160,0 L 160,700" stroke="#ffffff" strokeWidth="10" fill="none" />
+                <path d="M 160,0 L 160,700" stroke="#e4e4e4" strokeWidth="8" fill="none" />
+
+                <path d="M 0,480 C 160,480 260,530 400,450" stroke="#ffffff" strokeWidth="8" fill="none" />
+                <path d="M 0,480 C 160,480 260,530 400,450" stroke="#e4e4e4" strokeWidth="6" fill="none" />
+
+                {/* Minor Streets */}
+                <path d="M 60,0 L 60,700" stroke="#ffffff" strokeWidth="4" fill="none" />
+                <path d="M 290,0 L 290,700" stroke="#ffffff" strokeWidth="4" fill="none" />
+                <path d="M 0,100 Q 200,80 400,100" stroke="#ffffff" strokeWidth="4" fill="none" />
+                <path d="M 0,340 C 100,380 300,300 400,340" stroke="#ffffff" strokeWidth="4" fill="none" />
+                <path d="M 0,580 L 400,580" stroke="#ffffff" strokeWidth="4" fill="none" />
+
+                {/* Landmark Circles / Icons */}
+                <circle cx="120" cy="250" r="14" fill="#ff35e0" fillOpacity="0.15" />
+                <circle cx="120" cy="250" r="4" fill="#ff35e0" />
+
+                <circle cx="280" cy="180" r="10" fill="#0066cc" fillOpacity="0.15" />
+                <circle cx="280" cy="180" r="3" fill="#0066cc" />
+
+                <circle cx="90" cy="540" r="12" fill="#00cc66" fillOpacity="0.15" />
+                <circle cx="90" cy="540" r="4" fill="#00cc66" />
+              </svg>
+
+              {/* Pulsing Pin */}
+              <div
+                className="mobile-map-pin"
+                style={{
+                  left: `${(currentPin.x / 400) * 100}%`,
+                  top: `${(currentPin.y / 700) * 100}%`
+                }}
+              >
+                <div className="pin-pulse"></div>
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="#ff35e0" className="pin-svg">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Floating details card at bottom */}
+            <div className="mobile-map-bottom-card">
+              <div className="location-card-header">
+                <div className="location-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff35e0" strokeWidth="2.5">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+                <div className="location-card-details">
+                  <h4>{currentPin.name}</h4>
+                  <p>{currentPin.full}</p>
+                </div>
+              </div>
+
+              <button type="button" className="confirm-location-btn" onClick={handleConfirmMobileLocation}>
+                Confirm Location & Save
+              </button>
+            </div>
+          </div>
+        )}
+
+        {mobileMapStep === 2 && (
+          <div className="mobile-map-screen" style={{ padding: '20px', background: '#ffffff', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+            <div className="mobile-map-header" style={{ position: 'relative', top: 0, left: 0, right: 0, marginBottom: '24px', padding: 0 }}>
+              <button
+                type="button"
+                className="mobile-map-back-btn"
+                onClick={() => setMobileMapStep(1)}
+                style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+              </button>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#222222', marginLeft: '12px' }}>Enter Address Details</h3>
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              {/* Save Address As (Home, Work, Other) */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '10px', fontWeight: '500', color: '#717171', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Save Address as</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  {['Home', 'Work', 'Other'].map((lbl) => (
+                    <button
+                      key={lbl}
+                      type="button"
+                      className={`label-option-btn ${selectedMapLabel === lbl ? 'active' : ''}`}
+                      onClick={() => setSelectedMapLabel(lbl)}
+                      style={{ height: '34px', padding: '0 20px', borderRadius: '17px', fontSize: '12px', fontWeight: '500' }}
+                    >
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Floor or House number input field (Placed above the address field) */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '10px', fontWeight: '500', color: '#717171', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>House No. / Flat / Floor / Building</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Flat 102, 2nd Floor, Park Heights"
+                  className="map-address-input"
+                  style={{
+                    height: '46px',
+                    padding: '0 16px',
+                    fontSize: '14px',
+                    borderRadius: '12px',
+                    border: '1px solid #dcdcdc',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    outline: 'none',
+                    transition: 'border-color 0.2s ease'
+                  }}
+                  value={mobileHouseNo}
+                  onChange={(e) => setMobileHouseNo(e.target.value)}
+                />
+              </div>
+
+              {/* Auto-filled field showing selected address details (Placed below the house field) */}
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '10px', fontWeight: '500', color: '#717171', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Address</label>
+                <textarea
+                  readOnly
+                  className="map-address-input"
+                  style={{
+                    backgroundColor: '#f7f7f7',
+                    color: '#555555',
+                    height: '70px',
+                    padding: '12px',
+                    fontSize: '14px',
+                    lineHeight: '1.4',
+                    borderRadius: '12px',
+                    border: '1px solid #ebebeb',
+                    width: '100%',
+                    resize: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                  value={currentPin.full}
+                />
+              </div>
+
+              {/* Contact Details Card Container */}
+              <div style={{
+                background: '#fcfcfc',
+                borderRadius: '16px',
+                padding: '16px',
+                border: '1px solid #f0f0f0',
+                marginBottom: '20px',
+                boxSizing: 'border-box'
+              }}>
+                <span style={{ display: 'block', fontSize: '11px', fontWeight: '800', color: '#ff35e0', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '14px' }}>Receiver Contact Details</span>
+
+                {/* Contact Name input field */}
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#555555', marginBottom: '6px' }}>Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. John Doe"
+                    className="map-address-input"
+                    style={{
+                      height: '42px',
+                      padding: '0 12px',
+                      fontSize: '14px',
+                      borderRadius: '10px',
+                      border: '1px solid #dcdcdc',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      outline: 'none',
+                    }}
+                    value={mobileContactName}
+                    onChange={(e) => setMobileContactName(e.target.value)}
+                  />
+                </div>
+
+                {/* Contact Phone input field */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#555555', marginBottom: '6px' }}>Phone Number</label>
+                  <input
+                    type="tel"
+                    placeholder="e.g. +91 98765 43210"
+                    className="map-address-input"
+                    style={{
+                      height: '42px',
+                      padding: '0 12px',
+                      fontSize: '14px',
+                      borderRadius: '10px',
+                      border: '1px solid #dcdcdc',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      outline: 'none',
+                    }}
+                    value={mobileContactPhone}
+                    onChange={(e) => setMobileContactPhone(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Save Address Button */}
+            <div style={{ paddingTop: '16px', borderTop: '1px solid #f1f1f1' }}>
+              <button
+                type="button"
+                className="confirm-location-btn"
+                onClick={handleSaveMobileAddress}
+                style={{ background: '#ff35e0' }}
+              >
+                Save Address & Continue
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -3788,7 +4211,7 @@ function App() {
                   <div className="saved-addresses-section" style={{ marginTop: '0' }}>
                     <div className="saved-addresses-header">
                       <div className="saved-addresses-title">Saved Addresses</div>
-                      <button className="add-address-btn" onClick={() => setShowMapModal(true)}>
+                      <button className="add-address-btn" onClick={handleAddNewAddress}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
                           <line x1="12" y1="5" x2="12" y2="19"></line>
                           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -3807,10 +4230,12 @@ function App() {
                           <div className="empty-saved-addresses-text">No saved addresses yet</div>
                         </div>
                       ) : (
-                        savedAddresses.map((addr, idx) => (
+                        savedAddresses.filter((addr, index, self) =>
+                          self.findIndex(a => a.full.toLowerCase().trim() === addr.full.toLowerCase().trim()) === index
+                        ).map((addr, idx) => (
                           <div
                             key={idx}
-                            className={`saved-address-item ${selectedAddress?.name === addr.name ? 'selected' : ''}`}
+                            className={`saved-address-item ${selectedAddress?.full === addr.full ? 'selected' : ''}`}
                             onClick={() => {
                               setSelectedAddress(addr);
                               setShowMobileAddressModal(false);
@@ -3826,6 +4251,20 @@ function App() {
                               <div className="address-item-name">{addr.name}</div>
                               <div className="address-item-text">{addr.full}</div>
                             </div>
+                            <button
+                              type="button"
+                              className="address-action-dots-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setAddressActionMenuTarget(addr);
+                              }}
+                            >
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <circle cx="12" cy="12" r="1"></circle>
+                                <circle cx="12" cy="5" r="1"></circle>
+                                <circle cx="12" cy="19" r="1"></circle>
+                              </svg>
+                            </button>
                           </div>
                         ))
                       )}
@@ -5565,7 +6004,7 @@ function App() {
             <div className="mobile-address-modal-header" style={{ borderBottom: 'none', paddingBottom: '0' }}>
               <h3>Add / Select Address</h3>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <button className="add-address-btn" style={{ marginRight: '16px' }} onClick={() => setShowMapModal(true)}>
+                <button className="add-address-btn" style={{ marginRight: '16px' }} onClick={handleAddNewAddress}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -5621,10 +6060,12 @@ function App() {
                       <div className="empty-saved-addresses-text">No saved addresses yet</div>
                     </div>
                   ) : (
-                    savedAddresses.map((addr, idx) => (
+                    savedAddresses.filter((addr, index, self) =>
+                      self.findIndex(a => a.full.toLowerCase().trim() === addr.full.toLowerCase().trim()) === index
+                    ).map((addr, idx) => (
                       <div
                         key={idx}
-                        className={`saved-address-item ${selectedAddress?.name === addr.name ? 'selected' : ''}`}
+                        className={`saved-address-item ${selectedAddress?.full === addr.full ? 'selected' : ''}`}
                         onClick={() => {
                           setSelectedAddress(addr);
                           setShowMobileAddressModal(false);
@@ -5640,6 +6081,20 @@ function App() {
                           <div className="address-item-name">{addr.name}</div>
                           <div className="address-item-text">{addr.full}</div>
                         </div>
+                        <button
+                          type="button"
+                          className="address-action-dots-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAddressActionMenuTarget(addr);
+                          }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                          </svg>
+                        </button>
                       </div>
                     ))
                   )}
@@ -6128,7 +6583,7 @@ function App() {
       )}
 
       {/* Map Modal */}
-      {showMapModal && (
+      {showMapModal && window.innerWidth > 768 && (
         <div className="map-modal-overlay">
           <div className="map-modal-content">
             {mapModalStep === 1 ? (
@@ -6214,11 +6669,25 @@ function App() {
 
                   <div style={{ marginBottom: '16px' }}>
                     <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>HOUSE NO / FLOOR</div>
-                    <input type="text" placeholder="e.g. Flat 101, 1st Floor" className="map-address-input" id="houseNoInput" />
+                    <input
+                      type="text"
+                      placeholder="e.g. Flat 101, 1st Floor"
+                      className="map-address-input"
+                      id="houseNoInput"
+                      value={desktopHouseNo}
+                      onChange={(e) => setDesktopHouseNo(e.target.value)}
+                    />
                   </div>
                   <div style={{ marginBottom: '16px' }}>
                     <div style={{ fontSize: '12px', fontWeight: 600, color: '#717171', marginBottom: '8px' }}>AREA / STREET</div>
-                    <input type="text" placeholder="e.g. Phase 2, Kavuri Hills" className="map-address-input" id="areaInput" />
+                    <input
+                      type="text"
+                      placeholder="e.g. Phase 2, Kavuri Hills"
+                      className="map-address-input"
+                      id="areaInput"
+                      value={desktopArea}
+                      onChange={(e) => setDesktopArea(e.target.value)}
+                    />
                   </div>
                   <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                     <div style={{ flex: 1 }}>
@@ -6239,17 +6708,29 @@ function App() {
                   <button
                     className="save-address-btn"
                     onClick={() => {
-                      const area = (document.getElementById('areaInput') as HTMLInputElement)?.value || 'Gachibowli';
-                      const houseNo = (document.getElementById('houseNoInput') as HTMLInputElement)?.value || '';
+                      const area = desktopArea || 'Gachibowli';
+                      const houseNo = desktopHouseNo || '';
                       const newAddr = {
                         name: addressLabelType,
                         full: `${houseNo ? houseNo + ', ' : ''}${area}, Hyderabad, Telangana, 543210`
                       };
-                      setSavedAddresses([...savedAddresses, newAddr]);
-                      setSelectedAddress(newAddr);
+                      if (editingAddress) {
+                        const updated = savedAddresses.map(a =>
+                          a.full.toLowerCase().trim() === editingAddress.full.toLowerCase().trim() ? newAddr : a
+                        );
+                        setSavedAddresses(updated);
+                        setSelectedAddress(newAddr);
+                      } else {
+                        const isDuplicate = savedAddresses.some(a => a.full.toLowerCase().trim() === newAddr.full.toLowerCase().trim());
+                        if (!isDuplicate) {
+                          setSavedAddresses([...savedAddresses, newAddr]);
+                        }
+                        setSelectedAddress(newAddr);
+                      }
                       setShowMapModal(false);
                       setMapModalStep(1);
                       setShowMobileAddressModal(false);
+                      setEditingAddress(null);
                     }}
                   >
                     Save Address
@@ -6257,6 +6738,148 @@ function App() {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Address Action Modal Popup Overlay */}
+      {addressActionMenuTarget && (
+        <div className="address-action-menu-overlay" onClick={() => setAddressActionMenuTarget(null)}>
+          <div className="address-action-menu-content" onClick={(e) => e.stopPropagation()}>
+            <div className="address-action-menu-title">Address Options</div>
+            <div className="address-action-menu-subtitle">{addressActionMenuTarget.full}</div>
+            <div className="address-action-menu-options">
+              <button
+                type="button"
+                className="address-action-menu-btn"
+                onClick={() => {
+                  handleEditAddress(addressActionMenuTarget);
+                  setAddressActionMenuTarget(null);
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Details
+              </button>
+              <button
+                type="button"
+                className="address-action-menu-btn delete"
+                onClick={() => {
+                  setAddressToDeleteConfirm(addressActionMenuTarget);
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Delete Address
+              </button>
+              <button
+                type="button"
+                className="address-action-menu-btn cancel"
+                onClick={() => setAddressActionMenuTarget(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Popup Overlay (on top of all sheets) */}
+      {addressToDeleteConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 2200000,
+          backdropFilter: 'blur(4px)',
+          fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif"
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            width: '320px',
+            padding: '24px',
+            borderRadius: '24px',
+            textAlign: 'center',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif"
+          }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              backgroundColor: '#fee2e2',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '16px',
+              color: '#ef4444'
+            }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </div>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, color: '#111827', fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif" }}>Delete Address?</h4>
+            <p style={{ margin: '0 0 24px 0', fontSize: '14px', color: '#6b7280', lineHeight: '1.5', fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif" }}>
+              Are you sure you want to delete this address? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+              <button
+                type="button"
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: '1px solid #e5e7eb',
+                  backgroundColor: '#ffffff',
+                  color: '#374151',
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif"
+                }}
+                onClick={() => setAddressToDeleteConfirm(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  backgroundColor: '#ef4444',
+                  color: '#ffffff',
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  fontFamily: "'Outfit', -apple-system, BlinkMacSystemFont, sans-serif"
+                }}
+                onClick={() => {
+                  handleDeleteAddress(addressToDeleteConfirm);
+                  setAddressToDeleteConfirm(null);
+                  setAddressActionMenuTarget(null);
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

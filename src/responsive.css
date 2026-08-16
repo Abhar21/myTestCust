@@ -672,6 +672,249 @@
   .desktop-only-body-search {
     display: none !important;
   }
+
+  /* Mobile Full-Screen Map Screen */
+  .mobile-map-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f4f3f0;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  /* Top Bar with search and back button */
+  .mobile-map-header {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mobile-map-back-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    color: #222222;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .mobile-map-back-btn:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-map-search-wrapper {
+    flex: 1;
+    height: 44px;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+  }
+
+  .mobile-map-search-wrapper .search-icon {
+    flex-shrink: 0;
+  }
+
+  .mobile-map-search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    color: #222222;
+  }
+
+  /* Map Container */
+  .mobile-map-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+
+  .mobile-map-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Pin Styling */
+  .mobile-map-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
+    transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1), top 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .pin-svg {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    position: relative;
+    z-index: 2;
+    animation: bouncePin 0.6s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
+  }
+
+  .pin-pulse {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    z-index: 1;
+  }
+
+  @keyframes bouncePin {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+  }
+
+  /* Floating Location details Card at Bottom */
+  .mobile-map-bottom-card {
+    position: absolute;
+    bottom: 24px;
+    left: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 10;
+    animation: slideUpCard 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes slideUpCard {
+    from {
+      transform: translateY(120%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .location-card-header {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .location-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 53, 224, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .location-card-details {
+    flex: 1;
+  }
+
+  .location-card-details h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #222222;
+  }
+
+  .location-card-details p {
+    margin: 0;
+    font-size: 13px;
+    color: #666666;
+    line-height: 1.4;
+  }
+
+  /* Address label / save row */
+  .mobile-address-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .mobile-address-label-row .label-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222222;
+  }
+
+  .label-options-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .label-option-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid #ebebeb;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .label-option-btn.active {
+    background: #222222;
+    color: #ffffff;
+    border-color: #222222;
+  }
+
+  /* Action Button */
+  .confirm-location-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 24px;
+    background: #ff35e0;
+    color: #ffffff;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 53, 224, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .confirm-location-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 6px rgba(255, 53, 224, 0.2);
+  }
 }
 
 @media (min-width: 769px) {

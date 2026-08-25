@@ -2266,7 +2266,6 @@ function App() {
             })();
 
             const sitDownAddon = isSitDown ? previewGuestCount * 10 : 0;
-            const sitDownTotal = sitDownAddon;
 
             const subtotal = previewGuestCount * actualPricePerPlate;
             const originalPricePerPlate = (() => {
@@ -2430,15 +2429,7 @@ function App() {
                         <span>-₹{Math.max(0, originalSubtotal - subtotal).toLocaleString()}</span>
                       </div>
 
-                      {/* Sit-down service addon price */}
-                      {checkoutDiningStyle === 'sit-down' && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span>Sit-down service addon</span>
-                          </div>
-                          <span>₹{sitDownTotal.toLocaleString()}</span>
-                        </div>
-                      )}
+
 
                       {/* Coupon discount if applicable */}
                       {couponDiscount > 0 && (

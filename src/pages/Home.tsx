@@ -481,12 +481,12 @@ function App() {
 
   const handleEditAddress = (addr: any) => {
     setEditingAddress(addr);
-    
+
     // Find matching preset location in MAP_LOCATIONS
     const matched = MAP_LOCATIONS.find(loc => addr.full.toLowerCase().includes(loc.full.toLowerCase())) ||
-                    MAP_LOCATIONS.find(loc => addr.full.toLowerCase().includes(loc.name.toLowerCase())) ||
-                    MAP_LOCATIONS[0];
-                    
+      MAP_LOCATIONS.find(loc => addr.full.toLowerCase().includes(loc.name.toLowerCase())) ||
+      MAP_LOCATIONS[0];
+
     // Extract house/flat prefix
     let houseNo = '';
     if (addr.full.toLowerCase().includes(matched.full.toLowerCase())) {
@@ -505,7 +505,7 @@ function App() {
     setCurrentPin(matched);
     setSelectedMapLabel(addr.name);
     setAddressLabelType(addr.name);
-    
+
     if (window.innerWidth <= 768) {
       setMobileHouseNo(houseNo);
       setMobileMapStep(1);
@@ -514,7 +514,7 @@ function App() {
       setDesktopArea(matched.name);
       setMapModalStep(1);
     }
-    
+
     setShowMapModal(true);
     setShowMobileAddressModal(false);
     setAddressActionMenuTarget(null);
@@ -526,7 +526,7 @@ function App() {
       name: selectedMapLabel,
       full: finalAddress
     };
-    
+
     if (editingAddress) {
       const updated = savedAddresses.map(a => a.full.toLowerCase().trim() === editingAddress.full.toLowerCase().trim() ? newAddr : a);
       setSavedAddresses(updated);
@@ -540,7 +540,7 @@ function App() {
       }
       setSelectedAddress(newAddr);
     }
-    
+
     setCheckoutContactName(mobileContactName);
     setCheckoutContactPhone(mobileContactPhone);
     setShowMapModal(false);
@@ -623,6 +623,17 @@ function App() {
   const [showCouponTerms, setShowCouponTerms] = useState<string | null>(null);
   const [showAllOffers, setShowAllOffers] = useState(false);
   const [showReviewsModalDesktop, setShowReviewsModalDesktop] = useState(false);
+
+  const minGuests = (() => {
+    if (!selectedMenuData || !selectedMenuData.guestCount) return 50;
+    const match = selectedMenuData.guestCount.match(/Min\s+(\d+)/i);
+    return match ? parseInt(match[1], 10) : 50;
+  })();
+  const maxGuests = (() => {
+    if (!selectedMenuData || !selectedMenuData.guestCount) return 500;
+    const match = selectedMenuData.guestCount.match(/Max\s+(\d+)/i);
+    return match ? parseInt(match[1], 10) : 500;
+  })();
   const [isScrolled, setIsScrolled] = useState(false);
 
 
@@ -2231,21 +2242,14 @@ function App() {
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
         }}>
           {(() => {
-            const actualPricePerPlate = (() => {
+            const basePricePerPlate = (() => {
               if (!selectedMenuData || !selectedMenuData.price) return 49;
               const match = selectedMenuData.price.match(/\d+/);
               return match ? parseInt(match[0], 10) : 49;
             })();
-            const minGuests = (() => {
-              if (!selectedMenuData || !selectedMenuData.guestCount) return 50;
-              const match = selectedMenuData.guestCount.match(/Min\s+(\d+)/i);
-              return match ? parseInt(match[1], 10) : 50;
-            })();
-            const maxGuests = (() => {
-              if (!selectedMenuData || !selectedMenuData.guestCount) return 500;
-              const match = selectedMenuData.guestCount.match(/Max\s+(\d+)/i);
-              return match ? parseInt(match[1], 10) : 500;
-            })();
+            const isSitDown = checkoutDiningStyle === 'sit-down';
+            const addonPrice = isSitDown ? 10 : 0;
+            const actualPricePerPlate = basePricePerPlate + addonPrice;
 
             const couponDiscount = (() => {
               if (appliedCouponCode === 'FLAT500') {
@@ -2261,20 +2265,23 @@ function App() {
               return 0;
             })();
 
+            const sitDownAddon = isSitDown ? previewGuestCount * 10 : 0;
+            const sitDownTotal = sitDownAddon;
+
             const subtotal = previewGuestCount * actualPricePerPlate;
             const originalPricePerPlate = (() => {
-              if (!selectedMenuData || !selectedMenuData.originalPrice) return actualPricePerPlate;
+              if (!selectedMenuData || !selectedMenuData.originalPrice) return basePricePerPlate;
               const match = selectedMenuData.originalPrice.match(/\d+/);
-              return match ? parseInt(match[0], 10) : actualPricePerPlate;
+              return (match ? parseInt(match[0], 10) : basePricePerPlate) + addonPrice;
             })();
             const originalSubtotal = previewGuestCount * originalPricePerPlate;
-            const gst = Math.round(subtotal * 0.18);
-            const subtotalWithGST = subtotal + gst;
-            const finalDiscountedPrice = Math.max(0, subtotalWithGST - couponDiscount);
+            const baseDiscounted = Math.max(0, subtotal - couponDiscount);
+            const gstAmount = Math.round(baseDiscounted * 0.05);
+            const finalDiscountedPrice = baseDiscounted + gstAmount;
             const advance = Math.round(finalDiscountedPrice * 0.4);
             const advancePay = advance + 11.8;
-            const totalSavedAmount = Math.max(0, originalSubtotal - subtotal) + couponDiscount;
-            const totalSavedPercentage = originalSubtotal > 0 ? Math.round((totalSavedAmount / originalSubtotal) * 100) : 0;
+            const totalSavedAmount = Math.max(0, (originalSubtotal - sitDownAddon) - (subtotal - sitDownAddon)) + couponDiscount;
+            const totalSavedPercentage = (originalSubtotal - sitDownAddon) > 0 ? Math.round((totalSavedAmount / (originalSubtotal - sitDownAddon)) * 100) : 0;
 
             return (
               <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '100px' }}>
@@ -2337,103 +2344,39 @@ function App() {
 
                         <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
 
-                        {/* Menu and Guests Merged */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {/* Menu */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Menu</div>
-                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '8px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
-                            <div style={{ fontSize: '12px', color: '#717171' }}>Min: {minGuests} -  Max: {maxGuests}</div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '4px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                               {selectedMenuData?.originalPrice && (
                                 <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>{selectedMenuData.originalPrice}</span>
                               )}
-                              <span style={{ fontSize: '12px', fontWeight: '500', color: '#222222' }}>{selectedMenuData?.price || `₹49/plate`}</span>
+                              <span style={{ fontSize: '12px', fontWeight: '500', color: '#717171' }}>{selectedMenuData?.price || `₹49/plate`}</span>
                             </div>
-                          </div>
-
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <button
-                              disabled={typeof previewGuestCount === 'number' && previewGuestCount <= minGuests}
-                              onClick={() => setPreviewGuestCount(Math.max(minGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) - 5))}
-                              style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
-                            >
-                              -
-                            </button>
-                            <input
-                              type="text"
-                              value={previewGuestCount}
-                              onChange={(e) => {
-                                const valRaw = e.target.value.replace(/\D/g, '');
-                                if (valRaw === '') {
-                                  setPreviewGuestCount('' as any);
-                                } else {
-                                  const valNum = parseInt(valRaw, 10);
-                                  setPreviewGuestCount(valNum > maxGuests ? maxGuests : valNum);
-                                }
-                              }}
-                              onBlur={() => {
-                                let val = typeof previewGuestCount === 'number' ? previewGuestCount : 0;
-                                if (val < minGuests) val = minGuests;
-                                if (val > maxGuests) val = maxGuests;
-                                setPreviewGuestCount(val);
-                              }}
-                              style={{ fontSize: '16px', color: '#222222', width: '36px', textAlign: 'center', border: 'none', outline: 'none', background: 'transparent', padding: 0 }}
-                            />
-                            <button
-                              disabled={typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests}
-                              onClick={() => setPreviewGuestCount(Math.min(maxGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) + 5))}
-                              style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #b0b0b0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 'not-allowed' : 'pointer', opacity: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 0.5 : 1, color: '#717171', fontSize: '18px' }}
-                            >
-                              +
-                            </button>
                           </div>
                         </div>
 
-                        {/* Dining Style */}
-                        <div style={{ marginTop: '24px' }}>
-                          <div style={{ display: 'flex', gap: '12px' }}>
-                            <button
-                              onClick={() => setCheckoutDiningStyle('buffet')}
-                              style={{
-                                flex: 1,
-                                padding: '12px',
-                                borderRadius: '12px',
-                                border: 'none',
-                                boxShadow: checkoutDiningStyle === 'buffet' ? 'inset 0 0 0 2px #222222' : 'inset 0 0 0 1px #dddddd',
-                                backgroundColor: checkoutDiningStyle === 'buffet' ? '#f9fafb' : '#ffffff',
-                                color: checkoutDiningStyle === 'buffet' ? '#222222' : '#9ca3af',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                              }}
-                            >
-                              Buffet
-                            </button>
-                            <button
-                              onClick={() => setCheckoutDiningStyle('sit-down')}
-                              style={{
-                                flex: 1,
-                                padding: '12px',
-                                borderRadius: '12px',
-                                border: 'none',
-                                boxShadow: checkoutDiningStyle === 'sit-down' ? 'inset 0 0 0 2px #222222' : 'inset 0 0 0 1px #dddddd',
-                                backgroundColor: checkoutDiningStyle === 'sit-down' ? '#f9fafb' : '#ffffff',
-                                color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#9ca3af',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '4px'
-                              }}
-                            >
-                              <span>Sit-Down</span>
-                              <span style={{ fontSize: '11px', color: checkoutDiningStyle === 'sit-down' ? '#222222' : '#9ca3af', fontWeight: '400' }}>+₹10/person</span>
-                            </button>
+                        <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                        {/* Guest count */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Guest count</div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222' }}>{previewGuestCount} pax</div>
+                          </div>
+                        </div>
+
+                        <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+
+                        {/* Type */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Type</div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222' }}>
+                              {checkoutDiningStyle === 'sit-down' ? 'Sit-Down' : 'Buffet'}
+                            </div>
                           </div>
                         </div>
 
@@ -2477,9 +2420,8 @@ function App() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                           <span>Total price</span>
-                          <span style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>Incl. applicable taxes</span>
                         </div>
-                        <span>₹{(originalSubtotal + Math.round(originalSubtotal * 0.18)).toLocaleString()}</span>
+                        <span>₹{originalSubtotal.toLocaleString()}</span>
                       </div>
 
                       {/* Discount = MRP - actual price */}
@@ -2488,21 +2430,42 @@ function App() {
                         <span>-₹{Math.max(0, originalSubtotal - subtotal).toLocaleString()}</span>
                       </div>
 
+                      {/* Sit-down service addon price */}
+                      {checkoutDiningStyle === 'sit-down' && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#222222' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span>Sit-down service addon</span>
+                          </div>
+                          <span>₹{sitDownTotal.toLocaleString()}</span>
+                        </div>
+                      )}
 
+                      {/* Coupon discount if applicable */}
+                      {couponDiscount > 0 && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', color: '#059669', fontWeight: '500' }}>
+                          <span>Coupon discount</span>
+                          <span>-₹{couponDiscount.toLocaleString()}</span>
+                        </div>
+                      )}
 
                       <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
 
                       {/* Total after discounts */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', fontWeight: '700', color: '#222222', marginBottom: '24px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span>Total</span>
-                          {totalSavedAmount > 0 && (
-                            <span style={{ background: '#ecfdf5', color: '#059669', fontSize: '11px', fontWeight: '600', padding: '2px 6px', borderRadius: '4px' }}>
-                              Saved ₹{totalSavedAmount.toLocaleString()}
-                            </span>
-                          )}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '24px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', fontWeight: '700', color: '#222222' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span>Total</span>
+                              {totalSavedAmount > 0 && (
+                                <span style={{ background: '#ecfdf5', color: '#059669', fontSize: '11px', fontWeight: '600', padding: '2px 6px', borderRadius: '4px' }}>
+                                  Saved ₹{totalSavedAmount.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                            <span style={{ fontSize: '12px', color: '#717171', fontWeight: '400' }}>incl. 5% GST</span>
+                          </div>
+                          <span>₹{finalDiscountedPrice.toLocaleString()}</span>
                         </div>
-                        <span>₹{finalDiscountedPrice.toLocaleString()}</span>
                       </div>
 
                       <div style={{ borderBottom: '1px solid #dddddd', margin: '16px 0' }}></div>
@@ -2683,8 +2646,8 @@ function App() {
                         {showPriceBreakdown && (
                           <div style={{ padding: '16px 12px 8px 12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#4b5563' }}>
-                              <span>Total price</span>
-                              <span>₹{finalDiscountedPrice.toLocaleString()}</span>
+                              <span>Subtotal</span>
+                              <span>₹{subtotal.toLocaleString()}</span>
                             </div>
                             {couponDiscount > 0 && (
                               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#059669', fontWeight: '500' }}>
@@ -4845,30 +4808,7 @@ function App() {
               transition: 'width 0.2s ease-out'
             }}
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setShowSelectItemsModal(false)}
-              style={{
-                position: 'absolute',
-                top: '16px',
-                right: '16px',
-                background: '#f3f4f6',
-                border: 'none',
-                borderRadius: '50%',
-                width: '32px',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: '#222222',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                zIndex: 10
-              }}
-            >
-              ×
-            </button>
+
 
             {modalStep === 1 ? (
               // Step 1: Select Date (Airbnb style side-by-side Calendar)
@@ -5080,17 +5020,12 @@ function App() {
                     );
                   })()}
                 </div>
-
                 {/* Fixed Footer — Next */}
                 <div style={{ display: 'flex', gap: '12px', paddingTop: '12px', flexShrink: 0 }}>
                   <button
                     disabled={!modalSelectedSlot}
                     onClick={() => {
-                      const isDesktop = window.innerWidth >= 768;
-                      setCheckoutFrom(isDesktop ? 'modal' : 'drawer');
-                      setShowSelectItemsModal(false);
-                      setShowSelectItemsDrawer(false);
-                      setShowCheckoutPage(true);
+                      setModalStep(3);
                     }}
                     style={{
                       background: modalSelectedSlot ? '#222222' : '#e5e7eb',
@@ -5107,6 +5042,286 @@ function App() {
                     }}
                   >
                     Confirm
+                  </button>
+                </div>
+              </div>
+            ) : modalStep === 3 ? (
+              // Step 3: Select Guest Count & Service Type
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ textAlign: 'left', paddingBottom: '4px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#222222', margin: 0 }}>
+                    Select guests & service
+                  </h3>
+                  <p style={{ fontSize: '12px', color: '#717171', marginTop: '4px', marginBottom: 0 }}>
+                    Customize guest count and service style for your event
+                  </p>
+                </div>
+
+                {/* Guest Count Section */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>Guest Count</span>
+                      <div style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>Min: {minGuests} - Max: {maxGuests}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <button
+                        type="button"
+                        disabled={typeof previewGuestCount === 'number' && previewGuestCount <= minGuests}
+                        onClick={() => setPreviewGuestCount(Math.max(minGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) - 5))}
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          border: '1px solid #b0b0b0',
+                          background: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 'not-allowed' : 'pointer',
+                          opacity: (typeof previewGuestCount === 'number' && previewGuestCount <= minGuests) ? 0.5 : 1,
+                          color: '#222222',
+                          fontSize: '18px',
+                          fontWeight: '600'
+                        }}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="text"
+                        value={previewGuestCount}
+                        onChange={(e) => {
+                          const valRaw = e.target.value.replace(/\D/g, '');
+                          if (valRaw === '') {
+                            setPreviewGuestCount('' as any);
+                          } else {
+                            const valNum = parseInt(valRaw, 10);
+                            setPreviewGuestCount(valNum > maxGuests ? maxGuests : valNum);
+                          }
+                        }}
+                        onBlur={() => {
+                          let val = typeof previewGuestCount === 'number' ? previewGuestCount : 0;
+                          if (val < minGuests) val = minGuests;
+                          if (val > maxGuests) val = maxGuests;
+                          setPreviewGuestCount(val);
+                        }}
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: '#222222',
+                          width: '44px',
+                          textAlign: 'center',
+                          border: 'none',
+                          outline: 'none',
+                          background: 'transparent',
+                          padding: 0
+                        }}
+                      />
+                      <button
+                        type="button"
+                        disabled={typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests}
+                        onClick={() => setPreviewGuestCount(Math.min(maxGuests, (typeof previewGuestCount === 'number' ? previewGuestCount : minGuests) + 5))}
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          border: '1px solid #b0b0b0',
+                          background: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 'not-allowed' : 'pointer',
+                          opacity: (typeof previewGuestCount === 'number' && previewGuestCount >= maxGuests) ? 0.5 : 1,
+                          color: '#222222',
+                          fontSize: '18px',
+                          fontWeight: '600'
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Suggestion Pills */}
+                  <div style={{ display: 'flex', gap: '6px', width: '100%', marginTop: '16px' }}>
+                    {[50, 100, 150, 200, 250, 300].map((count) => {
+                      const isOutOfRange = count < minGuests || count > maxGuests;
+                      const isSelected = previewGuestCount === count;
+                      return (
+                        <button
+                          key={count}
+                          type="button"
+                          disabled={isOutOfRange}
+                          onClick={() => setPreviewGuestCount(count)}
+                          style={{
+                            flex: 1,
+                            padding: '8px 0',
+                            textAlign: 'center',
+                            borderRadius: '20px',
+                            border: isSelected ? '1px solid #222222' : '1px solid #e5e7eb',
+                            backgroundColor: isSelected ? '#222222' : '#ffffff',
+                            color: isSelected ? '#ffffff' : isOutOfRange ? '#d1d5db' : '#5e5e5e',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: isOutOfRange ? 'not-allowed' : 'pointer',
+                            opacity: isOutOfRange ? 0.5 : 1,
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          {count}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ borderBottom: '1px solid #f3f4f6' }}></div>
+
+                {/* Service Type Selection */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>Service Type</span>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setCheckoutDiningStyle('buffet')}
+                      style={{
+                        flex: 1,
+                        padding: '14px',
+                        borderRadius: '16px',
+                        border: 'none',
+                        boxShadow: checkoutDiningStyle === 'buffet' ? 'inset 0 0 0 2px #222222' : 'inset 0 0 0 1px #e5e7eb',
+                        backgroundColor: checkoutDiningStyle === 'buffet' ? '#ffffff' : '#ffffff',
+                        color: '#222222',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      Buffet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCheckoutDiningStyle('sit-down')}
+                      style={{
+                        flex: 1,
+                        padding: '14px',
+                        borderRadius: '16px',
+                        border: 'none',
+                        boxShadow: checkoutDiningStyle === 'sit-down' ? 'inset 0 0 0 2px #222222' : 'inset 0 0 0 1px #e5e7eb',
+                        backgroundColor: checkoutDiningStyle === 'sit-down' ? '#ffffff' : '#ffffff',
+                        color: '#222222',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '2px'
+                      }}
+                    >
+                      <span style={{ lineHeight: 1.1 }}>Sit-Down</span>
+                      <span style={{ fontSize: '10px', color: '#717171', fontWeight: '400' }}>+₹10/person</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Pricing Calculation Display */}
+                {(() => {
+                  const pricePerPlate = (() => {
+                    if (!selectedMenuData || !selectedMenuData.price) return 49;
+                    const match = selectedMenuData.price.match(/\d+/);
+                    return match ? parseInt(match[0], 10) : 49;
+                  })();
+                  const isSitDown = checkoutDiningStyle === 'sit-down';
+                  const addonPrice = isSitDown ? 10 : 0;
+                  const effectivePrice = pricePerPlate + addonPrice;
+                  const guestCountVal = typeof previewGuestCount === 'number' ? previewGuestCount : 0;
+                  const totalCost = guestCountVal * effectivePrice;
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>Cost Preview</span>
+                      <div style={{
+                        padding: '16px',
+                        borderRadius: '16px',
+                        backgroundColor: '#f9fafb',
+                        border: '1px solid #e5e7eb',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#5e5e5e' }}>
+                          <span>Base Price per Plate</span>
+                          <span style={{ fontWeight: '600', color: '#222222' }}>₹{pricePerPlate}</span>
+                        </div>
+                        {isSitDown && (
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#5e5e5e' }}>
+                            <span>Sit-down Service Addon</span>
+                            <span style={{ fontWeight: '600', color: '#16a34a' }}>+₹10</span>
+                          </div>
+                        )}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#5e5e5e' }}>
+                          <span>Effective Price per Plate</span>
+                          <span style={{ fontWeight: '600', color: '#222222' }}>₹{effectivePrice}</span>
+                        </div>
+                        <div style={{ borderTop: '1px dashed #e5e7eb', margin: '4px 0' }}></div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: '700', color: '#222222' }}>
+                          <span>Total ({guestCountVal} guests × ₹{effectivePrice})</span>
+                          <span style={{ color: '#2563eb' }}>₹{totalCost.toLocaleString('en-IN')}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Back & Confirm Actions */}
+                <div style={{ display: 'flex', gap: '12px', paddingTop: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setModalStep(2)}
+                    style={{
+                      background: '#ffffff',
+                      color: '#222222',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '16px',
+                      padding: '16px',
+                      fontWeight: '600',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      flex: 1,
+                      textAlign: 'center',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const isDesktop = window.innerWidth >= 768;
+                      setCheckoutFrom(isDesktop ? 'modal' : 'drawer');
+                      setShowSelectItemsModal(false);
+                      setShowSelectItemsDrawer(false);
+                      setShowCheckoutPage(true);
+                    }}
+                    style={{
+                      background: '#222222',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '16px',
+                      padding: '16px',
+                      fontWeight: '600',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      flex: 1,
+                      textAlign: 'center',
+                      transition: 'background-color 0.2s'
+                    }}
+                  >
+                    Proceed to Cart
                   </button>
                 </div>
               </div>

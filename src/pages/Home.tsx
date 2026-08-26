@@ -610,6 +610,14 @@ function App() {
   const [selectedMenuData, setSelectedMenuData] = useState<any>(null);
   const [drawerSelectedItems, setDrawerSelectedItems] = useState<string[]>([]);
   const [previewGuestCount, setPreviewGuestCount] = useState<number>(50);
+  const [checkoutGuestCount, setCheckoutGuestCount] = useState<number>(50);
+
+  useEffect(() => {
+    if (showCheckoutPage) {
+      setCheckoutGuestCount(previewGuestCount);
+    }
+  }, [showCheckoutPage, previewGuestCount]);
+
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const [showCouponSuccess, setShowCouponSuccess] = useState(false);
   const applyCoupon = (code: string | null) => {
@@ -2343,31 +2351,121 @@ function App() {
 
                         <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
 
-                        {/* Menu */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Menu</div>
-                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '4px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              {selectedMenuData?.originalPrice && (
-                                <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>{selectedMenuData.originalPrice}</span>
-                              )}
-                              <span style={{ fontSize: '12px', fontWeight: '500', color: '#717171' }}>{selectedMenuData?.price || `₹49/plate`}</span>
+                        {/* Menu & Guest Count Merged */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                          {/* Left Column: Menu details & Guest Count Labels */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {/* Menu */}
+                            <div>
+                              <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '4px' }}>Menu</div>
+                              <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222', marginBottom: '2px' }}>{selectedMenuForModal || 'Standard Menu'}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                {selectedMenuData?.originalPrice && (
+                                  <span style={{ fontSize: '12px', color: '#9ca3af', textDecoration: 'line-through' }}>{selectedMenuData.originalPrice}</span>
+                                )}
+                                <span style={{ fontSize: '12px', fontWeight: '500', color: '#717171' }}>{selectedMenuData?.price || `₹49/plate`}</span>
+                              </div>
+                            </div>
+
+                            {/* Guest count label */}
+                            <div>
+                              <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222' }}>Guest count</div>
+                              <div style={{ fontSize: '12px', color: '#717171', marginTop: '2px' }}>Min: {minGuests} - Max: {maxGuests}</div>
                             </div>
                           </div>
-                        </div>
 
-                        <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+                          {/* Right Column: Controls and Confirm Button */}
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <button
+                                type="button"
+                                disabled={typeof checkoutGuestCount === 'number' && checkoutGuestCount <= minGuests}
+                                onClick={() => setCheckoutGuestCount(Math.max(minGuests, (typeof checkoutGuestCount === 'number' ? checkoutGuestCount : minGuests) - 5))}
+                                style={{
+                                  width: '32px',
+                                  height: '32px',
+                                  borderRadius: '50%',
+                                  border: '1px solid #b0b0b0',
+                                  background: '#ffffff',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: (typeof checkoutGuestCount === 'number' && checkoutGuestCount <= minGuests) ? 'not-allowed' : 'pointer',
+                                  opacity: (typeof checkoutGuestCount === 'number' && checkoutGuestCount <= minGuests) ? 0.5 : 1,
+                                  color: '#222222',
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                  outline: 'none',
+                                  padding: '0',
+                                  lineHeight: '0'
+                                }}
+                              >
+                                <span style={{ position: 'relative', top: '-1px' }}>-</span>
+                              </button>
+                              <span style={{ fontSize: '14px', fontWeight: '600', color: '#222222', minWidth: '35px', textAlign: 'center' }}>
+                                {checkoutGuestCount}
+                              </span>
+                              <button
+                                type="button"
+                                disabled={typeof checkoutGuestCount === 'number' && checkoutGuestCount >= maxGuests}
+                                onClick={() => setCheckoutGuestCount(Math.min(maxGuests, (typeof checkoutGuestCount === 'number' ? checkoutGuestCount : minGuests) + 5))}
+                                style={{
+                                  width: '32px',
+                                  height: '32px',
+                                  borderRadius: '50%',
+                                  border: '1px solid #b0b0b0',
+                                  background: '#ffffff',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: (typeof checkoutGuestCount === 'number' && checkoutGuestCount >= maxGuests) ? 'not-allowed' : 'pointer',
+                                  opacity: (typeof checkoutGuestCount === 'number' && checkoutGuestCount >= maxGuests) ? 0.5 : 1,
+                                  color: '#222222',
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                  outline: 'none',
+                                  padding: '0',
+                                  lineHeight: '0'
+                                }}
+                              >
+                                <span style={{ position: 'relative', top: '-1px' }}>+</span>
+                              </button>
+                            </div>
 
-                        {/* Guest count */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div>
-                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#222222', marginBottom: '8px' }}>Guest count</div>
-                            <div style={{ fontSize: '14px', fontWeight: '500', color: '#222222' }}>{previewGuestCount} pax</div>
+                            <button
+                              type="button"
+                              disabled={checkoutGuestCount === previewGuestCount}
+                              onClick={() => setPreviewGuestCount(checkoutGuestCount)}
+                              style={{
+                                width: '100%',
+                                padding: '8px 16px',
+                                background: checkoutGuestCount === previewGuestCount ? '#f3f4f6' : '#E31C5F',
+                                color: checkoutGuestCount === previewGuestCount ? '#a1a1a1' : '#ffffff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: checkoutGuestCount === previewGuestCount ? 'not-allowed' : 'pointer',
+                                transition: 'background 0.2s, color 0.2s',
+                                textAlign: 'center'
+                              }}
+                              onMouseEnter={(e) => {
+                                if (checkoutGuestCount !== previewGuestCount) {
+                                  e.currentTarget.style.background = '#C1124F';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (checkoutGuestCount !== previewGuestCount) {
+                                  e.currentTarget.style.background = '#E31C5F';
+                                }
+                              }}
+                            >
+                              Confirm
+                            </button>
                           </div>
                         </div>
 
-                        <div style={{ borderBottom: '1px solid #dddddd', margin: '24px 0' }}></div>
+                        <div style={{ borderBottom: '1px solid #dddddd', marginBottom: '24px' }}></div>
 
                         {/* Type */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

@@ -192,6 +192,11 @@
     margin-right: 0 !important;
   }
 
+  .tab-icon-img {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
   /* Banner frame mobile padding override */
   .banner-frame {
     background: #ffffff !important;

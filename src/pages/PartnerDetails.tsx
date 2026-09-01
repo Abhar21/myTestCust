@@ -5,7 +5,7 @@ import { homeListings, bestRatingListings, checkoutListings } from './Home';
 const PartnerDetails: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const vendorName = searchParams.get('vendor') || 'Figma Caters';
+  const vendorName = searchParams.get('vendor') || 'Anapurna Caterings';
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -17,7 +17,7 @@ const PartnerDetails: React.FC = () => {
     allListings.find(item => item.title.toLowerCase().includes(vendorName.toLowerCase())) ||
     allListings[0];
 
-  const displayTitle = vendor ? (vendor.title.includes('Hyderabad') ? vendor.title : `${vendor.title} Hyderabad`) : 'Figma Caters Hyderabad';
+  const displayTitle = vendor ? (vendor.title.includes('Hyderabad') ? vendor.title : `${vendor.title} Hyderabad`) : 'Anapurna Caterings Hyderabad';
   const displayRating = vendor ? vendor.rating : '4.1';
 
   // Helper to generate dynamic looking details

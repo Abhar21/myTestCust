@@ -4,7 +4,17 @@ import "../App.css"
 import "../responsive.css"
 import Reviews from './Reviews';
 
-type TabType = 'caters' | 'mehendi' | 'makeup' | 'theatres' | 'photography' | 'decors' | 'venues'
+import vendorImg1 from '../assets/Vendor images/adam-boukhris-JaSnfg04Hiw-unsplash.jpg';
+import vendorImg3 from '../assets/Vendor images/ella-olsson-mmnKI8kMxpc-unsplash.jpg';
+import vendorImg4 from '../assets/Vendor images/natalie-kinnear-4hvnCQy62Rk-unsplash.jpg';
+import vendorImg5 from '../assets/Vendor images/tamanna-rumee-OstMKA7GaJ8-unsplash.jpg';
+
+import catersIcon from '../assets/Categories images/Caters.png';
+import mehendiIcon from '../assets/Categories images/Mehendi.png';
+import makeupIcon from '../assets/Categories images/Makeup.png';
+import photographyIcon from '../assets/Categories images/Photography.png';
+
+type TabType = 'caters' | 'mehendi' | 'makeup' | 'photography' | 'theatres' | 'decors' | 'venues'
 
 interface Suggestion {
   name: string
@@ -27,17 +37,26 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 
 export const homeListings: HomeListing[] = [
   {
-    title: 'Sri Venkata Carters',
-    image: '/homes/apartment_somajiguda.png',
-    price: '₹99/plate',
-    originalPrice: '₹149/plate',
+    title: 'Sree Venkata Caters',
+    image: vendorImg5,
+    price: '₹49/plate',
+    originalPrice: '₹79/plate',
     rating: '4.9',
     isGuestFavourite: true,
     categories: ['Breakfast', 'Lunch', 'Dinner']
   },
   {
-    title: 'Figma Caters',
-    image: '/homes/flat_tolichowki.png',
+    title: 'Brothers',
+    image: vendorImg4,
+    price: '₹100/plate',
+    originalPrice: '₹199/plate',
+    rating: '4.87',
+    isGuestFavourite: false,
+    categories: ['Breakfast', 'Lunch', 'Snacks', 'Dinner']
+  },
+  {
+    title: 'Anapurna Caterings',
+    image: vendorImg1,
     price: '₹49/plate',
     originalPrice: '₹79/plate',
     rating: '4.98',
@@ -45,17 +64,8 @@ export const homeListings: HomeListing[] = [
     categories: ['Lunch', 'Dinner']
   },
   {
-    title: 'Brother company',
-    image: '/homes/villa_jubilee_hills.png',
-    price: '₹149/plate',
-    originalPrice: '₹199/plate',
-    rating: '4.87',
-    isGuestFavourite: false,
-    categories: ['Breakfast', 'Lunch', 'Snacks', 'Dinner']
-  },
-  {
     title: 'Exotic One',
-    image: '/homes/flat_kondapur.png',
+    image: vendorImg3,
     price: '₹199/plate',
     originalPrice: '₹279/plate',
     rating: '4.96',
@@ -64,7 +74,7 @@ export const homeListings: HomeListing[] = [
   },
   {
     title: 'The Real company',
-    image: '/homes/flat_tolichowki.png',
+    image: vendorImg4,
     price: '₹249/plate',
     originalPrice: '₹349/plate',
     rating: '5.0',
@@ -73,7 +83,7 @@ export const homeListings: HomeListing[] = [
   },
   {
     title: 'Golden Plate Service',
-    image: '/homes/flat_kondapur.png',
+    image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80',
     price: '₹299/plate',
     originalPrice: '₹399/plate',
     rating: '4.92',
@@ -82,7 +92,7 @@ export const homeListings: HomeListing[] = [
   },
   {
     title: 'Annapurna Catering',
-    image: '/homes/apartment_somajiguda.png',
+    image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80',
     price: '₹399/plate',
     originalPrice: '₹499/plate',
     rating: '4.87',
@@ -94,7 +104,7 @@ export const homeListings: HomeListing[] = [
 export const bestRatingListings: HomeListing[] = [
   {
     title: 'Gourmet Foods',
-    image: '/homes/flat_kondapur.png',
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
     price: '₹199/plate',
     originalPrice: '₹279/plate',
     rating: '4.98',
@@ -103,7 +113,7 @@ export const bestRatingListings: HomeListing[] = [
   },
   {
     title: 'Swad Catering',
-    image: '/homes/flat_tolichowki.png',
+    image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80',
     price: '₹299/plate',
     originalPrice: '₹399/plate',
     rating: '4.95',
@@ -112,7 +122,7 @@ export const bestRatingListings: HomeListing[] = [
   },
   {
     title: 'Royal Chef Services',
-    image: '/homes/villa_jubilee_hills.png',
+    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
     price: '₹349/plate',
     originalPrice: '₹449/plate',
     rating: '4.99',
@@ -121,7 +131,7 @@ export const bestRatingListings: HomeListing[] = [
   },
   {
     title: 'Elite Feasts',
-    image: '/homes/apartment_somajiguda.png',
+    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
     price: '₹150/plate',
     originalPrice: '₹220/plate',
     rating: '5.0',
@@ -130,7 +140,7 @@ export const bestRatingListings: HomeListing[] = [
   },
   {
     title: 'The Spice Story',
-    image: '/homes/flat_kondapur.png',
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80',
     price: '₹450/plate',
     originalPrice: '₹599/plate',
     rating: '4.97',
@@ -139,7 +149,7 @@ export const bestRatingListings: HomeListing[] = [
   },
   {
     title: 'Feast & Co.',
-    image: '/homes/flat_tolichowki.png',
+    image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80',
     price: '₹270/plate',
     originalPrice: '₹349/plate',
     rating: '4.96',
@@ -148,7 +158,7 @@ export const bestRatingListings: HomeListing[] = [
   },
   {
     title: 'Celebrations Catering',
-    image: '/homes/apartment_somajiguda.png',
+    image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80',
     price: '₹180/plate',
     originalPrice: '₹249/plate',
     rating: '4.94',
@@ -160,7 +170,7 @@ export const bestRatingListings: HomeListing[] = [
 export const checkoutListings: HomeListing[] = [
   {
     title: 'Capital Caters',
-    image: '/homes/flat_kondapur.png',
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
     price: '₹120/plate',
     originalPrice: '₹180/plate',
     rating: '4.85',
@@ -169,7 +179,7 @@ export const checkoutListings: HomeListing[] = [
   },
   {
     title: 'Grand Banquet Services',
-    image: '/homes/apartment_somajiguda.png',
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
     price: '₹220/plate',
     originalPrice: '₹300/plate',
     rating: '4.91',
@@ -178,7 +188,7 @@ export const checkoutListings: HomeListing[] = [
   },
   {
     title: 'Pinnacle Catering',
-    image: '/homes/flat_tolichowki.png',
+    image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=800&q=80',
     price: '₹180/plate',
     originalPrice: '₹250/plate',
     rating: '4.88',
@@ -187,7 +197,7 @@ export const checkoutListings: HomeListing[] = [
   },
   {
     title: 'Spice Route Caters',
-    image: '/homes/villa_jubilee_hills.png',
+    image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=800&q=80',
     price: '₹299/plate',
     originalPrice: '₹399/plate',
     rating: '4.94',
@@ -196,7 +206,7 @@ export const checkoutListings: HomeListing[] = [
   },
   {
     title: 'Dosa House Catering',
-    image: '/homes/flat_kondapur.png',
+    image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=80',
     price: '₹75/plate',
     originalPrice: '₹120/plate',
     rating: '4.90',
@@ -205,7 +215,7 @@ export const checkoutListings: HomeListing[] = [
   },
   {
     title: 'Biryani Express Services',
-    image: '/homes/flat_tolichowki.png',
+    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80',
     price: '₹150/plate',
     originalPrice: '₹210/plate',
     rating: '4.82',
@@ -214,7 +224,7 @@ export const checkoutListings: HomeListing[] = [
   },
   {
     title: 'Royal Feast Hyderabad',
-    image: '/homes/apartment_somajiguda.png',
+    image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80',
     price: '₹380/plate',
     originalPrice: '₹480/plate',
     rating: '4.97',
@@ -237,13 +247,13 @@ const getFoodType = (title: string): string => {
 const getCaterTravelInfo = (title: string): string => {
   const lower = title.toLowerCase();
   if (lower.includes('venkata')) {
-    return '🚚 22 mins • 15 km';
+    return '🚚 25 mins • 8.5 km';
   }
-  if (lower.includes('figma')) {
+  if (lower.includes('anapurna') || lower.includes('figma')) {
     return '🚚 18 mins • 12 km';
   }
   if (lower.includes('brother')) {
-    return '🚚 35 mins • 22 km';
+    return '🚚 71 mins • 23.6 km';
   }
   if (lower.includes('exotic')) {
     return '🚚 25 mins • 18 km';
@@ -832,7 +842,7 @@ function App() {
     return null;
   })
 
-  const hasBreakfastMenu = selectedVendorDetail ? !selectedVendorDetail.title.toLowerCase().includes('figma') : true;
+  const hasBreakfastMenu = selectedVendorDetail ? (!selectedVendorDetail.title.toLowerCase().includes('anapurna') && !selectedVendorDetail.title.toLowerCase().includes('figma')) : true;
   const acceptsBreakfastOrders = selectedVendorDetail ? !selectedVendorDetail.title.toLowerCase().includes('venkata') : true;
 
   // Auto-show date modal removed based on request
@@ -2313,7 +2323,7 @@ function App() {
 
                       {/* Vendor Card */}
                       <div style={{ border: '1px solid #dddddd', borderRadius: '24px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)', padding: '16px', display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                        <img src={selectedVendorDetail?.image || '/homes/flat_kondapur.png'} alt="Vendor" style={{ width: '84px', height: '84px', borderRadius: '12px', objectFit: 'cover' }} />
+                        <img src={selectedVendorDetail?.image || vendorImg1} alt="Vendor" style={{ width: '84px', height: '84px', borderRadius: '12px', objectFit: 'cover' }} />
                         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
                           <div style={{ fontSize: '12px', color: '#717171', marginBottom: '4px', fontWeight: '400' }}>Cater</div>
                           <div style={{ fontSize: '16px', fontWeight: '550', color: '#222222', marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{selectedVendorDetail?.title || 'Vendor Name'}</div>
@@ -3001,7 +3011,9 @@ function App() {
                   className={`tab-item ${activeTab === 'caters' ? 'active' : ''}`}
                   onClick={() => setActiveTab('caters')}
                 >
-                  <span className="tab-icon">🍽</span>
+                  <span className="tab-icon">
+                    <img src={catersIcon} alt="Caters" className="tab-icon-img" />
+                  </span>
                   <span>Caters</span>
                 </div>
 
@@ -3010,7 +3022,9 @@ function App() {
                   onClick={() => setActiveTab('mehendi')}
                 >
                   <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">🎨</span>
+                  <span className="tab-icon">
+                    <img src={mehendiIcon} alt="Mehendi" className="tab-icon-img" />
+                  </span>
                   <span>Mehendi</span>
                 </div>
 
@@ -3019,8 +3033,21 @@ function App() {
                   onClick={() => setActiveTab('makeup')}
                 >
                   <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">💄</span>
+                  <span className="tab-icon">
+                    <img src={makeupIcon} alt="Makeup" className="tab-icon-img" />
+                  </span>
                   <span>Makeup</span>
+                </div>
+
+                <div
+                  className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('photography')}
+                >
+                  <span className="tab-badge">Soon</span>
+                  <span className="tab-icon">
+                    <img src={photographyIcon} alt="Photography" className="tab-icon-img" />
+                  </span>
+                  <span>Photography</span>
                 </div>
 
                 <div
@@ -3030,15 +3057,6 @@ function App() {
                   <span className="tab-badge">Soon</span>
                   <span className="tab-icon">🎬</span>
                   <span>Private Theatres</span>
-                </div>
-
-                <div
-                  className={`tab-item ${activeTab === 'photography' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('photography')}
-                >
-                  <span className="tab-badge">Soon</span>
-                  <span className="tab-icon">📸</span>
-                  <span>Photography</span>
                 </div>
 
                 <div
@@ -4215,7 +4233,7 @@ function App() {
                           <div className="card-categories-row" style={{ marginTop: '8px' }}>
                             {home.categories.filter(cat => {
                               if (cat === 'Breakfast') {
-                                const hasBreakfast = !home.title.toLowerCase().includes('figma');
+                                const hasBreakfast = !home.title.toLowerCase().includes('anapurna') && !home.title.toLowerCase().includes('figma');
                                 const acceptsBreakfast = !home.title.toLowerCase().includes('venkata');
                                 return hasBreakfast && acceptsBreakfast;
                               }
